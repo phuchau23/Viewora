@@ -105,10 +105,10 @@ export default function CinemasPage() {
                 </div>
                 
                 <Button asChild>
-                  <Link href={`/cinemas/${cinema.id}`}>View Showtimes</Link>
+                  <Link href={`/users/cinemas/${cinema.id}`}>View Showtimes</Link>
                 </Button>
               </CardContent>
-            </Card>
+            </Card> 
           ))}
         </div>
         

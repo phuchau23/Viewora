@@ -22,9 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <div className="flex min-h-screen flex-col">
-            <Header />
             <main className="flex-1">{children}</main>
-            <Footer />
           </div>
         </ThemeProvider>
       </body>

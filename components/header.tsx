@@ -15,9 +15,9 @@ const Header = () => {
 
   const navigation = [
     { name: "Home", href: "/" },
-    { name: "Movies", href: "/movies" },
-    { name: "Cinemas", href: "/cinemas" },
-    { name: "Promotions", href: "/promotions" },
+    { name: "Movies", href: "/user/movies" },
+    { name: "Cinemas", href: "/user/cinemas" },
+    { name: "Promotions", href: "/user/promotions" },
   ];
 
   useEffect(() => {
@@ -136,7 +136,7 @@ const Header = () => {
           </Button>
           
           <Button className="hidden md:flex">
-            Sign In
+            <Link href="/login">Sign In</Link>
           </Button>
         </div>
       </div>

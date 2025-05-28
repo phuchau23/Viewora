@@ -38,27 +38,27 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/movies" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="/user/movies" className="text-sm text-muted-foreground hover:text-primary">
                   Movies
                 </Link>
               </li>
               <li>
-                <Link href="/cinemas" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="/user/cinemas" className="text-sm text-muted-foreground hover:text-primary">
                   Cinemas
                 </Link>
               </li>
               <li>
-                <Link href="/promotions" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="/user/promotions" className="text-sm text-muted-foreground hover:text-primary">
                   Promotions
                 </Link>
               </li>
               <li>
-                <Link href="/events" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="/user/events" className="text-sm text-muted-foreground hover:text-primary">
                   Events
                 </Link>
               </li>
               <li>
-                <Link href="/membership" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="/user/membership" className="text-sm text-muted-foreground hover:text-primary">
                   Membership
                 </Link>
               </li>
@@ -69,28 +69,28 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Help & Support</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/faq" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="/user/faq" className="text-sm text-muted-foreground hover:text-primary">
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="https://policies.google.com/terms" className="text-sm text-muted-foreground hover:text-primary">
                   Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="https://policies.google.com/privacy" className="text-sm text-muted-foreground hover:text-primary">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/refund" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="/user/refund" className="text-sm text-muted-foreground hover:text-primary">
                   Refund Policy
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-sm text-muted-foreground hover:text-primary">
-                  Contact Us
+                <Link href="/user/contact" className="text-sm text-muted-foreground hover:text-primary">
+                  Contact Us  
                 </Link>
               </li>
             </ul>

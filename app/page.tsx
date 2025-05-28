@@ -242,7 +242,7 @@ export default function Home() {
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-bold">Promotions & Offers</h2>
             <Button variant="ghost" asChild className="gap-2">
-              <Link href="/promotions">
+              <Link href="/users/promotions">
                 View All <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
