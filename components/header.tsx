@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-const Header = ({ minimal = false }: { minimal?: boolean }) => {
+const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
@@ -20,6 +20,7 @@ const Header = ({ minimal = false }: { minimal?: boolean }) => {
     { name: "Promotions", href: "/user/promotions" },
   ];
   useEffect(() => {
+    
     const handleScroll = () => {
       if (window.scrollY > 10) {
         setIsScrolled(true);
@@ -85,7 +86,7 @@ const Header = ({ minimal = false }: { minimal?: boolean }) => {
           </Link>
           
           <nav className="hidden md:flex items-center gap-6 ml-6">
-            {!minimal &&navigation.map((item) => (
+            {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -101,7 +102,7 @@ const Header = ({ minimal = false }: { minimal?: boolean }) => {
             ))}
           </nav>
         </div>
-        {!minimal && (
+        
 
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center border rounded-full px-3 py-1 text-sm text-muted-foreground">
@@ -139,7 +140,6 @@ const Header = ({ minimal = false }: { minimal?: boolean }) => {
             <Link href="/login">Sign In</Link>
           </Button>
         </div>
-      )}
       </div>
     </header>
   );

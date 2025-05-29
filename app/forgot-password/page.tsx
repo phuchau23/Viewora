@@ -1,95 +1,159 @@
-"use client";
+'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import OTPForm from "@/components/shared/OTPForm";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1); // 1: nhập email, 2: nhập OTP
+  const [timeLeft, setTimeLeft] = useState(10); // 5 phút
+  const [timerActive, setTimerActive] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (!timerActive || timeLeft <= 0) return;
+
+    const timerInterval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerInterval);
+          setTimerActive(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timerInterval);
+  }, [timerActive, timeLeft]);
+
+
+
+  const handleEmailSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage("");
+    setError("");
+    console.log(timeLeft);
+    try {
+      await new Promise((res) => setTimeout(res, 1000));
+      setMessage("Mã OTP đã được gửi đến email của bạn.");
+      setStep(2);
+      setTimeLeft(300);
+      setTimerActive(true);
+    } catch (err) {
+      setError("Đã có lỗi xảy_charge ra. Vui lòng thử lại sau!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onOtpComplete = async (otpValue: string) => {
+    setOtp(otpValue);
+    setLoading(true);
+    setMessage("");
+    setError("");
+
+    if (otpValue.length !== 6) {
+      setError("Mã OTP phải có 6 chữ số!");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await new Promise((res) => setTimeout(res, 1000));
+      setMessage("Xác minh thành công! Bạn có thể đặt lại mật khẩu.");
+      // TODO: Redirect hoặc hiển thị form đổi mật khẩu
+    } catch (err) {
+      setError("Mã OTP không hợp lệ hoặc đã hết hạn!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
     setLoading(true);
     setMessage("");
     setError("");
 
     try {
-      // Giả lập request gửi reset link, thay thế bằng API thật khi cần
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setMessage(
-        "Nếu email này tồn tại, chúng tôi đã gửi hướng dẫn khôi phục vào email của bạn."
-      );
+      await new Promise((res) => setTimeout(res, 1000));
+      setMessage("Mã OTP mới đã được gửi đến email của bạn.");
+      setTimeLeft(300);
+      setTimerActive(true);
     } catch (err) {
-      setError("Đã có lỗi xảy ra. Vui lòng thử lại sau!");
+      setError("Không thể gửi lại mã OTP. Vui lòng thử lại sau!");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="h-screen flex flex-row bg-black">
-    <div className="border-orange-500 h-2/5  rounded-2xl m-auto border w-2/5 flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8 bg-black">
-      <div className="max-w-md w-full space-y-8">
-        {/* Tiêu đề trang */}
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-orange-500">
-            Forgot your password?
-          </h2>
-          <p className="mt-2 text-center text-sm text-white">
-            Enter your email address below and we&apos;ll send you a link to reset your password.
-          </p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="w-full max-w-md bg-white p-10 rounded-2xl shadow-lg">
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
+          {step === 1 ? "Quên mật khẩu?" : "Nhập mã xác minh"}
+        </h2>
+        <p className="text-sm text-center text-gray-500 mb-6">
+          {step === 1
+            ? "Nhập email của bạn để nhận mã xác minh khôi phục mật khẩu."
+            : "Vui lòng nhập mã OTP đã được gửi đến email của bạn."}
+        </p>
 
-        {/* Form gửi yêu cầu khôi phục mật khẩu */}
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6" method="POST">
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none relative block w-full px-3 py-2 bg-gray-800 border border-orange-400 placeholder-orange-300 text-orange-50 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-              />
-            </div>
-          </div>
+        {/* Form bước 1 */}
+        {step === 1 ? (
+          <form onSubmit={handleEmailSubmit} className="space-y-4">
+            <input
+              type="email"
+              required
+              placeholder="Địa chỉ email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md bg-white text-gray-700 focus:ring-2 focus:ring-orange-400 outline-none"
+            />
 
-          {/* Hiển thị thông báo thành công hoặc lỗi */}
-          {message && <p className="text-green-400 text-center text-sm">{message}</p>}
-          {error && <p className="text-red-400 text-center text-sm">{error}</p>}
+            {message && (
+              <p className="text-green-500 text-sm text-center">{message}</p>
+            )}
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
 
-          <div>
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              className="w-full py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition disabled:opacity-50"
             >
-              {loading ? "Sending..." : "Send Reset Link"}
+              {loading ? "Đang gửi..." : "Gửi mã xác minh"}
             </button>
+          </form>
+        ) : (
+          // Form bước 2
+          <div className="space-y-4 text-black">
+            <OTPForm
+              onSubmit={onOtpComplete}
+              timeLeft={timeLeft} // Fixed prop name from "timeleft" to "timeLeft"
+              loading={loading}
+              message={message}
+              error={error}
+              onResend={handleResendOtp}
+            />
           </div>
-        </form>
+        )}
 
-        {/* Liên kết chuyển hướng về trang đăng nhập */}
-        <div className="text-sm text-center">
+        <div className="mt-6 text-center text-sm">
           <Link
             href="/login"
-            className="font-medium text-orange-50 hover:text-orange-300"
+            className="text-gray-600 hover:text-orange-500 font-medium"
           >
-            Remember your password? Sign in
+            Đã nhớ mật khẩu? Đăng nhập
           </Link>
         </div>
       </div>
-    </div>
     </div>
   );
 }

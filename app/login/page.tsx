@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { Checkbox } from "@radix-ui/react-checkbox";
+// import useLogin from "@/hooks/useLogin";
 
 const bgImages = [
   "/images/login-bg.jpg",
@@ -11,14 +14,16 @@ const bgImages = [
   "/images/login-bg4.jpg",
 ];
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [agree, setAgree] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState("");
+  // const loginMutation = useLogin();
+  // const [showForgotPassword, setShowForgotPassword] = useState(false);
+  // const [forgotEmail, setForgotEmail] = useState("");
 
   // Auto change background image
   useEffect(() => {
@@ -28,15 +33,17 @@ export default function LoginPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1000);
-  };
-
-  const handleSendOTP = () => {
-    alert(`Mã OTP đã được gửi đến ${forgotEmail}`);
-  };
+  // const handleSubmit = async () => {
+  //   try {
+  //     await loginMutation.mutateAsync({ email, password });
+  //     alert("Login thành công");
+  //   } catch (err: any) {
+  //     alert(err.message || "Login thất bại");
+  //   }
+  // };
+  // const handleSendOTP = () => {
+  //   alert(`Mã OTP đã được gửi đến ${forgotEmail}`);
+  // };
 
   return (
     <div className="min-h-screen flex flex-row bg-black">
@@ -72,7 +79,7 @@ export default function LoginPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-orange-600 mb-10 text-center">
             Đăng nhập tài khoản
           </h1>
-          <form className="space-y-8" onSubmit={handleSubmit}>
+          <form className="space-y-8">
             <div>
               <label
                 htmlFor="email"
@@ -135,7 +142,8 @@ export default function LoginPage() {
                 <div>
                   <button
                     type="button"
-                    onClick={() => setShowForgotPassword(true)}
+                    // onClick={() => setShowForgotPassword(true)}
+                    onClick={() => router.push("/forgot-password")}
                     className="text-md text-orange-600 hover:underline"
                   >
                     Quên mật khẩu?
@@ -144,18 +152,17 @@ export default function LoginPage() {
               </div>
             </div>
             <div className="flex items-center">
-              <input
+              <Checkbox
                 id="agree"
                 name="agree"
-                type="checkbox"
                 checked={agree}
-                onChange={(e) => setAgree(e.target.checked)}
-                className="h-5 w-5 bg-white text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                onCheckedChange={(checked) => setAgree(true)}
+                className="h-5 w-5 border border-gray-300 rounded"
                 required
               />
               <label
                 htmlFor="agree"
-                className="ml-3 block text-lg text-gray-700"
+                className="ml-3 block text-lg text-gray-700 dark:text-gray-200"
               >
                 Tôi đồng ý với{" "}
                 <Link href="#" className="underline text-orange-600">
@@ -194,7 +201,7 @@ export default function LoginPage() {
               </button>
             </div>
           </form>
-          {showForgotPassword && (
+          {/* {showForgotPassword && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
               <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full">
                 <div className="flex justify-between">
@@ -227,7 +234,7 @@ export default function LoginPage() {
                 
               </div>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>
