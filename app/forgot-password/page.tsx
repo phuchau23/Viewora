@@ -30,7 +30,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black py-12 px-4 sm:px-6 lg:px-8">
+    <div className="h-screen flex flex-row bg-black">
+    <div className="border-orange-500 h-2/5  rounded-2xl m-auto border w-2/5 flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8 bg-black">
       <div className="max-w-md w-full space-y-8">
         {/* Tiêu đề trang */}
         <div>
@@ -88,6 +89,7 @@ export default function ForgotPasswordPage() {
           </Link>
         </div>
       </div>
+    </div>
     </div>
   );
 }
