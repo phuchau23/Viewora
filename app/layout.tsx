@@ -29,9 +29,7 @@ export default function RootLayout({
         <QueryClientProvider client={queryClient}>   
           <ThemeProvider attribute="class" defaultTheme="dark">
             <div className="flex min-h-screen flex-col">
-              <Header />
               <main className="flex-1">{children}</main>
-              <Footer />
             </div>
           </ThemeProvider>
         </QueryClientProvider> 
