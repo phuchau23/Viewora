@@ -38,6 +38,217 @@ export type Showtime = {
   price: number;
 };
 
+export interface User {
+  id: number
+  name: string
+  email: string
+  phone: string
+  role: "Admin" | "User" | "Moderator" | "Manager"
+  status: "Active" | "Inactive" | "Suspended"
+  lastLogin: string
+  joinDate: string
+  avatar?: string
+  department: string
+  location: string
+}
+
+export interface Ticket {
+  id: string
+  title: string
+  description: string
+  status: "Open" | "In Progress" | "Resolved" | "Closed" | "Pending"
+  priority: "Low" | "Medium" | "High" | "Critical"
+  assignee: string
+  reporter: string
+  created: string
+  updated: string
+  comments: number
+  category: "Bug" | "Feature Request" | "Support" | "Technical Issue"
+  tags: string[]
+}
+
+export interface Role {
+  id: number
+  name: string
+  userCount: number
+  createdDate: string
+  status: "Active" | "Inactive"
+}
+
+export const initialRoles: Role[] = [
+  {
+    id: 1,
+    name: "Administrator",
+    userCount: 5,
+    createdDate: "2024-01-15",
+    status: "Active",
+  },
+  {
+    id: 2,
+    name: "Editor",
+    userCount: 12,
+    createdDate: "2024-02-20",
+    status: "Active",
+  },
+  {
+    id: 3,
+    name: "Viewer",
+    userCount: 25,
+    createdDate: "2024-03-10",
+    status: "Active",
+  },
+  {
+    id: 4,
+    name: "Guest",
+    userCount: 0,
+    createdDate: "2024-04-05",
+    status: "Inactive",
+  },
+]
+
+export interface Employee {
+  id: number
+  employeeId: string
+  account: string
+  password: string
+  employeeName: string
+  identityCard: string
+  email: string
+  phoneNumber: string
+  address: string
+  dateOfBirth: string
+  sex: "Male" | "Female"
+  image?: string
+  role: "Admin" | "Manager" | "Employee"
+  status: "Active" | "Inactive";
+  createdDate: string
+  lastLogin: string
+}
+// Mock current user for role-based access control
+export const currentUser = {
+  id: 1,
+  role: "Admin" as const,
+  name: "John Smith",
+}
+
+export const hasEmployeeAccess = (userRole: string): boolean => {
+  return userRole === "Admin" || userRole === "Manager"
+}
+export interface AnalyticsData {
+  pageViews: { month: string; views: number }[]
+  userGrowth: { month: string; users: number }[]
+  ticketStats: { status: string; count: number; color: string }[]
+  topPages: { page: string; views: number; change: number }[]
+  deviceStats: { device: string; percentage: number; color: string }[]
+  revenueData: { month: string; revenue: number }[]
+}
+
+export const sampleEmployees: Employee[] = [
+  {
+    id: 1,
+    employeeId: "EMP001",
+    account: "john.admin",
+    password: "password123",
+    employeeName: "John Smith",
+    identityCard: "123456789",
+    email: "john.smith@movietheater.com",
+    phoneNumber: "+1 (555) 123-4567",
+    address: "123 Main St, New York, NY 10001",
+    dateOfBirth: "1985-03-15",
+    sex: "Male",
+    role: "Admin",
+    status: "Active",
+    createdDate: "2023-01-15",
+    lastLogin: "2 hours ago",
+  },
+  {
+    id: 2,
+    employeeId: "EMP002",
+    account: "jane.manager",
+    password: "password123",
+    employeeName: "Jane Johnson",
+    identityCard: "987654321",
+    email: "jane.johnson@movietheater.com",
+    phoneNumber: "+1 (555) 987-6543",
+    address: "456 Oak Ave, Los Angeles, CA 90210",
+    dateOfBirth: "1990-07-22",
+    sex: "Female",
+    role: "Manager",
+    status: "Active",
+    createdDate: "2023-02-20",
+    lastLogin: "1 day ago",
+  },
+  {
+    id: 3,
+    employeeId: "EMP003",
+    account: "mike.employee",
+    password: "password123",
+    employeeName: "Mike Davis",
+    identityCard: "456789123",
+    email: "mike.davis@movietheater.com",
+    phoneNumber: "+1 (555) 456-7890",
+    address: "789 Pine St, Chicago, IL 60601",
+    dateOfBirth: "1992-11-08",
+    sex: "Male",
+    role: "Employee",
+    status: "Active",
+    createdDate: "2023-03-10",
+    lastLogin: "3 hours ago",
+  },
+  {
+    id: 4,
+    employeeId: "EMP004",
+    account: "sarah.employee",
+    password: "password123",
+    employeeName: "Sarah Wilson",
+    identityCard: "789123456",
+    email: "sarah.wilson@movietheater.com",
+    phoneNumber: "+1 (555) 321-0987",
+    address: "321 Elm St, Miami, FL 33101",
+    dateOfBirth: "1988-05-14",
+    sex: "Female",
+    role: "Employee",
+    status: "Inactive",
+    createdDate: "2023-04-05",
+    lastLogin: "1 week ago",
+  },
+  {
+    id: 5,
+    employeeId: "EMP005",
+    account: "alex.manager",
+    password: "password123",
+    employeeName: "Alex Brown",
+    identityCard: "321654987",
+    email: "alex.brown@movietheater.com",
+    phoneNumber: "+1 (555) 654-3210",
+    address: "654 Cedar Rd, Seattle, WA 98101",
+    dateOfBirth: "1987-09-30",
+    sex: "Male",
+    role: "Manager",
+    status: "Active",
+    createdDate: "2023-05-12",
+    lastLogin: "5 minutes ago",
+  },
+  {
+    id: 6,
+    employeeId: "EMP006",
+    account: "emily.employee",
+    password: "password123",
+    employeeName: "Emily Garcia",
+    identityCard: "654987321",
+    email: "emily.garcia@movietheater.com",
+    phoneNumber: "+1 (555) 789-0123",
+    address: "987 Maple Dr, Austin, TX 78701",
+    dateOfBirth: "1993-12-03",
+    sex: "Female",
+    role: "Employee",
+    status: "Active",
+    createdDate: "2023-01-30",
+    lastLogin: "30 minutes ago",
+  },
+]
+
+
 export const movies: Movie[] = [
   {
     id: "1",
@@ -409,7 +620,290 @@ export const promotions = [
     image: "https://images.pexels.com/photos/7991381/pexels-photo-7991381.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
     validUntil: "2024-08-15",
   },
-];
+]
+export const sampleUsers: User[] = [
+    {
+      id: 1,
+      name: "John Doe",
+      email: "john.doe@company.com",
+      phone: "+1 (555) 123-4567",
+      role: "Admin",
+      status: "Active",
+      lastLogin: "2 hours ago",
+      joinDate: "2023-01-15",
+      department: "IT",
+      location: "New York, NY",
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      email: "jane.smith@company.com",
+      phone: "+1 (555) 987-6543",
+      role: "Manager",
+      status: "Active",
+      lastLogin: "1 day ago",
+      joinDate: "2023-02-20",
+      department: "Marketing",
+      location: "Los Angeles, CA",
+    },
+    {
+      id: 3,
+      name: "Mike Johnson",
+      email: "mike.johnson@company.com",
+      phone: "+1 (555) 456-7890",
+      role: "Moderator",
+      status: "Active",
+      lastLogin: "3 hours ago",
+      joinDate: "2023-03-10",
+      department: "Support",
+      location: "Chicago, IL",
+    },
+    {
+      id: 4,
+      name: "Sarah Davis",
+      email: "sarah.davis@company.com",
+      phone: "+1 (555) 321-0987",
+      role: "User",
+      status: "Inactive",
+      lastLogin: "1 week ago",
+      joinDate: "2023-04-05",
+      department: "Sales",
+      location: "Miami, FL",
+    },
+    {
+      id: 5,
+      name: "Alex Wilson",
+      email: "alex.wilson@company.com",
+      phone: "+1 (555) 654-3210",
+      role: "User",
+      status: "Active",
+      lastLogin: "5 minutes ago",
+      joinDate: "2023-05-12",
+      department: "Design",
+      location: "Seattle, WA",
+    },
+    {
+      id: 6,
+      name: "Emily Brown",
+      email: "emily.brown@company.com",
+      phone: "+1 (555) 789-0123",
+      role: "Manager",
+      status: "Active",
+      lastLogin: "30 minutes ago",
+      joinDate: "2023-01-30",
+      department: "HR",
+      location: "Austin, TX",
+    },
+    {
+      id: 7,
+      name: "David Lee",
+      email: "david.lee@company.com",
+      phone: "+1 (555) 234-5678",
+      role: "User",
+      status: "Suspended",
+      lastLogin: "2 weeks ago",
+      joinDate: "2023-06-18",
+      department: "Finance",
+      location: "Boston, MA",
+    },
+    {
+      id: 8,
+      name: "Lisa Garcia",
+      email: "lisa.garcia@company.com",
+      phone: "+1 (555) 876-5432",
+      role: "Moderator",
+      status: "Active",
+      lastLogin: "1 hour ago",
+      joinDate: "2023-03-25",
+      department: "Operations",
+      location: "Denver, CO",
+    },
+  ]
+  
+  export const sampleTickets: Ticket[] = [
+    {
+      id: "TK-001",
+      title: "Login Issues with Mobile App",
+      description:
+        "Users are experiencing difficulties logging into the mobile application. The issue appears to be related to OAuth authentication flow.",
+      status: "Open",
+      priority: "High",
+      assignee: "John Doe",
+      reporter: "Jane Smith",
+      created: "2 hours ago",
+      updated: "30 minutes ago",
+      comments: 3,
+      category: "Bug",
+      tags: ["mobile", "authentication", "urgent"],
+    },
+    {
+      id: "TK-002",
+      title: "Feature Request: Dark Mode",
+      description:
+        "Multiple users have requested the implementation of a dark mode theme across the entire application to improve user experience during night hours.",
+      status: "In Progress",
+      priority: "Medium",
+      assignee: "Mike Johnson",
+      reporter: "Alex Wilson",
+      created: "1 day ago",
+      updated: "4 hours ago",
+      comments: 7,
+      category: "Feature Request",
+      tags: ["ui", "theme", "enhancement"],
+    },
+    {
+      id: "TK-003",
+      title: "Database Performance Issues",
+      description:
+        "Slow query performance affecting user experience, particularly on the dashboard and reporting sections. Response times have increased by 300%.",
+      status: "Resolved",
+      priority: "Critical",
+      assignee: "Sarah Davis",
+      reporter: "System Monitor",
+      created: "3 days ago",
+      updated: "1 day ago",
+      comments: 12,
+      category: "Technical Issue",
+      tags: ["database", "performance", "critical"],
+    },
+    {
+      id: "TK-004",
+      title: "Email Notifications Not Working",
+      description: "Users report not receiving email notifications for important updates and system alerts.",
+      status: "Open",
+      priority: "High",
+      assignee: "Emily Brown",
+      reporter: "David Lee",
+      created: "6 hours ago",
+      updated: "2 hours ago",
+      comments: 2,
+      category: "Bug",
+      tags: ["email", "notifications", "system"],
+    },
+    {
+      id: "TK-005",
+      title: "Add Export Functionality to Reports",
+      description:
+        "Request to add PDF and Excel export options to all report pages for better data sharing and offline analysis.",
+      status: "Pending",
+      priority: "Medium",
+      assignee: "Lisa Garcia",
+      reporter: "Emily Brown",
+      created: "2 days ago",
+      updated: "1 day ago",
+      comments: 5,
+      category: "Feature Request",
+      tags: ["reports", "export", "pdf", "excel"],
+    },
+    {
+      id: "TK-006",
+      title: "Security Vulnerability in File Upload",
+      description:
+        "Potential security issue discovered in the file upload component that could allow malicious file execution.",
+      status: "In Progress",
+      priority: "Critical",
+      assignee: "John Doe",
+      reporter: "Security Team",
+      created: "4 hours ago",
+      updated: "1 hour ago",
+      comments: 8,
+      category: "Bug",
+      tags: ["security", "upload", "vulnerability"],
+    },
+    {
+      id: "TK-007",
+      title: "Improve Search Functionality",
+      description:
+        "Current search is slow and doesn't provide relevant results. Users want better filtering and sorting options.",
+      status: "Open",
+      priority: "Low",
+      assignee: "Alex Wilson",
+      reporter: "Multiple Users",
+      created: "1 week ago",
+      updated: "3 days ago",
+      comments: 4,
+      category: "Feature Request",
+      tags: ["search", "performance", "ux"],
+    },
+    {
+      id: "TK-008",
+      title: "API Rate Limiting Issues",
+      description: "Third-party integrations are hitting rate limits causing service disruptions during peak hours.",
+      status: "Closed",
+      priority: "Medium",
+      assignee: "Mike Johnson",
+      reporter: "API Monitor",
+      created: "5 days ago",
+      updated: "2 days ago",
+      comments: 6,
+      category: "Technical Issue",
+      tags: ["api", "rate-limiting", "integration"],
+    },
+  ]
+  
+  export const sampleAnalytics: AnalyticsData = {
+    pageViews: [
+      { month: "Jan", views: 12000 },
+      { month: "Feb", views: 15000 },
+      { month: "Mar", views: 18000 },
+      { month: "Apr", views: 22000 },
+      { month: "May", views: 25000 },
+      { month: "Jun", views: 28000 },
+      { month: "Jul", views: 32000 },
+      { month: "Aug", views: 35000 },
+      { month: "Sep", views: 38000 },
+      { month: "Oct", views: 42000 },
+      { month: "Nov", views: 45000 },
+      { month: "Dec", views: 48000 },
+    ],
+    userGrowth: [
+      { month: "Jan", users: 1200 },
+      { month: "Feb", users: 1350 },
+      { month: "Mar", users: 1500 },
+      { month: "Apr", users: 1680 },
+      { month: "May", users: 1850 },
+      { month: "Jun", users: 2020 },
+      { month: "Jul", users: 2200 },
+      { month: "Aug", users: 2380 },
+      { month: "Sep", users: 2550 },
+      { month: "Oct", users: 2720 },
+      { month: "Nov", users: 2900 },
+      { month: "Dec", users: 3100 },
+    ],
+    ticketStats: [
+      { status: "Open", count: 15, color: "#ef4444" },
+      { status: "In Progress", count: 8, color: "#3b82f6" },
+      { status: "Resolved", count: 45, color: "#10b981" },
+      { status: "Closed", count: 32, color: "#6b7280" },
+      { status: "Pending", count: 6, color: "#f59e0b" },
+    ],
+    topPages: [
+      { page: "/dashboard", views: 15420, change: 12.5 },
+      { page: "/user-profile", views: 12380, change: 8.2 },
+      { page: "/reports", views: 9850, change: -2.1 },
+      { page: "/settings", views: 7650, change: 15.8 },
+      { page: "/analytics", views: 6420, change: 22.3 },
+    ],
+    deviceStats: [
+      { device: "Desktop", percentage: 65, color: "#3b82f6" },
+      { device: "Mobile", percentage: 28, color: "#10b981" },
+      { device: "Tablet", percentage: 7, color: "#f59e0b" },
+    ],
+    revenueData: [
+      { month: "Jan", revenue: 45000 },
+      { month: "Feb", revenue: 52000 },
+      { month: "Mar", revenue: 48000 },
+      { month: "Apr", revenue: 61000 },
+      { month: "May", revenue: 55000 },
+      { month: "Jun", revenue: 67000 },
+      { month: "Jul", revenue: 72000 },
+      { month: "Aug", revenue: 69000 },
+      { month: "Sep", revenue: 78000 },
+      { month: "Oct", revenue: 85000 },
+      { month: "Nov", revenue: 92000 },
+      { month: "Dec", revenue: 98000 },
+    ],
+  }
 
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('vi-VN', {
