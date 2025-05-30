@@ -49,7 +49,7 @@ export default function Home() {
     setAutoplay(false);
     setCurrentSlide(
       (prev) => (prev - 1 + featuredMovies.length) % featuredMovies.length
-    );
+    )
   };
 
   return (
@@ -159,11 +159,7 @@ export default function Home() {
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-bold">Movies</h2>
             <Button variant="ghost" asChild className="gap-2">
-<<<<<<< HEAD
               <Link href="/users/promotions">
-=======
-              <Link href="/movies">
->>>>>>> 762b9c5976ef571ead2da18f1b9dd4416744400e
                 View All <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
