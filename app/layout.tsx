@@ -1,15 +1,19 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { ThemeProvider } from '@/components/theme-provider';
-import Header from '@/components/header';
-import Footer from '@/components/footer';
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'CinemaTix - Book Movie Tickets Online',
-  description: 'Book movie tickets online for the latest movies in theaters near you.',
+  title: "CINEVERSE - Book Movie Tickets Online",
+  description:
+    "Book movie tickets online for the latest movies in theaters near you.",
+  icons: {
+    icon: "/logo1.png",
+  },
 };
 
 export default function RootLayout({
