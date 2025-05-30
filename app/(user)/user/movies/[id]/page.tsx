@@ -269,7 +269,7 @@ export default function MovieDetailPage() {
                     <div className="absolute bottom-0 left-0 right-0 p-4">
                       <div className="flex gap-2 mb-2">
                         {movie.status === "now-showing" ? (
-                          <Button size="sm\" asChild>
+                          <Button size="sm" asChild>
                             <Link href={`/booking/${movie.id}`}>
                               Buy Tickets
                             </Link>

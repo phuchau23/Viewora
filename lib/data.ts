@@ -918,3 +918,107 @@ export function formatDuration(minutes: number): string {
   const mins = minutes % 60;
   return `${hours}h ${mins}m`;
 }
+
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  avatar?: string;
+  dateOfBirth?: string;
+  sex?: "Male" | "Female" | "Other";
+  identityCard?: string;
+  address?: {
+    houseNo?: string; // Thêm trường cho Flat/House No.
+    street: string;
+    city: string;
+    state?: string; // Thêm trường cho State
+    pincode?: string; // Thêm trường cho Pincode
+    landmark?: string; // Thêm trường cho Landmark
+    country: string;
+  };
+  preferences?: {
+    favoriteGenres: string[];
+    preferredCinemas: string[];
+    notifications: boolean;
+  };
+  bookingHistory?: BookingHistory[];
+}
+export interface BookingHistory {
+  showtimeId: string
+  tickets: number
+  totalAmount: number
+  bookingDate: string
+}
+export interface EditLog {
+  id: string
+  employeeId?: string
+  memberId: string
+  timestamp: string
+  status: "success" | "failed"
+  changes: Record<string, { old: any; new: any }>
+}
+
+export interface FormErrors {
+  firstName?: string
+  lastName?: string
+  email?: string
+  phone?: string
+  dateOfBirth?: string
+  sex?: string
+  identityCard?: string
+  password?: string
+  confirmPassword?: string
+  general?: string
+  address?: {
+    street?: string
+    city?: string
+    country?: string
+  }
+}
+export const sampleUser: User = {
+  id: "user123",
+  firstName: "Vaishnavi",
+  lastName: "Baskaran",
+  email: "vaishnavibaskaran@gmail.com",
+  phone: "+919840524789",
+  avatar: "/profile1.png",
+  dateOfBirth: "1994-08-16",
+  sex: "Female",
+  identityCard: "ID123456789", // Không có trong hình, giữ nguyên giá trị mẫu
+  address: {
+    houseNo: "200", // Thêm trường này để khớp với Flat/House No.
+    street: "5th Street, KK Nagar",
+    city: "Saidapet",
+    state: "Tamilnadu", // Thêm trường này để khớp với State
+    pincode: "+600017", // Thêm trường này để khớp với Pincode
+    landmark: "Near MedPlus", // Thêm trường này để khớp với Landmark
+    country: "India", // Thêm từ thông tin trong hình (Chennai, Tamil Nadu, India)
+  },
+  preferences: {
+    favoriteGenres: ["Action", "Adventure", "Sci-Fi", "Drama"], // Giữ nguyên từ dữ liệu gốc
+    preferredCinemas: ["1", "3"], // Giữ nguyên từ dữ liệu gốc
+    notifications: true, // Giữ nguyên từ dữ liệu gốc
+  },
+  bookingHistory: [
+    {
+      showtimeId: "1",
+      tickets: 2,
+      totalAmount: 25.0,
+      bookingDate: "2024-01-10",
+    },
+    {
+      showtimeId: "2",
+      tickets: 1,
+      totalAmount: 11.0,
+      bookingDate: "2024-01-12",
+    },
+    {
+      showtimeId: "3",
+      tickets: 3,
+      totalAmount: 39.0,
+      bookingDate: "2024-01-08",
+    },
+  ],
+};
