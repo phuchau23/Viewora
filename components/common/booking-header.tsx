@@ -4,8 +4,7 @@ import { Bell, Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { NavigationSection } from "@/app/(admin)/admin/components/booking-system";
-
+import { NavigationSection } from "@/app/(admin)/admin/booking-system";
 interface BookingHeaderProps {
   activeSection: NavigationSection;
 }

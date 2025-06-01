@@ -4,7 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { Checkbox } from "@radix-ui/react-checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Film } from "lucide-react";
+import { SocialAuthButtons } from "@/components/shared/SocialAuthButtons";
+import router from "next/router";
 // import useLogin from "@/hooks/useLogin";
 
 const bgImages = [
@@ -46,9 +52,9 @@ export default function LoginPage() {
   // };
 
   return (
-    <div className="min-h-screen flex flex-row bg-black">
+    <div className="h-screen flex flex-row">
       {/* Left: Background Slideshow + Slogan + Icon */}
-      <div className="hidden md:flex flex-col justify-between w-1/2 h-screen bg-black rounded-r-3xl overflow-hidden relative">
+      <div className="hidden md:flex flex-col justify-between w-1/2 h-screen rounded-r-3xl overflow-hidden relative">
         {bgImages.map((img, idx) => (
           <img
             key={img}
@@ -73,134 +79,113 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-black opacity-60 z-10"></div>
       </div>
 
+      <div className="absolute top-4 right-4 flex items-center gap-2 w-64 h-16">
+        <Film className="h-6 w-6 text-primary" />
+        <Link href="/" className="text-xl font-bold">
+          CinemaTix
+        </Link>
+      </div>
+
       {/* Right: Login Form */}
-      <div className="flex flex-1 flex-col justify-center items-center bg-white px-12 py-20 h-screen">
+      <div className="flex flex-1 items-center justify-center px-12 py-20 h-screen">
         <div className="w-full max-w-lg">
           <h1 className="text-4xl md:text-5xl font-bold text-orange-600 mb-10 text-center">
             Đăng nhập tài khoản
           </h1>
           <form className="space-y-8">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-lg font-medium text-gray-700 mb-2"
-              >
+              <Label htmlFor="email" className="text-lg text-gray-500">
                 Email
-              </label>
-              <input
+              </Label>
+              <Input
                 id="email"
-                name="email"
                 type="email"
-                autoComplete="email"
-                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full px-6 py-4 bg-white border border-gray-300 rounded-xl shadow-sm text-lg text-gray-700 focus:ring-orange-500 focus:border-orange-500"
+                required
                 placeholder="Nhập email"
+                className="mt-2 text-lg"
               />
             </div>
+
             <div>
-              <label
-                htmlFor="password"
-                className="block text-lg font-medium text-gray-700 mb-2"
-              >
+              <Label htmlFor="password" className="text-lg text-gray-500">
                 Mật khẩu
-              </label>
-              {/* Container bọc input và nút toggle */}
+              </Label>
               <div className="relative">
-                <input
+                <Input
                   id="password"
-                  name="password"
                   type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full px-6 py-4 pr-12 bg-white border border-gray-300 rounded-xl shadow-sm text-lg text-gray-700 focus:ring-orange-500 focus:border-orange-500"
+                  required
                   placeholder="Nhập mật khẩu"
+                  className="pr-12 mt-2 text-lg"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500"
                 >
-                  {showPassword ? (
-                    <FaEye className="text-gray-500" />
-                  ) : (
-                    <FaEyeSlash className="text-gray-500" />
-                  )}
+                  {showPassword ? <FaEye /> : <FaEyeSlash />}
                 </button>
               </div>
-              {/* Yêu cầu mật khẩu */}
-              <div className="flex justify-between mt-2">
-                <div>
-                  <ul className="text-sm text-gray-500 space-y-1 pl-3">
-                    <li>• Có ít nhất 8 ký tự</li>
-                    <li>• Có ít nhất 1 số</li>
-                  </ul>
-                </div>
-                <div>
-                  <button
-                    type="button"
-                    // onClick={() => setShowForgotPassword(true)}
-                    onClick={() => router.push("/forgot-password")}
-                    className="text-md text-orange-600 hover:underline"
-                  >
-                    Quên mật khẩu?
-                  </button>
-                </div>
+            </div>
+
+            <div className="flex items-center space-x-2 justify-between">
+              <div>
+                <Checkbox
+                  id="agree"
+                  checked={agree}
+                  onCheckedChange={(checked) => setAgree(!!checked)}
+                  className="mr-2"
+                />
+
+                <Label htmlFor="agree" className="text-lg text-gray-500">
+                  Tôi đồng ý với{" "}
+                  <Link href="#" className="underline text-orange-600">
+                    Điều khoản & Bảo mật
+                  </Link>
+                </Label>
+              </div>
+              <div className="ml-4">
+                <Button
+                variant="link"
+                  onClick={() => router.push("/forgot-password")}
+                  className="text-orange-600 text-sm font-semibold hover:text-orange-500 hover:underline "
+                >
+                  Quên mật khẩu
+                </Button>
               </div>
             </div>
-            <div className="flex items-center">
-              <Checkbox
-                id="agree"
-                name="agree"
-                checked={agree}
-                onCheckedChange={(checked) => setAgree(true)}
-                className="h-5 w-5 border border-gray-300 rounded"
-                required
-              />
-              <label
-                htmlFor="agree"
-                className="ml-3 block text-lg text-gray-700 dark:text-gray-200"
-              >
-                Tôi đồng ý với{" "}
-                <Link href="#" className="underline text-orange-600">
-                  Điều khoản & Bảo mật
-                </Link>
-              </label>
-            </div>
-            <button
+
+            <Button
               type="submit"
               disabled={isLoading || !agree}
-              className="w-full py-4 px-6 bg-orange-600 hover:bg-orange-700 text-white text-lg font-bold rounded-xl shadow transition-all disabled:opacity-60"
+              variant="default"
+              className="text-lg w-full"
             >
               {isLoading ? "Đang đăng nhập..." : "ĐĂNG NHẬP"}
-            </button>
-            <div className="text-center text-lg text-gray-500 mt-18">
+            </Button>
+
+            <div className="text-center text-lg text-gray-500">
               Chưa có tài khoản?{" "}
-              <Link
-                href="/register"
-                className="text-orange-600 font-semibold hover:underline"
+              <Button
+              variant="link"
+                onClick={() => router.push("/register")}
+                className="text-primary font-semibold hover:text-primary hover:underline"
               >
                 Đăng ký
-              </Link>
+              </Button>
             </div>
-            <div className="flex items-center my-20">
-              <div className="flex-grow border-t border-gray-200" />
-              <span className="mx-4 text-gray-400 text-base">hoặc</span>
-              <div className="flex-grow border-t border-gray-200" />
-            </div>
-            <div className="flex flex-col gap-5">
-              <button
-                type="button"
-                className="w-full flex items-center justify-center gap-4 border border-gray-300 rounded-xl py-4 px-6 bg-white hover:bg-gray-50 text-gray-700 text-lg font-medium"
-              >
-                <FaGoogle className="text-2xl text-orange-600" />
-                Đăng nhập với Google
-              </button>
-            </div>
+
+            <SocialAuthButtons
+              label="Hoặc đăng ký bằng"
+              onGoogleClick={() => console.log("Google clicked")}
+              onFacebookClick={() => console.log("Facebook clicked")}
+            />
           </form>
+
           {/* {showForgotPassword && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
               <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full">
