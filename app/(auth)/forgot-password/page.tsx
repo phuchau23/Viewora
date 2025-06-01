@@ -3,6 +3,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import OTPForm from "@/components/shared/OTPForm";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2, Mail } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -10,8 +14,8 @@ export default function ForgotPasswordPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(1); // 1: nhập email, 2: nhập OTP
-  const [timeLeft, setTimeLeft] = useState(10); // 5 phút
+  const [step, setStep] = useState(1);
+  const [timeLeft, setTimeLeft] = useState(300);
   const [timerActive, setTimerActive] = useState(false);
 
   useEffect(() => {
@@ -31,14 +35,11 @@ export default function ForgotPasswordPage() {
     return () => clearInterval(timerInterval);
   }, [timerActive, timeLeft]);
 
-
-
   const handleEmailSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
     setError("");
-    console.log(timeLeft);
     try {
       await new Promise((res) => setTimeout(res, 1000));
       setMessage("Mã OTP đã được gửi đến email của bạn.");
@@ -46,7 +47,7 @@ export default function ForgotPasswordPage() {
       setTimeLeft(300);
       setTimerActive(true);
     } catch (err) {
-      setError("Đã có lỗi xảy_charge ra. Vui lòng thử lại sau!");
+      setError("Đã có lỗi xảy ra. Vui lòng thử lại sau!");
     } finally {
       setLoading(false);
     }
@@ -67,7 +68,6 @@ export default function ForgotPasswordPage() {
     try {
       await new Promise((res) => setTimeout(res, 1000));
       setMessage("Xác minh thành công! Bạn có thể đặt lại mật khẩu.");
-      // TODO: Redirect hoặc hiển thị form đổi mật khẩu
     } catch (err) {
       setError("Mã OTP không hợp lệ hoặc đã hết hạn!");
     } finally {
@@ -93,64 +93,63 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white p-10 rounded-2xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
-          {step === 1 ? "Quên mật khẩu?" : "Nhập mã xác minh"}
-        </h2>
-        <p className="text-sm text-center text-gray-500 mb-6">
-          {step === 1
-            ? "Nhập email của bạn để nhận mã xác minh khôi phục mật khẩu."
-            : "Vui lòng nhập mã OTP đã được gửi đến email của bạn."}
-        </p>
+    <div className=" my-auto h-[calc(100vh-4rem)] flex justify-center items-center   ">
+      <div className="w-full max-w-md p-8 rounded-2xl shadow-xl space-y-6 border">
+        <div className="space-y-2 text-center">
+          <h2 className="text-2xl font-bold">
+            {step === 1 ? "Quên mật khẩu?" : "Nhập mã xác minh"}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {step === 1
+              ? "Nhập email của bạn để nhận mã xác minh khôi phục mật khẩu."
+              : "Vui lòng nhập mã OTP đã được gửi đến email của bạn."}
+          </p>
+        </div>
 
         {/* Form bước 1 */}
         {step === 1 ? (
           <form onSubmit={handleEmailSubmit} className="space-y-4">
-            <input
+            <Input
               type="email"
               required
               placeholder="Địa chỉ email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md bg-white text-gray-700 focus:ring-2 focus:ring-orange-400 outline-none"
             />
 
             {message && (
-              <p className="text-green-500 text-sm text-center">{message}</p>
+              <Alert variant="default">
+                <Mail className="h-4 w-4" />
+                <AlertTitle>Thành công</AlertTitle>
+                <AlertDescription>{message}</AlertDescription>
+              </Alert>
             )}
             {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
+              <Alert variant="destructive">
+                <AlertTitle>Lỗi</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition disabled:opacity-50"
-            >
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
               {loading ? "Đang gửi..." : "Gửi mã xác minh"}
-            </button>
+            </Button>
           </form>
         ) : (
-          // Form bước 2
-          <div className="space-y-4 text-black">
-            <OTPForm
-              onSubmit={onOtpComplete}
-              timeLeft={timeLeft} // Fixed prop name from "timeleft" to "timeLeft"
-              loading={loading}
-              message={message}
-              error={error}
-              onResend={handleResendOtp}
-            />
-          </div>
+          <OTPForm
+            onSubmit={onOtpComplete}
+            timeLeft={timeLeft}
+            loading={loading}
+            message={message}
+            error={error}
+            onResend={handleResendOtp}
+          />
         )}
 
-        <div className="mt-6 text-center text-sm">
-          <Link
-            href="/login"
-            className="text-gray-600 hover:text-orange-500 font-medium"
-          >
-            Đã nhớ mật khẩu? Đăng nhập
+        <div className="text-center text-sm">
+          <Link href="/login" className="text-muted-foreground hover:text-primary">
+            Đã nhớ mật khẩu? <span className="font-medium">Đăng nhập</span>
           </Link>
         </div>
       </div>
