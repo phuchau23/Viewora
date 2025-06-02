@@ -14,12 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-<<<<<<< HEAD
-import { LanguageSelector } from "./language-selector";
-import Image from "next/image";
-=======
 import { ThemeToggle } from "./common/ThemeToggle";
->>>>>>> Login-page
 
 const NAVIGATION = [
   { name: "Home", href: "/" },
@@ -74,20 +69,9 @@ export default function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-64 sm:w-80">
-<<<<<<< HEAD
-              <div className="flex h-16 items-center">
-                <Image
-                  src="/logo1.png"
-                  alt="CinemaTix Logo"
-                  width={180} // Increased from 120
-                  height={60} // Increased from 40
-                  className="object-contain"
-                />
-=======
               <div className="flex items-center h-16 gap-2">
                 <Film className="h-6 w-6 text-primary" />
                 <Link href="/" className="text-xl font-bold">CinemaTix</Link>
->>>>>>> Login-page
               </div>
               <nav className="mt-6 flex flex-col gap-4">
                 {renderNavLinks()}
@@ -98,33 +82,6 @@ export default function Header() {
             </SheetContent>
           </Sheet>
 
-<<<<<<< HEAD
-          <Link href="/" className="hidden md:flex items-center gap-2">
-            <Image
-              src="/logo1.png"
-              alt="CinemaTix Logo"
-              width={150}
-              height={150}
-              className="object-contain"
-            />
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-6 ml-6">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
-                  pathname === item.href
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                )}
-              >
-                {item.name}
-              </Link>
-            ))}
-=======
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <Film className="h-6 w-6 text-primary" />
@@ -136,7 +93,6 @@ export default function Header() {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
             {renderNavLinks()}
->>>>>>> Login-page
           </nav>
         </div>
 
@@ -148,10 +104,7 @@ export default function Header() {
             <span>Ho Chi Minh City</span>
           </div>
 
-<<<<<<< HEAD
-=======
           {/* Search */}
->>>>>>> Login-page
           <div className="relative hidden sm:block">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -161,33 +114,20 @@ export default function Header() {
             />
           </div>
 
-<<<<<<< HEAD
-=======
           {/* Search icon for mobile */}
->>>>>>> Login-page
           <Button variant="ghost" size="icon" className="md:hidden">
             <Search className="h-5 w-5" />
             <span className="sr-only">Search</span>
           </Button>
-<<<<<<< HEAD
-          <LanguageSelector />
-
-          <Button variant="ghost" size="icon" className="rounded-full" asChild>
-            <Link href="/user/account">
-=======
 
           {/* Account */}
           <Button variant="ghost" size="icon" className="rounded-full" asChild>
             <Link href="/account">
->>>>>>> Login-page
               <User className="h-5 w-5" />
               <span className="sr-only">Account</span>
             </Link>
           </Button>
 
-<<<<<<< HEAD
-          <Button className="hidden md:flex">Sign In</Button>
-=======
           {/* Sign in (desktop) */}
           <Button onClick={() => router.push("/login")} className="hidden md:flex">
             Sign In
@@ -197,15 +137,9 @@ export default function Header() {
           <div className="">
             <ThemeToggle />
           </div>
->>>>>>> Login-page
         </div>
       </div>
     </header>
   );
-<<<<<<< HEAD
-};
-
-export default Header;
-=======
 }
->>>>>>> Login-page
+  
