@@ -24,26 +24,22 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { SocialAuthButtons } from "@/components/shared/SocialAuthButtons";
+import { useRegister } from "@/hooks/useAuth";
 
 export default function RegisterPage() {
+  const { register, isLoading, error } = useRegister();
   const [formData, setFormData] = useState({
-    username: "",
-    fullName: "",
-    dateOfBirth: "",
-    gender: "",
     email: "",
-    phone: "",
-    address: "",
-    idNumber: "",
+    fullName: "",
+    DateOfBirth: "",
     password: "",
-    confirmPassword: "",
+    phoneNumber: "",
+    Gender: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -51,10 +47,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsLoading(false);
+    register(formData);
   };
 
   const handleSocialLogin = (provider: string) => {
@@ -103,9 +96,7 @@ export default function RegisterPage() {
   };
 
   const isPasswordMatch =
-    formData.password &&
-    formData.confirmPassword &&
-    formData.password === formData.confirmPassword;
+    formData.password && formData.password === formData.password;
 
   return (
     <div className="h-screen from-slate-900 via-gray-900 to-black">
@@ -237,11 +228,11 @@ export default function RegisterPage() {
                         <div className="relative">
                           <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                           <Input
-                            id="phone"
+                            id="phoneNumber"
                             placeholder="0912345678"
-                            value={formData.phone}
+                            value={formData.phoneNumber}
                             onChange={(e) =>
-                              handleInputChange("phone", e.target.value)
+                              handleInputChange("phoneNumber", e.target.value)
                             }
                             className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
                             required
@@ -266,11 +257,49 @@ export default function RegisterPage() {
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                         <Input
-                          id="username"
+                          id="fullName"
                           placeholder="username"
-                          value={formData.username}
+                          value={formData.fullName}
                           onChange={(e) =>
-                            handleInputChange("username", e.target.value)
+                            handleInputChange("fullName", e.target.value)
+                          }
+                          className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="">
+                      <Label htmlFor="gender" className="font-medium">
+                        Giới tính *
+                      </Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                        <Input
+                          id="gender"
+                          placeholder="gender"
+                          value={formData.Gender}
+                          onChange={(e) =>
+                            handleInputChange("Gender", e.target.value)
+                          }
+                          className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="">
+                      <Label htmlFor="dateOfBirth" className="font-medium">
+                        Ngày sinh *
+                      </Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                        <Input
+                          id="dateOfBirth"
+                          placeholder="dateOfBirth"
+                          value={formData.DateOfBirth}
+                          onChange={(e) =>
+                            handleInputChange("DateOfBirth", e.target.value)
                           }
                           className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
                           required
@@ -355,9 +384,9 @@ export default function RegisterPage() {
                           id="confirmPassword"
                           type={showConfirmPassword ? "text" : "password"}
                           placeholder="••••••••"
-                          value={formData.confirmPassword}
+                          value={formData.password}
                           onChange={(e) =>
-                            handleInputChange("confirmPassword", e.target.value)
+                            handleInputChange("password", e.target.value)
                           }
                           className="pl-10 pr-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
                           required
@@ -378,7 +407,7 @@ export default function RegisterPage() {
                           )}
                         </Button>
                       </div>
-                      {formData.confirmPassword && (
+                      {formData.password && (
                         <div className="flex items-center space-x-2">
                           {isPasswordMatch ? (
                             <Check className="w-4 h-4 text-green-400" />
