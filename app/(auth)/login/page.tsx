@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Film } from "lucide-react";
 import { SocialAuthButtons } from "@/components/shared/SocialAuthButtons";
 import router from "next/router";
-// import useLogin from "@/hooks/useLogin";
+import { useLogin } from "@/hooks/useAuth";
 
 const bgImages = [
   "/images/login-bg.jpg",
@@ -20,16 +20,16 @@ const bgImages = [
   "/images/login-bg4.jpg",
 ];
 export default function LoginPage() {
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [agree, setAgree] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
-  // const loginMutation = useLogin();
-  // const [showForgotPassword, setShowForgotPassword] = useState(false);
-  // const [forgotEmail, setForgotEmail] = useState("");
+  const { login } = useLogin();
 
   // Auto change background image
   useEffect(() => {
@@ -39,18 +39,27 @@ export default function LoginPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // const handleSubmit = async () => {
-  //   try {
-  //     await loginMutation.mutateAsync({ email, password });
-  //     alert("Login thành công");
-  //   } catch (err: any) {
-  //     alert(err.message || "Login thất bại");
-  //   }
-  // };
-  // const handleSendOTP = () => {
-  //   alert(`Mã OTP đã được gửi đến ${forgotEmail}`);
-  // };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await login(loginData);
+    
+  };
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setLoginData((prev) => ({
+      ...prev,
+      email: value,
+    }));
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setLoginData((prev) => ({
+      ...prev,
+      password: value,
+    }));
+  };
   return (
     <div className="h-screen flex flex-row">
       {/* Left: Background Slideshow + Slogan + Icon */}
@@ -92,7 +101,7 @@ export default function LoginPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-orange-600 mb-10 text-center">
             Đăng nhập tài khoản
           </h1>
-          <form className="space-y-8">
+          <form className="space-y-2" onSubmit={handleSubmit}>
             <div>
               <Label htmlFor="email" className="text-lg text-gray-500">
                 Email
@@ -100,8 +109,8 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={loginData.email}
+                onChange={handleEmailChange}
                 required
                 placeholder="Nhập email"
                 className="mt-2 text-lg"
@@ -116,8 +125,8 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={loginData.password}
+                  onChange={handlePasswordChange}
                   required
                   placeholder="Nhập mật khẩu"
                   className="pr-12 mt-2 text-lg"
@@ -150,7 +159,7 @@ export default function LoginPage() {
               </div>
               <div className="ml-4">
                 <Button
-                variant="link"
+                  variant="link"
                   onClick={() => router.push("/forgot-password")}
                   className="text-orange-600 text-sm font-semibold hover:text-orange-500 hover:underline "
                 >
@@ -171,7 +180,7 @@ export default function LoginPage() {
             <div className="text-center text-lg text-gray-500">
               Chưa có tài khoản?{" "}
               <Button
-              variant="link"
+                variant="link"
                 onClick={() => router.push("/register")}
                 className="text-primary font-semibold hover:text-primary hover:underline"
               >

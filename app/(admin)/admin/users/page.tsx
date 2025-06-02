@@ -54,13 +54,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { User } from "@/lib/data";
-import { sampleUsers } from "@/lib/data";
 import { UserFormModal } from "./components/user-form-modal";
 import { UserDetailsModal } from "./components/user-detail-modal";
+import { useUsers } from "@/hooks/useUsers";
+import { User } from "@/lib/api/service/fetchUser";
 
 export default function UserManagerPage() {
-  const [users, setUsers] = useState<User[]>(sampleUsers);
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -71,70 +70,39 @@ export default function UserManagerPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const { toast } = useToast();
 
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.department.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = roleFilter === "all" || user.role === roleFilter;
-    const matchesStatus =
-      statusFilter === "all" || user.status === statusFilter;
+  const { users, isLoading, isError, error } = useUsers();
 
-    return matchesSearch && matchesRole && matchesStatus;
-  });
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error: {error?.message}</div>;
 
-  const handleCreateUser = (userData: Omit<User, "id">) => {
-    const newUser: User = {
-      ...userData,
-      id: Math.max(...users.map((u) => u.id)) + 1,
-    };
-    setUsers([...users, newUser]);
-    setIsCreateModalOpen(false);
-    toast({
-      title: "User Created",
-      description: `${newUser.name} has been successfully created.`,
-    });
+  const getRoleColor = (role: string) => {
+    switch (role) {
+      case "Admin":
+        return "destructive";
+      case "Manager":
+        return "default";
+      case "Moderator":
+        return "secondary";
+      default:
+        return "outline";
+    }
   };
 
-  const handleUpdateUser = (userData: Omit<User, "id">) => {
-    if (!selectedUser) return;
-
-    const updatedUser: User = {
-      ...userData,
-      id: selectedUser.id,
-    };
-    setUsers(
-      users.map((user) => (user.id === selectedUser.id ? updatedUser : user))
-    );
-    setIsEditModalOpen(false);
-    setSelectedUser(null);
-    toast({
-      title: "User Updated",
-      description: `${updatedUser.name} has been successfully updated.`,
-    });
+  const getStatusColor = (isActive: boolean) => {
+    return isActive ? "default" : "secondary";
   };
 
-  const handleDeleteUser = () => {
-    if (!selectedUser) return;
-
-    setUsers(users.filter((user) => user.id !== selectedUser.id));
-    setIsDeleteDialogOpen(false);
-    toast({
-      title: "User Deleted",
-      description: `${selectedUser.name} has been successfully deleted.`,
-      variant: "destructive",
-    });
-    setSelectedUser(null);
-  };
-
-  const handleToggleStatus = (user: User) => {
-    const newStatus = user.status === "Active" ? "Inactive" : "Active";
-    const updatedUser = { ...user, status: newStatus as User["status"] };
-    setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
-    toast({
-      title: "Status Updated",
-      description: `${user.name} is now ${newStatus.toLowerCase()}.`,
-    });
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case "Admin":
+        return <Shield className="h-4 w-4" />;
+      case "Manager":
+        return <UserCheck className="h-4 w-4" />;
+      case "Moderator":
+        return <Users className="h-4 w-4" />;
+      default:
+        return <UserX className="h-4 w-4" />;
+    }
   };
 
   const handleViewDetails = (user: User) => {
@@ -152,51 +120,17 @@ export default function UserManagerPage() {
     setIsDeleteDialogOpen(true);
   };
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case "Admin":
-        return <Shield className="h-3 w-3" />;
-      case "Manager":
-        return <UserCheck className="h-3 w-3" />;
-      case "Moderator":
-        return <Users className="h-3 w-3" />;
-      default:
-        return <UserX className="h-3 w-3" />;
-    }
-  };
-
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case "Admin":
-        return "destructive";
-      case "Manager":
-        return "default";
-      case "Moderator":
-        return "secondary";
-      default:
-        return "outline";
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Active":
-        return "default";
-      case "Inactive":
-        return "secondary";
-      case "Suspended":
-        return "destructive";
-      default:
-        return "outline";
-    }
-  };
-
-  const userStats = {
-    total: users.length,
-    active: users.filter((u) => u.status === "Active").length,
-    inactive: users.filter((u) => u.status === "Inactive").length,
-    suspended: users.filter((u) => u.status === "Suspended").length,
-  };
+  // const handleCreateUser = (userData: Omit<User, "accountId">) => {
+  //   const newUser: User = {
+  //     ...userData,
+  //     accountId: Math.max(...users?.map((u) => u.accountId)) + 1,
+  //   };
+  //   setIsCreateModalOpen(false);
+  //   toast({
+  //     title: "User Created",
+  //     description: `${newUser.fullName} has been successfully created.`,
+  //   });
+  // };
 
   return (
     <div className="space-y-6">
@@ -220,14 +154,14 @@ export default function UserManagerPage() {
       </div>
 
       {/* User Statistics */}
-      <div className="grid gap-4 md:grid-cols-4">
+      {/* <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{userStats.total}</div>
+            <div className="text-2xl font-bold">{users?.length}</div>
             <p className="text-xs text-muted-foreground">
               All registered users
             </p>
@@ -280,10 +214,10 @@ export default function UserManagerPage() {
             </p>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       {/* Search and Filters */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Search & Filter Users</CardTitle>
           <CardDescription>
@@ -326,29 +260,29 @@ export default function UserManagerPage() {
             </Select>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Users List */}
       <Card>
         <CardHeader>
-          <CardTitle>Users ({filteredUsers.length})</CardTitle>
+          <CardTitle>Users ({users?.length})</CardTitle>
           <CardDescription>
-            {filteredUsers.length === users.length
+            {users?.length === users?.length
               ? "All registered users in the system"
-              : `Showing ${filteredUsers.length} of ${users.length} users`}
+              : `Showing ${users?.length} of ${users?.length} users`}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredUsers.map((user) => (
+            {users?.map((user) => (
               <div
-                key={user.id}
+                key={user.accountId}
                 className="flex items-center justify-between p-6 border rounded-lg hover:bg-accent/50 transition-colors"
               >
                 <div className="flex items-center space-x-4">
                   <Avatar className="h-12 w-12">
                     <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                      {user.name
+                      {user.fullName
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
@@ -356,7 +290,7 @@ export default function UserManagerPage() {
                   </Avatar>
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
-                      <h3 className="font-semibold text-lg">{user.name}</h3>
+                      <h3 className="font-semibold text-lg">{user.fullName}</h3>
                       <Badge
                         variant={getRoleColor(user.role)}
                         className="flex items-center space-x-1"
@@ -364,8 +298,8 @@ export default function UserManagerPage() {
                         {getRoleIcon(user.role)}
                         <span>{user.role}</span>
                       </Badge>
-                      <Badge variant={getStatusColor(user.status)}>
-                        {user.status}
+                      <Badge variant={getStatusColor(user.isActive)}>
+                        {user.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-muted-foreground">
@@ -375,22 +309,16 @@ export default function UserManagerPage() {
                       </div>
                       <div className="flex items-center space-x-1">
                         <Phone className="h-3 w-3" />
-                        <span>{user.phone}</span>
+                        <span>{user.phoneNumber}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <MapPin className="h-3 w-3" />
-                        <span>{user.location}</span>
+                        <span>{user.address}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <Calendar className="h-3 w-3" />
-                        <span>Joined {user.joinDate}</span>
+                        <span>Joined {user.createdAt}</span>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-4 text-sm">
-                      <span className="font-medium">{user.department}</span>
-                      <span className="text-muted-foreground">
-                        Last login: {user.lastLogin}
-                      </span>
                     </div>
                   </div>
                 </div>
@@ -424,23 +352,6 @@ export default function UserManagerPage() {
                         <Edit className="mr-2 h-4 w-4" />
                         Edit User
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => handleToggleStatus(user)}
-                      >
-                        {user.status === "Active" ? (
-                          <>
-                            <UserX className="mr-2 h-4 w-4" />
-                            Deactivate User
-                          </>
-                        ) : (
-                          <>
-                            <UserCheck className="mr-2 h-4 w-4" />
-                            Activate User
-                          </>
-                        )}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => handleDeleteClick(user)}
                         className="text-destructive"
@@ -458,16 +369,16 @@ export default function UserManagerPage() {
       </Card>
 
       {/* Create User Modal */}
-      <UserFormModal
+      {/* <UserFormModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateUser}
         title="Create New User"
         submitText="Create User"
-      />
+      /> */}
 
       {/* Edit User Modal */}
-      <UserFormModal
+      {/* <UserFormModal
         isOpen={isEditModalOpen}
         onClose={() => {
           setIsEditModalOpen(false);
@@ -477,10 +388,10 @@ export default function UserManagerPage() {
         title="Edit User"
         submitText="Update User"
         initialData={selectedUser}
-      />
+      /> */}
 
       {/* User Details Modal */}
-      <UserDetailsModal
+      {/* <UserDetailsModal
         isOpen={isDetailsModalOpen}
         onClose={() => {
           setIsDetailsModalOpen(false);
@@ -493,12 +404,12 @@ export default function UserManagerPage() {
         }}
         onDelete={() => {
           setIsDetailsModalOpen(false);
-          handleDeleteClick(selectedUser!);
+          handleDeleteUser(selectedUser!);
         }}
-      />
+      /> */}
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog
+      {/* <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
@@ -523,7 +434,7 @@ export default function UserManagerPage() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> */}
     </div>
   );
 }
