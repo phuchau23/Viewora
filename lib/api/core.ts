@@ -111,7 +111,7 @@ export class ApiService {
 
   // Generic request method
   private async request<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
-// Handle FormData in config.data
+    // Handle FormData in config.data
     if (config.data instanceof FormData) {
       // FormData will be handled by the interceptor which removes Content-Type
       // to let the browser set the correct boundary
@@ -126,21 +126,46 @@ export class ApiService {
     };
   }
 
-   // Public methods
-   get<T>(url: string, params?: RequestParams) {
-    return this.request<T>({ method: 'GET', url, params: this.createParams(params) });
+  // GET request
+  async get<T>(url: string, params?: RequestParams): Promise<ApiResponse<T>> {
+    return this.request<T>({
+      method: 'GET',
+      url,
+      params: this.createParams(params),
+    });
   }
 
-  post<T, D = any>(url: string, data?: D) {
-    return this.request<T>({ method: 'POST', url, data });
+  // POST request
+  async post<T, D = Record<string, unknown> | FormData>(
+    url: string,
+    data?: D
+  ): Promise<ApiResponse<T>> {
+    return this.request<T>({
+      method: 'POST',
+      url,
+      data,
+    });
   }
 
-  put<T, D = any>(url: string, data?: D) {
-    return this.request<T>({ method: 'PUT', url, data });
+  // PUT request
+  async put<T, D = Record<string, unknown> | FormData>(
+    url: string,
+    data?: D
+  ): Promise<ApiResponse<T>> {
+    return this.request<T>({
+      method: 'PUT',
+      url,
+      data,
+    });
   }
 
-  delete<T>(url: string, params?: RequestParams) {
-    return this.request<T>({ method: 'DELETE', url, params: this.createParams(params) });
+  // DELETE request
+  async delete<T>(url: string, params?: RequestParams): Promise<ApiResponse<T>> {
+    return this.request<T>({
+      method: 'DELETE',
+      url,
+      params: this.createParams(params),
+    });
   }
 
   // Upload file(s)

@@ -2,8 +2,6 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/lib/query-client";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,13 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <QueryClientProvider client={queryClient}>   
-          <ThemeProvider attribute="class" defaultTheme="system">
-            <div className="flex min-h-screen flex-col">
-              <main className="flex-1">{children}</main>
-            </div>
-          </ThemeProvider>
-        </QueryClientProvider> 
+        <ThemeProvider attribute="class" defaultTheme="system">
+          <div className="flex min-h-screen flex-col">
+            <main className="flex-1">{children}</main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
