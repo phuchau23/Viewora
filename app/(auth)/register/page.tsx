@@ -21,10 +21,18 @@ import {
   Shield,
   ArrowLeft,
   Play,
+  Calendar,
 } from "lucide-react";
 import Link from "next/link";
 import { SocialAuthButtons } from "@/components/shared/SocialAuthButtons";
 import { useRegister } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function RegisterPage() {
   const { register, isLoading, error } = useRegister();
@@ -269,34 +277,57 @@ export default function RegisterPage() {
                       </div>
                     </div>
 
-                    <div className="">
+                    <div className="space-y-2">
                       <Label htmlFor="gender" className="font-medium">
                         Giới tính *
                       </Label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                        <Input
-                          id="gender"
-                          placeholder="gender"
-                          value={formData.Gender}
-                          onChange={(e) =>
-                            handleInputChange("Gender", e.target.value)
-                          }
-                          className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
-                          required
-                        />
+
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
+                            >
+                              {formData.Gender || "Giới tính"}
+                            </Button>
+                          </DropdownMenuTrigger>
+
+                          <DropdownMenuContent className="w-full ">
+                            <DropdownMenuRadioGroup
+                              value={formData.Gender}
+                              onValueChange={(value) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  Gender: value,
+                                }))
+                              }
+                            >
+                              <DropdownMenuRadioItem value="male">
+                                Nam
+                              </DropdownMenuRadioItem>
+                              <DropdownMenuRadioItem value="female">
+                                Nữ
+                              </DropdownMenuRadioItem>
+                              <DropdownMenuRadioItem value="other">
+                                Khác
+                              </DropdownMenuRadioItem>
+                            </DropdownMenuRadioGroup>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </div>
 
-                    <div className="">
+                    <div className="space-y-2">
                       <Label htmlFor="dateOfBirth" className="font-medium">
                         Ngày sinh *
                       </Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                        <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                         <Input
                           id="dateOfBirth"
-                          placeholder="dateOfBirth"
+                          type="date"
                           value={formData.DateOfBirth}
                           onChange={(e) =>
                             handleInputChange("DateOfBirth", e.target.value)

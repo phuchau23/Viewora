@@ -39,7 +39,7 @@ export const fetchAuth = {
         const files = avatarFile ? [avatarFile] : [];
     
         const response = await apiService.upload<RegisterResponse>(
-          '/account/register',
+          '/auth/register',
           files,
           'avatarFile',
           additionalData
