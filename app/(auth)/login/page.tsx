@@ -26,7 +26,6 @@ export default function LoginPage() {
   });
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [agree, setAgree] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useLogin();
@@ -42,7 +41,6 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await login(loginData);
-    
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,21 +140,6 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center space-x-2 justify-between">
-              <div>
-                <Checkbox
-                  id="agree"
-                  checked={agree}
-                  onCheckedChange={(checked) => setAgree(!!checked)}
-                  className="mr-2"
-                />
-
-                <Label htmlFor="agree" className="text-lg text-gray-500">
-                  Tôi đồng ý với{" "}
-                  <Link href="#" className="underline text-orange-600">
-                    Điều khoản & Bảo mật
-                  </Link>
-                </Label>
-              </div>
               <div className="ml-4">
                 <Button
                   variant="link"
@@ -170,7 +153,6 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              disabled={isLoading || !agree}
               variant="default"
               className="text-lg w-full"
             >

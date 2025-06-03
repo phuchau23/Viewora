@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   InputOTP,
   InputOTPGroup,
@@ -8,51 +8,77 @@ import {
 } from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useVerifyEmail } from "@/hooks/useAuth";
 
 interface OTPFormProps {
-  onSubmit: (otp: string) => Promise<void>;
-  timeLeft: number;
-  loading: boolean;
-  message?: string;
-  error?: string;
-  onResend: () => Promise<void>;
+  Email: string;
+  onSuccess?: () => void; // Optional callback for successful verification
 }
 
-function OTPForm({
-  onSubmit,
-  timeLeft,
-  loading,
-  message,
-  error,
-  onResend,
-}: OTPFormProps) {
+const OTPForm = ({ Email, onSuccess }: OTPFormProps) => {
   const [otp, setOtp] = useState("");
+  const [timeLeft, setTimeLeft] = useState(300); // 60-second countdown
+  const { verifyEmail, isLoading: verifyLoading, error: verifyError } = useVerifyEmail();
+  
 
-  // Utility function to format time (e.g., seconds to MM:SS)
+
+  // Format time for display (MM:SS)
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
+  // Countdown timer effect
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [timeLeft]);
+
+  // Handle resending OTP
+  // const handleResendOtp = async () => {
+  //   setIsResending(true);
+  //   try {
+  //     await fetchAuth.resendOtp(email); // Assuming this API exists
+  //     setTimeLeft(60); // Reset countdown
+  //     toast.success("Mã OTP mới đã được gửi");
+  //   } catch (err) {
+  //     toast.error("Gửi lại mã OTP thất bại");
+  //   } finally {
+  //     setIsResending(false);
+  //   }
+  // };
+
+  // Handle form submission for OTP verification
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.length < 6) {
       toast.error("Vui lòng nhập đủ 6 số");
       return;
     }
-    await onSubmit(otp);
+    try {
+      await verifyEmail({
+        Email: Email,
+        optCode: Number(otp),
+      });
+      toast.success("Xác minh OTP thành công");
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      // Error is handled by useVerifyEmail hook
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full">
+    <div className="space-y-4 w-full">
       <InputOTP
         className="justify-center w-full"
         maxLength={6}
         value={otp}
         onChange={(val) => setOtp(val)}
       >
-        <InputOTPGroup className="justify-center gap-x-2">
+        <InputOTPGroup className="justify-center gap-x-2 ">
           {[0, 1, 2, 3, 4, 5].map((i) => (
             <InputOTPSlot
               key={i}
@@ -73,30 +99,30 @@ function OTPForm({
         </p>
       )}
 
-      {message && (
-        <p className="text-green-500 text-sm text-center">{message}</p>
+      {verifyError && (
+        <p className="text-red-500 text-sm text-center">{verifyError}</p>
       )}
-      {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-      <Button
-        onClick={async () => await onResend()}
-        disabled={loading || timeLeft > 0}
+
+      {/* <Button
+        onClick={handleResendOtp}
+        disabled={isResending || timeLeft > 0}
         className={`w-full py-2 rounded-md transition ${
           timeLeft > 0
             ? "bg-gray-200 text-gray-400 cursor-not-allowed"
             : "bg-orange-500 text-white hover:bg-orange-600"
         }`}
       >
-        {loading ? "Đang gửi..." : "Gửi lại mã xác minh"}
-      </Button>
+        {isResending ? "Đang gửi..." : "Gửi lại mã xác minh"}
+      </Button> */}
       <Button
-        type="submit"
-        disabled={loading}
+        onClick={handleSubmit}
+        disabled={verifyLoading}
         className="w-full py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition disabled:opacity-50"
       >
-        {loading ? "Đang xác minh..." : "Xác nhận"}
+        {verifyLoading ? "Đang xác minh..." : "Xác nhận"}
       </Button>
-    </form>
+    </div>
   );
-}
+};
 
 export default OTPForm;

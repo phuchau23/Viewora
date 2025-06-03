@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 import {
   Film,
   User,
   Menu,
   MapPin,
-  Search
+  Search,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -27,13 +29,28 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
+  // Effect để xử lý sự kiện cuộn
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Effect để cập nhật token dựa trên pathname
+  useEffect(() => {
+    const authToken = Cookies.get("auth-token");
+    setToken(authToken || null);
+  }, [pathname]);
+
+  const handleLogout = () => {
+    Cookies.remove("auth-token");
+    setToken(null);
+    router.push("/login");
+  };
+
+  
   const renderNavLinks = () =>
     NAVIGATION.map(({ name, href }) => (
       <Link
@@ -75,9 +92,15 @@ export default function Header() {
               </div>
               <nav className="mt-6 flex flex-col gap-4">
                 {renderNavLinks()}
-                <Button variant="outline" onClick={() => router.push("/login")}>
-                  Sign In
-                </Button>
+                {!token ? (
+                  <Button variant="outline" onClick={() => router.push("/login")}>
+                    Sign In
+                  </Button>
+                ) : (
+                  <Button variant="outline" onClick={handleLogout}>
+                    Sign Out
+                  </Button>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
@@ -98,13 +121,11 @@ export default function Header() {
 
         {/* Right section */}
         <div className="flex items-center gap-4">
-          {/* Location */}
           <div className="hidden md:flex items-center border rounded-full px-3 py-1 text-sm text-muted-foreground">
             <MapPin className="mr-1 h-3 w-3" />
             <span>Ho Chi Minh City</span>
           </div>
 
-          {/* Search */}
           <div className="relative hidden sm:block">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -114,32 +135,37 @@ export default function Header() {
             />
           </div>
 
-          {/* Search icon for mobile */}
+          {/* Mobile search */}
           <Button variant="ghost" size="icon" className="md:hidden">
             <Search className="h-5 w-5" />
             <span className="sr-only">Search</span>
           </Button>
 
-          {/* Account */}
-          <Button variant="ghost" size="icon" className="rounded-full" asChild>
-            <Link href="/account">
-              <User className="h-5 w-5" />
-              <span className="sr-only">Account</span>
-            </Link>
-          </Button>
+          {/* Nút Profile - chỉ hiển thị nếu có token */}
+          {token && (
+            <Button variant="ghost" size="icon" className="rounded-full" asChild>
+              <Link href="/account">
+                <User className="h-5 w-5" />
+                <span className="sr-only">Account</span>
+              </Link>
+            </Button>
+          )}
 
-          {/* Sign in (desktop) */}
-          <Button onClick={() => router.push("/login")} className="hidden md:flex">
-            Sign In
-          </Button>
+          {/* Nút Sign In / Sign Out */}
+          {!token ? (
+            <Button onClick={() => router.push("/login")} className="hidden md:flex">
+              Sign In
+            </Button>
+          ) : (
+            <Button onClick={handleLogout} className="hidden md:flex" variant="outline">
+              <LogOut className="h-4 w-4 mr-1" />
+              Sign Out
+            </Button>
+          )}
 
-          {/* Theme Toggle */}
-          <div className="">
-            <ThemeToggle />
-          </div>
+          <ThemeToggle />
         </div>
       </div>
     </header>
   );
 }
-  

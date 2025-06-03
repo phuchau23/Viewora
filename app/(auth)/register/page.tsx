@@ -1,7 +1,7 @@
+
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,18 +33,20 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import OTPForm from "@/components/shared/OTPForm";
 
 export default function RegisterPage() {
   const { register, isLoading, error } = useRegister();
+  const [showOTPForm, setShowOTPForm] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     fullName: "",
-    DateOfBirth: "",
+    dateOfBirth: "",
     password: "",
+    confirmPassword: "",
     phoneNumber: "",
-    Gender: "",
+    gender: undefined as number | undefined,
   });
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
@@ -55,7 +57,29 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    register(formData);
+
+    try {
+      console.log('FormData before submit:', formData);
+      const registerData = {
+        email: formData.email,
+        fullName: formData.fullName,
+        dateOfBirth: formData.dateOfBirth,
+        password: formData.password,
+        phoneNumber: formData.phoneNumber,
+        gender: formData.gender!,
+      };
+      console.log('Register data:', registerData);
+      console.log('Gender type:', typeof formData.gender, 'Value:', formData.gender);
+
+      await register(registerData);
+      // Chỉ hiển thị OTPForm khi đăng ký thành công (không có lỗi)
+      if (!error) {
+        localStorage.setItem('registerData', JSON.stringify(registerData));
+        setShowOTPForm(true);
+      }
+    } catch (err) {
+      console.error("Đăng ký thất bại:", err);
+    }
   };
 
   const handleSocialLogin = (provider: string) => {
@@ -103,8 +127,7 @@ export default function RegisterPage() {
     }
   };
 
-  const isPasswordMatch =
-    formData.password && formData.password === formData.password;
+  const isPasswordMatch = formData.password && formData.password === formData.confirmPassword;
 
   return (
     <div className="h-screen from-slate-900 via-gray-900 to-black">
@@ -188,329 +211,350 @@ export default function RegisterPage() {
             </div>
 
             {/* Right Side - Registration Form */}
-            <Card className=" border-gray-700 backdrop-blur-sm">
-              <CardHeader className="space-y-2">
-                <CardTitle className="text-2xl font-bold text-center">
-                  Thông tin đăng ký
-                </CardTitle>
-                <p className="text-gray-400 text-center">
-                  Vui lòng điền đầy đủ thông tin để tạo tài khoản
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <Separator className="bg-gray-600" />
-
-                  {/* Contact Information */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold flex items-center">
-                      <Mail className="w-5 h-5 mr-2 text-orange-400" />
-                      Thông tin liên hệ
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="email" className="font-medium">
-                          Email *
-                        </Label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                          <Input
-                            id="email"
-                            type="email"
-                            placeholder="example@email.com"
-                            value={formData.email}
-                            onChange={(e) =>
-                              handleInputChange("email", e.target.value)
-                            }
-                            className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="phone" className="font-medium">
-                          Số điện thoại *
-                        </Label>
-                        <div className="relative">
-                          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                          <Input
-                            id="phoneNumber"
-                            placeholder="0912345678"
-                            value={formData.phoneNumber}
-                            onChange={(e) =>
-                              handleInputChange("phoneNumber", e.target.value)
-                            }
-                            className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
-                            required
-                          />
-                        </div>
-                      </div>
+            {showOTPForm ? (
+              <OTPForm
+                Email={formData.email}
+                onSuccess={() => setShowOTPForm(false)}
+              />
+            ) : (
+              <Card className="border-gray-700 backdrop-blur-sm">
+                <CardHeader className="space-y-2">
+                  <CardTitle className="text-2xl font-bold text-center">
+                    Thông tin đăng ký
+                  </CardTitle>
+                  <p className="text-gray-400 text-center">
+                    Vui lòng điền đầy đủ thông tin để tạo tài khoản
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Hiển thị lỗi từ useRegister */}
+                  {error && (
+                    <div className="bg-red-500/10 border border-red-500 text-red-400 p-3 rounded-md">
+                      {error}
                     </div>
-                  </div>
-                  <Separator />
+                  )}
 
-                  {/* Security Information */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold flex items-center">
-                      <Shield className="w-5 h-5 mr-2 text-orange-400" />
-                      Xác thực người dùng
-                    </h3>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <Separator className="bg-gray-600" />
 
-                    <div className="space-y-2">
-                      <Label htmlFor="username" className="font-medium">
-                        Tài khoản *
-                      </Label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                        <Input
-                          id="fullName"
-                          placeholder="username"
-                          value={formData.fullName}
-                          onChange={(e) =>
-                            handleInputChange("fullName", e.target.value)
-                          }
-                          className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
-                          required
-                        />
-                      </div>
-                    </div>
+                    {/* Contact Information */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold flex items-center">
+                        <Mail className="w-5 h-5 mr-2 text-orange-400" />
+                        Thông tin liên hệ
+                      </h3>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="gender" className="font-medium">
-                        Giới tính *
-                      </Label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="outline"
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="fullName" className="font-medium">
+                            Họ và tên *
+                          </Label>
+                          <div className="relative">
+                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <Input
+                              id="fullName"
+                              placeholder="Nhập họ và tên"
+                              value={formData.fullName}
+                              onChange={(e) =>
+                                handleInputChange("fullName", e.target.value)
+                              }
                               className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
-                            >
-                              {formData.Gender || "Giới tính"}
-                            </Button>
-                          </DropdownMenuTrigger>
+                              required
+                            />
+                          </div>
+                        </div>
 
-                          <DropdownMenuContent className="w-full ">
-                            <DropdownMenuRadioGroup
-                              value={formData.Gender}
-                              onValueChange={(value) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  Gender: value,
-                                }))
+                        <div className="space-y-2">
+                          <Label htmlFor="phoneNumber" className="font-medium">
+                            Số điện thoại *
+                          </Label>
+                          <div className="relative">
+                            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <Input
+                              id="phoneNumber"
+                              placeholder="0912345678"
+                              value={formData.phoneNumber}
+                              onChange={(e) =>
+                                handleInputChange("phoneNumber", e.target.value)
+                              }
+                              className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="dateOfBirth" className="font-medium">
+                            Ngày sinh *
+                          </Label>
+                          <div className="relative">
+                            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <Input
+                              id="dateOfBirth"
+                              type="date"
+                              value={formData.dateOfBirth}
+                              onChange={(e) =>
+                                handleInputChange("dateOfBirth", e.target.value)
+                              }
+                              className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="gender" className="font-medium">
+                            Giới tính *
+                          </Label>
+                          <div className="relative">
+                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
+                                >
+                                  {formData.gender === 0
+                                    ? "Nam"
+                                    : formData.gender === 1
+                                    ? "Nữ"
+                                    : formData.gender === 2
+                                    ? "Khác"
+                                    : "Giới tính"}
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent className="w-full">
+                                <DropdownMenuRadioGroup
+                                  value={formData.gender?.toString()}
+                                  onValueChange={(value) => {
+                                    const newGender = parseInt(value);
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      gender: newGender,
+                                    }));
+                                    console.log('Updated Gender:', newGender, 'Type:', typeof newGender);
+                                  }}
+                                >
+                                  <DropdownMenuRadioItem value="0">
+                                    Nam
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem value="1">
+                                    Nữ
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem value="2">
+                                    Khác
+                                  </DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </div>
+                      </div>
+                      <Separator />
+
+                      {/* Security Information */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold flex items-center">
+                          <Shield className="w-5 h-5 mr-2 text-orange-400" />
+                          Xác thực người dùng
+                        </h3>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="font-medium">
+                            Email *
+                          </Label>
+                          <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <Input
+                              id="email"
+                              type="email"
+                              placeholder="example@email.com"
+                              value={formData.email}
+                              onChange={(e) =>
+                                handleInputChange("email", e.target.value)
+                              }
+                              className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="password" className="font-medium">
+                            Mật khẩu *
+                          </Label>
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <Input
+                              id="password"
+                              type={showPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              value={formData.password}
+                              onChange={(e) =>
+                                handleInputChange("password", e.target.value)
+                              }
+                              className="pl-10 pr-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
+                              required
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? (
+                                <EyeOff className="w-4 h-4" />
+                              ) : (
+                                <Eye className="w-4 h-4" />
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                        {formData.password && (
+                          <div className="space-y-2">
+                            <div className="flex space-x-1">
+                              {[1, 2, 3, 4].map((level) => (
+                                <div
+                                  key={level}
+                                  className={`h-1 flex-1 rounded ${
+                                    level <= passwordStrength(formData.password)
+                                      ? getPasswordStrengthColor(
+                                          passwordStrength(formData.password)
+                                        )
+                                      : "bg-gray-600"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            <p className="text-xs text-gray-400">
+                              Độ mạnh:{" "}
+                              <span
+                                className={`font-medium ${
+                                  passwordStrength(formData.password) >= 3
+                                    ? "text-green-400"
+                                    : passwordStrength(formData.password) >= 2
+                                    ? "text-yellow-400"
+                                    : "text-red-400"
+                                }`}
+                              >
+                                {getPasswordStrengthText(
+                                  passwordStrength(formData.password)
+                                )}
+                              </span>
+                            </p>
+                          </div>
+                        )}
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="confirmPassword"
+                            className="font-medium"
+                          >
+                            Xác nhận mật khẩu *
+                          </Label>
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <Input
+                              id="confirmPassword"
+                              type={showConfirmPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              value={formData.confirmPassword}
+                              onChange={(e) =>
+                                handleInputChange("confirmPassword", e.target.value)
+                              }
+                              className="pl-10 pr-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
+                              required
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                              onClick={() =>
+                                setShowConfirmPassword(!showConfirmPassword)
                               }
                             >
-                              <DropdownMenuRadioItem value="male">
-                                Nam
-                              </DropdownMenuRadioItem>
-                              <DropdownMenuRadioItem value="female">
-                                Nữ
-                              </DropdownMenuRadioItem>
-                              <DropdownMenuRadioItem value="other">
-                                Khác
-                              </DropdownMenuRadioItem>
-                            </DropdownMenuRadioGroup>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="dateOfBirth" className="font-medium">
-                        Ngày sinh *
-                      </Label>
-                      <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                        <Input
-                          id="dateOfBirth"
-                          type="date"
-                          value={formData.DateOfBirth}
-                          onChange={(e) =>
-                            handleInputChange("DateOfBirth", e.target.value)
-                          }
-                          className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="password" className="font-medium">
-                        Mật khẩu *
-                      </Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                        <Input
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder="••••••••"
-                          value={formData.password}
-                          onChange={(e) =>
-                            handleInputChange("password", e.target.value)
-                          }
-                          className="pl-10 pr-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
-                          required
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="w-4 h-4" />
-                          ) : (
-                            <Eye className="w-4 h-4" />
-                          )}
-                        </Button>
-                      </div>
-                      {formData.password && (
-                        <div className="space-y-2">
-                          <div className="flex space-x-1">
-                            {[1, 2, 3, 4].map((level) => (
-                              <div
-                                key={level}
-                                className={`h-1 flex-1 rounded ${
-                                  level <= passwordStrength(formData.password)
-                                    ? getPasswordStrengthColor(
-                                        passwordStrength(formData.password)
-                                      )
-                                    : "bg-gray-600"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <p className="text-xs text-gray-400">
-                            Độ mạnh:{" "}
-                            <span
-                              className={`font-medium ${
-                                passwordStrength(formData.password) >= 3
-                                  ? "text-green-400"
-                                  : passwordStrength(formData.password) >= 2
-                                  ? "text-yellow-400"
-                                  : "text-red-400"
-                              }`}
-                            >
-                              {getPasswordStrengthText(
-                                passwordStrength(formData.password)
+                              {showConfirmPassword ? (
+                                <EyeOff className="w-4 h-4" />
+                              ) : (
+                                <Eye className="w-4 h-4" />
                               )}
-                            </span>
-                          </p>
+                            </Button>
+                          </div>
+                          {formData.confirmPassword && (
+                            <div className="flex items-center space-x-2">
+                              {isPasswordMatch ? (
+                                <Check className="w-4 h-4 text-green-400" />
+                              ) : (
+                                <X className="w-4 h-4 text-red-400" />
+                              )}
+                              <span
+                                className={`text-xs ${
+                                  isPasswordMatch
+                                    ? "text-green-400"
+                                    : "text-red-400"
+                                }`}
+                              >
+                                {isPasswordMatch
+                                  ? "Mật khẩu khớp"
+                                  : "Mật khẩu không khớp"}
+                              </span>
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword" className="font-medium">
-                        Xác nhận mật khẩu *
-                      </Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                        <Input
-                          id="confirmPassword"
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="••••••••"
-                          value={formData.password}
-                          onChange={(e) =>
-                            handleInputChange("password", e.target.value)
-                          }
-                          className="pl-10 pr-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
-                          required
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
-                          onClick={() =>
-                            setShowConfirmPassword(!showConfirmPassword)
-                          }
+                    {/* Terms and Conditions */}
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="terms"
+                        checked={acceptTerms}
+                        onCheckedChange={(checked) =>
+                          setAcceptTerms(checked === true)
+                        }
+                        className="border-gray-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                      />
+                      <Label
+                        htmlFor="terms"
+                        className="text-sm text-gray-300 leading-relaxed"
+                      >
+                        Tôi đồng ý với{" "}
+                        <Link
+                          href="/terms"
+                          className="text-orange-400 hover:text-orange-300 underline"
                         >
-                          {showConfirmPassword ? (
-                            <EyeOff className="w-4 h-4" />
-                          ) : (
-                            <Eye className="w-4 h-4" />
-                          )}
-                        </Button>
-                      </div>
-                      {formData.password && (
-                        <div className="flex items-center space-x-2">
-                          {isPasswordMatch ? (
-                            <Check className="w-4 h-4 text-green-400" />
-                          ) : (
-                            <X className="w-4 h-4 text-red-400" />
-                          )}
-                          <span
-                            className={`text-xs ${
-                              isPasswordMatch
-                                ? "text-green-400"
-                                : "text-red-400"
-                            }`}
-                          >
-                            {isPasswordMatch
-                              ? "Mật khẩu khớp"
-                              : "Mật khẩu không khớp"}
-                          </span>
-                        </div>
-                      )}
+                          Điều khoản sử dụng
+                        </Link>{" "}
+                        và{" "}
+                        <Link
+                          href="/privacy"
+                          className="text-orange-400 hover:text-orange-300 underline"
+                        >
+                          Chính sách bảo mật
+                        </Link>{" "}
+                        của CinemaTix
+                      </Label>
                     </div>
-                  </div>
 
-                  {/* Terms and Conditions */}
-                  <div className="flex items-start space-x-3">
-                    <Checkbox
-                      id="terms"
-                      checked={acceptTerms}
-                      onCheckedChange={(checked) =>
-                        setAcceptTerms(checked === true)
-                      }
-                      className="border-gray-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
-                    />
-                    <Label
-                      htmlFor="terms"
-                      className="text-sm text-gray-300 leading-relaxed"
+                    {/* Submit Button */}
+                    <Button
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium py-3 h-12 transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-orange-500/25"
+                      disabled={isLoading || !acceptTerms}
                     >
-                      Tôi đồng ý với{" "}
-                      <Link
-                        href="/terms"
-                        className="text-orange-400 hover:text-orange-300 underline"
-                      >
-                        Điều khoản sử dụng
-                      </Link>{" "}
-                      và{" "}
-                      <Link
-                        href="/privacy"
-                        className="text-orange-400 hover:text-orange-300 underline"
-                      >
-                        Chính sách bảo mật
-                      </Link>{" "}
-                      của CinemaTix
-                    </Label>
-                  </div>
-
-                  {/* Submit Button */}
-                  <Button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium py-3 h-12 transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-orange-500/25"
-                    disabled={isLoading || !acceptTerms}
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Đang tạo tài khoản...</span>
-                      </div>
-                    ) : (
-                      "Đăng Ký"
-                    )}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+                      {isLoading ? (
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Đang tạo tài khoản...</span>
+                        </div>
+                      ) : (
+                        "Đăng Ký"
+                      )}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
