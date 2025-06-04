@@ -120,6 +120,30 @@ export default function UserManagerPage() {
     setIsDeleteDialogOpen(true);
   };
 
+  const handleDeleteUser = (user: User) => {
+    if (!user) return;
+    setIsDeleteDialogOpen(false);
+    toast({
+      title: "User Deleted",
+      description: `${user.fullName} has been successfully deleted.`,
+    });
+    setSelectedUser(null);
+  };
+
+  const filteredUsers = users?.filter((user) => {
+    const searchTermLower = searchTerm.toLowerCase();
+    const matchesSearch =
+      user.fullName.toLowerCase().includes(searchTermLower) ||
+      user.email.toLowerCase().includes(searchTermLower) ||
+      user.phoneNumber.toLowerCase().includes(searchTermLower);
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "Active" && user.isActive) ||
+      (statusFilter === "Inactive" && !user.isActive);
+
+    return matchesSearch && matchesStatus;
+  });
+
   // const handleCreateUser = (userData: Omit<User, "accountId">) => {
   //   const newUser: User = {
   //     ...userData,
@@ -217,7 +241,7 @@ export default function UserManagerPage() {
       </div> */}
 
       {/* Search and Filters */}
-      {/* <Card>
+      <Card>
         <CardHeader>
           <CardTitle>Search & Filter Users</CardTitle>
           <CardDescription>
@@ -235,18 +259,6 @@ export default function UserManagerPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="Admin">Admin</SelectItem>
-                <SelectItem value="Manager">Manager</SelectItem>
-                <SelectItem value="Moderator">Moderator</SelectItem>
-                <SelectItem value="User">User</SelectItem>
-              </SelectContent>
-            </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by status" />
@@ -255,12 +267,11 @@ export default function UserManagerPage() {
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="Active">Active</SelectItem>
                 <SelectItem value="Inactive">Inactive</SelectItem>
-                <SelectItem value="Suspended">Suspended</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </CardContent>
-      </Card> */}
+      </Card>
 
       {/* Users List */}
       <Card>
@@ -274,7 +285,7 @@ export default function UserManagerPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {users?.map((user) => (
+            {filteredUsers?.map((user) => (
               <div
                 key={user.accountId}
                 className="flex items-center justify-between p-6 border rounded-lg hover:bg-accent/50 transition-colors"
@@ -391,7 +402,7 @@ export default function UserManagerPage() {
       /> */}
 
       {/* User Details Modal */}
-      {/* <UserDetailsModal
+      <UserDetailsModal
         isOpen={isDetailsModalOpen}
         onClose={() => {
           setIsDetailsModalOpen(false);
@@ -406,7 +417,7 @@ export default function UserManagerPage() {
           setIsDetailsModalOpen(false);
           handleDeleteUser(selectedUser!);
         }}
-      /> */}
+      />
 
       {/* Delete Confirmation Dialog */}
       {/* <AlertDialog

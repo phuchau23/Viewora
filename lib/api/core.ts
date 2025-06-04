@@ -136,9 +136,9 @@ export class ApiService {
   }
 
   // POST request
-  async post<T>(
+  async post<T, D = unknown>(
     url: string,
-    data?: Record<string, unknown> | FormData
+    data?: D
   ): Promise<ApiResponse<T>> {
     return this.request<T>({
       method: 'POST',

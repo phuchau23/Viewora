@@ -1,4 +1,3 @@
-
 "use client";
 
 import type React from "react";
@@ -59,22 +58,27 @@ export default function RegisterPage() {
     e.preventDefault();
 
     try {
-      console.log('FormData before submit:', formData);
+      console.log("FormData before submit:", formData);
       const registerData = {
-        email: formData.email,
-        fullName: formData.fullName,
-        dateOfBirth: formData.dateOfBirth,
-        password: formData.password,
-        phoneNumber: formData.phoneNumber,
-        gender: formData.gender!,
+        Email: formData.email,
+        FullName: formData.fullName,
+        DateOfBirth: formData.dateOfBirth,
+        Password: formData.password,
+        PhoneNumber: formData.phoneNumber,
+        Gender: formData.gender!,
       };
-      console.log('Register data:', registerData);
-      console.log('Gender type:', typeof formData.gender, 'Value:', formData.gender);
+      console.log("Register data:", registerData);
+      console.log(
+        "Gender type:",
+        typeof formData.gender,
+        "Value:",
+        formData.gender
+      );
 
       await register(registerData);
       // Chỉ hiển thị OTPForm khi đăng ký thành công (không có lỗi)
       if (!error) {
-        localStorage.setItem('registerData', JSON.stringify(registerData));
+        localStorage.setItem("registerData", JSON.stringify(registerData));
         setShowOTPForm(true);
       }
     } catch (err) {
@@ -127,7 +131,8 @@ export default function RegisterPage() {
     }
   };
 
-  const isPasswordMatch = formData.password && formData.password === formData.confirmPassword;
+  const isPasswordMatch =
+    formData.password && formData.password === formData.confirmPassword;
 
   return (
     <div className="h-screen from-slate-900 via-gray-900 to-black">
@@ -332,7 +337,12 @@ export default function RegisterPage() {
                                       ...prev,
                                       gender: newGender,
                                     }));
-                                    console.log('Updated Gender:', newGender, 'Type:', typeof newGender);
+                                    console.log(
+                                      "Updated Gender:",
+                                      newGender,
+                                      "Type:",
+                                      typeof newGender
+                                    );
                                   }}
                                 >
                                   <DropdownMenuRadioItem value="0">
@@ -459,7 +469,10 @@ export default function RegisterPage() {
                               placeholder="••••••••"
                               value={formData.confirmPassword}
                               onChange={(e) =>
-                                handleInputChange("confirmPassword", e.target.value)
+                                handleInputChange(
+                                  "confirmPassword",
+                                  e.target.value
+                                )
                               }
                               className="pl-10 pr-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
                               required
