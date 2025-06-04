@@ -21,19 +21,88 @@ export interface User {
     employee: any | null; // Use specific Employee interface if defined
 }
 
+
+export interface ProfileDataResponse {
+  password: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  avatar: string | null;
+  identityCard: string | null;
+  address: string | null;
+  dateOfBirth: string;
+  gender: number;
+}
+export interface ProfileResponse{
+  code: string;
+  statusCode: string;
+  message: string;
+  data :ProfileDataResponse
+}
+
 export interface UserResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data: User;
+}
+
+export interface ProfileUpdateDataResponse {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  avatar: string | null;
+  identityCard: string | null;
+  address: string | null;
+  dateOfBirth: string;
+  gender: number;
+}
+
+export interface ProfileUpdateResponse {
+    code: number;
+    statusCode: string;
+    message?: string;
+    data?: ProfileUpdateDataResponse;
+  }
+  export interface ChangePasswordRequest {
+    oldPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+  }
+  
+  export interface ChangePasswordResponse {
     code: number;
     statusCode: string;
     message: string;
-    data: User[];
-}
-
+    data: null;
+  }
 export const UserService = {
     //get User
     getUser: async () => {
         const response = await apiService.get<UserResponse>("/users");
         return response.data;
     },
+   
+    getProfile: async (): Promise<ProfileResponse> => {
+      const response = await apiService.get<ProfileResponse>("/users/profile");
+      return response.data;
+    },
+
+    updateUserProfile: async (profileData: Partial<ProfileUpdateDataResponse> | FormData): Promise<ProfileUpdateResponse> => {
+        // The API service already handles FormData appropriately in its interceptors
+        const response = await apiService.put<ProfileUpdateResponse, Partial<ProfileUpdateDataResponse> | FormData>(
+          '/users/update-profile',
+          profileData
+        );
+        return response.data;
+      },
+      changePassword: async (payload: ChangePasswordRequest): Promise<ChangePasswordResponse> => {
+        const response = await apiService.put<ChangePasswordResponse, ChangePasswordRequest>(
+          '/users/change-password',
+          payload
+        );
+        return response.data;
+      },
 }
 
 export default UserService;

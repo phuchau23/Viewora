@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { getCookie } from 'cookies-next';
 // API error response data structure
 export interface ApiErrorData {
   message?: string;
@@ -70,25 +71,25 @@ export class ApiService {
     );
 
     // Response interceptor
-    this.client.interceptors.response.use(
-      response => response,
-      (error: AxiosError<ApiErrorData>) => {
-        // Handle authentication errors
-        if (error.response?.status === 401 && this.onAuthError) {
-          this.onAuthError();
+    this.client.interceptors.request.use(
+      (config) => {
+        const token = getCookie("auth-token")?.toString();
+        if (token && config.headers) {
+          config.headers.Authorization = `Bearer ${token}`;
         }
 
-        // Standardize error format
-        const apiError: ApiError = {
-          status: error.response?.status,
-          message: error.response?.data?.message || error.message || 'Unknown error occurred',
-          error: error.response?.data || { message: error.message },
-        };
+        // For FormData, remove Content-Type to allow browser set it
+        if (config.data instanceof FormData) {
+          delete config.headers["Content-Type"];
+        }
 
-        return Promise.reject(apiError);
-      }
+        return config;
+      },
+      (error) => Promise.reject(error)
     );
   }
+
+  
 
   // Process parameters for GET requests
   private createParams(params?: RequestParams): URLSearchParams | undefined {

@@ -1,5 +1,11 @@
-import UserService from "@/lib/api/service/fetchUser";
-import { useQuery } from "@tanstack/react-query";
+import UserService, {
+  ChangePasswordRequest,
+  ChangePasswordResponse,
+  ProfileResponse,
+  ProfileUpdateDataResponse,
+  ProfileUpdateResponse,
+} from "@/lib/api/service/fetchUser";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserResponse } from "@/lib/api/service/fetchUser";
 
 export function useUsers() {
@@ -17,4 +23,38 @@ export function useUsers() {
     error,
     users: data?.users,
   };
+}
+import { getCookie } from "cookies-next";
+
+export function useUserProfile() {
+  const token = getCookie("auth-token");
+  const isAuthenticated = !!token;
+
+  return useQuery<ProfileResponse>({
+    queryKey: ["users", "profile"],
+    queryFn: () => UserService.getProfile(),
+    enabled: isAuthenticated,
+  });
+}
+
+/**
+ * Hook to update user profile
+ */
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (profileData: Partial<ProfileUpdateDataResponse> | FormData) =>
+      UserService.updateUserProfile(profileData),
+    onSuccess: (data: ProfileUpdateResponse) => {
+      // Không check data.status nữa!
+      queryClient.invalidateQueries({ queryKey: ["users", "profile"] });
+      // Có thể show toast thành công, đóng modal, v.v...
+    },
+  });
+}
+export function useChangePassword() {
+  return useMutation<ChangePasswordResponse, any, ChangePasswordRequest>({
+    mutationFn: (payload) => UserService.changePassword(payload),
+  });
 }
