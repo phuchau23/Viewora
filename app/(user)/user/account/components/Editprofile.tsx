@@ -142,7 +142,7 @@ export default function EditProfileModal({
           setTimeout(() => {
             setShowSuccess(false);
             onClose();
-            
+            window.location.reload();
           }, 1200);
         } else {
           toast.error("Cập nhật thất bại!");
