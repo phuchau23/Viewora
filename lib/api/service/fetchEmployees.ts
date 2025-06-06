@@ -1,3 +1,5 @@
+import apiService from "../core";
+
 export interface Employee {
     id: number,
     position: string,
@@ -6,7 +8,20 @@ export interface Employee {
     workLocation: string,
     isActive: boolean,
     baseSalary: number,
-    accountId: number
+    account: Account
+}
+
+export interface Account {
+    accountId: number,
+    email: string,
+    fullName: string,
+    phoneNumber: string,
+    dateOfBirth: string,
+    gender: string,
+    address: string,
+    avatar: string,
+    identityCard: string,
+    role: string
 }
 
 export interface EmployeeApiResponse {
@@ -16,9 +31,28 @@ export interface EmployeeApiResponse {
     data: Employee[]
 }
 
+export interface CreateEmployeeRequest {
+    position: string;
+    accountId: number;
+    department: string;
+    workLocation: string;
+    baseSalary: number;
+}
+
 export const EmployeeService = {
     async getEmployees(): Promise<EmployeeApiResponse> {
-        const response = await fetch('/api/employees');
-        return response.json();
+        const response = await apiService.get<EmployeeApiResponse>('/employees');
+        return response.data;
+    },
+
+    createEmployee: async (formData: FormData) => {
+        const response = await apiService.post<CreateEmployeeRequest>("/employees", formData);
+        return response.data;
+    },
+
+    deleteEmployee: async (id: number) => {
+        const response = await apiService.delete(`/employees/${id}`);
+        return response.data;
     }
+
 }

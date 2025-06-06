@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   EmployeeService,
   EmployeeApiResponse,
+  CreateEmployeeRequest,
 } from "@/lib/api/service/fetchEmployees";
 
 export const useEmployees = () => {
@@ -9,15 +10,28 @@ export const useEmployees = () => {
     queryKey: ["employees"],
     queryFn: () => EmployeeService.getEmployees(),
     select: (data: EmployeeApiResponse) => ({
-      employees: data.data,
+      data: data.data,
       status: data.statusCode,
     }),
   });
 
   return {
+    data,
     isError: error !== null,
     isLoading,
     error,
-    employees: data?.employees,
   };
 };
+
+export function useCreateEmployee() {
+  const { mutate, isError, isSuccess, data } = useMutation({
+    mutationFn: (formData: FormData) => EmployeeService.createEmployee(formData),
+  });
+
+  return {
+    mutate,
+    isError,
+    isSuccess,
+    data,
+  };
+}

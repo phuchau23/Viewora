@@ -39,7 +39,7 @@ export type Showtime = {
 };
 
 export interface User {
-  id: number
+  id: string
   name: string
   email: string
   phone: string
@@ -1021,4 +1021,11 @@ export const sampleUser: User = {
       bookingDate: "2024-01-08",
     },
   ],
+  name: "",
+  role: "Admin",
+  status: "Active",
+  lastLogin: "",
+  joinDate: "",
+  department: "",
+  location: ""
 };

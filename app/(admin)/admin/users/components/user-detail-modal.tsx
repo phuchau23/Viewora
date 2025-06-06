@@ -39,7 +39,6 @@ interface UserDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   user: User | null;
-  onEdit: () => void;
   onDelete: () => void;
 }
 
@@ -47,7 +46,6 @@ export function UserDetailsModal({
   isOpen,
   onClose,
   user,
-  onEdit,
   onDelete,
 }: UserDetailsModalProps) {
   if (!user) return null;
@@ -171,10 +169,6 @@ export function UserDetailsModal({
 
         <DialogFooter className="mt-6 flex justify-between">
           <div className="flex space-x-2">
-            <Button variant="outline" onClick={onEdit} size="sm">
-              <Edit className="mr-1 h-3.5 w-3.5" />
-              Edit
-            </Button>
             <Button variant="destructive" onClick={onDelete} size="sm">
               <Trash2 className="mr-1 h-3.5 w-3.5" />
               Delete

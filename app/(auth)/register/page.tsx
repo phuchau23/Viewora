@@ -33,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import OTPForm from "@/components/shared/OTPForm";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const { register, isLoading, error } = useRegister();
@@ -144,7 +145,14 @@ export default function RegisterPage() {
               <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg">
                 <Play className="w-5 h-5 fill-current" />
               </div>
-              <span className="text-2xl font-bold">CinemaTix</span>
+              <span className="text-2xl font-bold">
+                <Image
+                  src="/logo1.png"
+                  alt="Viewora Logo"
+                  width={120}
+                  height={40}
+                />
+              </span>
             </Link>
             <Link href="/">
               <Button variant="ghost" className="hover:text-white">
@@ -545,7 +553,7 @@ export default function RegisterPage() {
                         >
                           Chính sách bảo mật
                         </Link>{" "}
-                        của CinemaTix
+                        của Viewora
                       </Label>
                     </div>
 

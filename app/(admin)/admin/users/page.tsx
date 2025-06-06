@@ -28,6 +28,7 @@ import {
   Edit,
   Trash2,
   Eye,
+  RotateCcw,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -54,23 +55,21 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { UserFormModal } from "./components/user-form-modal";
 import { UserDetailsModal } from "./components/user-detail-modal";
-import { useUsers } from "@/hooks/useUsers";
+import { useDeleteUser, useUsers } from "@/hooks/useUsers";
 import { User } from "@/lib/api/service/fetchUser";
 
 export default function UserManagerPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const { toast } = useToast();
 
   const { users, isLoading, isError, error } = useUsers();
+  const deleteUserMutation = useDeleteUser();
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {error?.message}</div>;
@@ -110,51 +109,51 @@ export default function UserManagerPage() {
     setIsDetailsModalOpen(true);
   };
 
-  const handleEditUser = (user: User) => {
-    setSelectedUser(user);
-    setIsEditModalOpen(true);
-  };
-
   const handleDeleteClick = (user: User) => {
     setSelectedUser(user);
     setIsDeleteDialogOpen(true);
   };
 
-  const handleDeleteUser = (user: User) => {
-    if (!user) return;
-    setIsDeleteDialogOpen(false);
-    toast({
-      title: "User Deleted",
-      description: `${user.fullName} has been successfully deleted.`,
-    });
-    setSelectedUser(null);
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+    try {
+      await deleteUserMutation.mutateAsync(selectedUser.accountId);
+      setIsDeleteDialogOpen(false);
+      toast({
+        title: selectedUser.isActive ? "User Deactivated" : "User Restored",
+        description: selectedUser.isActive
+          ? `${selectedUser.fullName} has been successfully deactivated.`
+          : `${selectedUser.fullName} has been successfully restored.`,
+      });
+      setSelectedUser(null);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: selectedUser.isActive
+          ? "Failed to deactivate user. Please try again."
+          : "Failed to restore user. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const filteredUsers = users?.filter((user) => {
-    const searchTermLower = searchTerm.toLowerCase();
-    const matchesSearch =
-      user.fullName.toLowerCase().includes(searchTermLower) ||
-      user.email.toLowerCase().includes(searchTermLower) ||
-      user.phoneNumber.toLowerCase().includes(searchTermLower);
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "Active" && user.isActive) ||
-      (statusFilter === "Inactive" && !user.isActive);
+  const filteredUsers =
+    users && Array.isArray(users)
+      ? users.filter((user) => {
+          const searchTermLower = searchTerm.toLowerCase();
+          const matchesSearch =
+            user.fullName.toLowerCase().includes(searchTermLower) ||
+            user.email.toLowerCase().includes(searchTermLower) ||
+            user.phoneNumber.toLowerCase().includes(searchTermLower);
+          const matchesStatus =
+            statusFilter === "all" ||
+            (statusFilter === "Active" && user.isActive) ||
+            (statusFilter === "Inactive" && !user.isActive);
+          const matchesRole = roleFilter === "all" || user.role === roleFilter;
 
-    return matchesSearch && matchesStatus;
-  });
-
-  // const handleCreateUser = (userData: Omit<User, "accountId">) => {
-  //   const newUser: User = {
-  //     ...userData,
-  //     accountId: Math.max(...users?.map((u) => u.accountId)) + 1,
-  //   };
-  //   setIsCreateModalOpen(false);
-  //   toast({
-  //     title: "User Created",
-  //     description: `${newUser.fullName} has been successfully created.`,
-  //   });
-  // };
+          return matchesSearch && matchesStatus && matchesRole;
+        })
+      : [];
 
   return (
     <div className="space-y-6">
@@ -170,75 +169,8 @@ export default function UserManagerPage() {
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
-          <Button onClick={() => setIsCreateModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add User
-          </Button>
         </div>
       </div>
-
-      {/* User Statistics */}
-      {/* <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{users?.length}</div>
-            <p className="text-xs text-muted-foreground">
-              All registered users
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-            <UserCheck className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {userStats.active}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {((userStats.active / userStats.total) * 100).toFixed(1)}% of
-              total
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Inactive Users
-            </CardTitle>
-            <UserX className="h-4 w-4 text-gray-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-gray-600">
-              {userStats.inactive}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {((userStats.inactive / userStats.total) * 100).toFixed(1)}% of
-              total
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Suspended</CardTitle>
-            <Shield className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {userStats.suspended}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {((userStats.suspended / userStats.total) * 100).toFixed(1)}% of
-              total
-            </p>
-          </CardContent>
-        </Card>
-      </div> */}
 
       {/* Search and Filters */}
       <Card>
@@ -275,17 +207,9 @@ export default function UserManagerPage() {
 
       {/* Users List */}
       <Card>
-        <CardHeader>
-          <CardTitle>Users ({users?.length})</CardTitle>
-          <CardDescription>
-            {users?.length === users?.length
-              ? "All registered users in the system"
-              : `Showing ${users?.length} of ${users?.length} users`}
-          </CardDescription>
-        </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {filteredUsers?.map((user) => (
+          <div className="space-y-4 mt">
+            {filteredUsers?.map((user: User) => (
               <div
                 key={user.accountId}
                 className="flex items-center justify-between p-6 border rounded-lg hover:bg-accent/50 transition-colors"
@@ -341,13 +265,6 @@ export default function UserManagerPage() {
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEditUser(user)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm">
@@ -359,16 +276,21 @@ export default function UserManagerPage() {
                         <Eye className="mr-2 h-4 w-4" />
                         View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleEditUser(user)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit User
-                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handleDeleteClick(user)}
                         className="text-destructive"
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete User
+                        {user.isActive ? (
+                          <>
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Deactivate User
+                          </>
+                        ) : (
+                          <>
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            Restore User
+                          </>
+                        )}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -379,28 +301,6 @@ export default function UserManagerPage() {
         </CardContent>
       </Card>
 
-      {/* Create User Modal */}
-      {/* <UserFormModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleCreateUser}
-        title="Create New User"
-        submitText="Create User"
-      /> */}
-
-      {/* Edit User Modal */}
-      {/* <UserFormModal
-        isOpen={isEditModalOpen}
-        onClose={() => {
-          setIsEditModalOpen(false);
-          setSelectedUser(null);
-        }}
-        onSubmit={handleUpdateUser}
-        title="Edit User"
-        submitText="Update User"
-        initialData={selectedUser}
-      /> */}
-
       {/* User Details Modal */}
       <UserDetailsModal
         isOpen={isDetailsModalOpen}
@@ -409,18 +309,14 @@ export default function UserManagerPage() {
           setSelectedUser(null);
         }}
         user={selectedUser}
-        onEdit={() => {
-          setIsDetailsModalOpen(false);
-          setIsEditModalOpen(true);
-        }}
         onDelete={() => {
           setIsDetailsModalOpen(false);
-          handleDeleteUser(selectedUser!);
+          handleDeleteUser();
         }}
       />
 
       {/* Delete Confirmation Dialog */}
-      {/* <AlertDialog
+      <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
@@ -428,9 +324,11 @@ export default function UserManagerPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete{" "}
-              <span className="font-semibold">{selectedUser?.name}</span> and
-              remove all their data from the system.
+              This action will{" "}
+              {selectedUser?.isActive ? "deactivate" : "restore"}{" "}
+              <span className="font-semibold">{selectedUser?.fullName}</span>{" "}
+              and {selectedUser?.isActive ? "remove" : "restore"} their access
+              from the system.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -441,11 +339,11 @@ export default function UserManagerPage() {
               onClick={handleDeleteUser}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete User
+              {selectedUser?.isActive ? "Deactivate User" : "Restore User"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog> */}
+      </AlertDialog>
     </div>
   );
 }
