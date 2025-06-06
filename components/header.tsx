@@ -4,19 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import {
-  Film,
-  User,
-  Menu,
-  MapPin,
-  Search,
-  LogOut,
-} from "lucide-react";
+import { Film, User, Menu, MapPin, Search, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./common/ThemeToggle";
+import Image from "next/image";
 
 const NAVIGATION = [
   { name: "Home", href: "/" },
@@ -50,7 +44,6 @@ export default function Header() {
     router.push("/login");
   };
 
-  
   const renderNavLinks = () =>
     NAVIGATION.map(({ name, href }) => (
       <Link
@@ -87,13 +80,22 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent side="left" className="w-64 sm:w-80">
               <div className="flex items-center h-16 gap-2">
-                <Film className="h-6 w-6 text-primary" />
-                <Link href="/" className="text-xl font-bold">CinemaTix</Link>
+                <Link href="/" className="text-xl font-bold">
+                  <Image
+                    src="/logo1.png"
+                    alt="Viewora Logo"
+                    width={120}
+                    height={40}
+                  />
+                </Link>
               </div>
               <nav className="mt-6 flex flex-col gap-4">
                 {renderNavLinks()}
                 {!token ? (
-                  <Button variant="outline" onClick={() => router.push("/login")}>
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push("/login")}
+                  >
                     Sign In
                   </Button>
                 ) : (
@@ -107,9 +109,13 @@ export default function Header() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <Film className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold hidden md:inline-block">
-              CinemaTix
+              <Image
+                src="/logo1.png"
+                alt="Viewora Logo"
+                width={120}
+                height={40}
+              />
             </span>
           </Link>
 
@@ -143,8 +149,13 @@ export default function Header() {
 
           {/* Nút Profile - chỉ hiển thị nếu có token */}
           {token && (
-            <Button variant="ghost" size="icon" className="rounded-full" asChild>
-              <Link href="/account">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              asChild
+            >
+              <Link href="/user/account">
                 <User className="h-5 w-5" />
                 <span className="sr-only">Account</span>
               </Link>
@@ -153,11 +164,18 @@ export default function Header() {
 
           {/* Nút Sign In / Sign Out */}
           {!token ? (
-            <Button onClick={() => router.push("/login")} className="hidden md:flex">
+            <Button
+              onClick={() => router.push("/login")}
+              className="hidden md:flex"
+            >
               Sign In
             </Button>
           ) : (
-            <Button onClick={handleLogout} className="hidden md:flex" variant="outline">
+            <Button
+              onClick={handleLogout}
+              className="hidden md:flex"
+              variant="outline"
+            >
               <LogOut className="h-4 w-4 mr-1" />
               Sign Out
             </Button>

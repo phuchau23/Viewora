@@ -29,14 +29,16 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Employee } from "@/lib/data";
-import { sampleEmployees, currentUser, hasEmployeeAccess } from "@/lib/data";
+import { currentUser, hasEmployeeAccess } from "@/lib/data";
 import { EmployeesTable } from "./components/employees-table";
 import { EmployeeFormModal } from "./components/employee-form-modal";
+import { useEmployees } from "@/hooks/useEmployees";
+import { Employee } from "@/lib/api/service/fetchEmployees";
 import { EmployeeDetailsModal } from "./components/employee-details-modal";
+import { useCreateEmployee } from "@/hooks/useEmployees";
 
 export default function EmployeesPage() {
-  const [employees, setEmployees] = useState<Employee[]>(sampleEmployees);
+  const { data: employees, isLoading, isError, error } = useEmployees();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -44,7 +46,21 @@ export default function EmployeesPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
     null
   );
+
+  const { mutate: createEmployee } = useCreateEmployee();
   const { toast } = useToast();
+
+  const employeesData = employees?.data;
+
+  console.log(employees);
+
+  const [formData, setFormData] = useState({
+    position: "",
+    accountId: 0,
+    department: "",
+    workLocation: "",
+    baseSalary: 0,
+  });
 
   // Role-based access control
   if (!hasEmployeeAccess(currentUser.role)) {
@@ -63,45 +79,6 @@ export default function EmployeesPage() {
     );
   }
 
-  const handleAddEmployee = (
-    employeeData: Omit<
-      Employee,
-      "id" | "employeeId" | "createdDate" | "lastLogin"
-    >
-  ) => {
-    // Check if account already exists (AC-04)
-    const accountExists = employees.some(
-      (emp) => emp.account === employeeData.account
-    );
-    if (accountExists) {
-      toast({
-        title: "Account Already Exists",
-        description:
-          "The inputted account is already existed, please choose another account name",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    const newEmployee: Employee = {
-      ...employeeData,
-      id: Math.max(...employees.map((e) => e.id)) + 1,
-      employeeId: `EMP${String(
-        Math.max(...employees.map((e) => e.id)) + 1
-      ).padStart(3, "0")}`,
-      createdDate: new Date().toISOString().split("T")[0],
-      lastLogin: "Never",
-    };
-
-    setEmployees([...employees, newEmployee]);
-    setIsAddModalOpen(false);
-    toast({
-      title: "Employee Added",
-      description: `${newEmployee.employeeName} has been successfully added.`,
-    });
-    return true;
-  };
-
   const handleEditEmployee = (
     employeeData: Omit<
       Employee,
@@ -113,22 +90,14 @@ export default function EmployeesPage() {
     const updatedEmployee: Employee = {
       ...employeeData,
       id: selectedEmployee.id,
-      employeeId: selectedEmployee.employeeId,
       account: selectedEmployee.account, // Account is non-editable
-      createdDate: selectedEmployee.createdDate,
-      lastLogin: selectedEmployee.lastLogin,
     };
 
-    setEmployees(
-      employees.map((emp) =>
-        emp.id === selectedEmployee.id ? updatedEmployee : emp
-      )
-    );
     setIsEditModalOpen(false);
     setSelectedEmployee(null);
     toast({
       title: "Employee Updated",
-      description: `${updatedEmployee.employeeName} has been successfully updated.`,
+      description: `${updatedEmployee.account.fullName} has been successfully updated.`,
     });
     return true;
   };
@@ -136,11 +105,10 @@ export default function EmployeesPage() {
   const handleDeleteEmployee = () => {
     if (!selectedEmployee) return;
 
-    setEmployees(employees.filter((emp) => emp.id !== selectedEmployee.id));
     setIsDeleteDialogOpen(false);
     toast({
       title: "Employee Deleted",
-      description: `${selectedEmployee.employeeName} has been successfully deleted.`,
+      description: `${selectedEmployee.account.fullName} has been successfully deleted.`,
       variant: "destructive",
     });
     setSelectedEmployee(null);
@@ -156,18 +124,34 @@ export default function EmployeesPage() {
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteClick = (employee: Employee) => {
-    setSelectedEmployee(employee);
-    setIsDeleteDialogOpen(true);
+  // const handleDeleteClick = (employee: Employee) => {
+  //   setSelectedEmployee(employee);
+  //   setIsDeleteDialogOpen(true);
+  // };
+
+  const handleCreateEmployee = () => {
+    const form = new FormData();
+    form.append("Position", formData.position);
+    form.append("AccountId", formData.accountId.toString());
+    form.append("Department", formData.department);
+    form.append("WorkLocation", formData.workLocation);
+    form.append("BaseSalary", formData.baseSalary.toString());
+
+    createEmployee(form);
+    setIsAddModalOpen(false);
+    toast({
+      title: "Employee Added",
+      description: `${formData.position} has been successfully added.`,
+    });
   };
 
   const employeeStats = {
-    total: employees.length,
-    active: employees.filter((e) => e.status === "Active").length,
-    inactive: employees.filter((e) => e.status === "Inactive").length,
-    admins: employees.filter((e) => e.role === "Admin").length,
-    managers: employees.filter((e) => e.role === "Manager").length,
-    employees: employees.filter((e) => e.role === "Employee").length,
+    total: employees?.data.length,
+    admins: employees?.data.filter((e) => e.account.role === "Admin").length,
+    managers: employees?.data.filter((e) => e.account.role === "Manager")
+      .length,
+    employees: employees?.data.filter((e) => e.account.role === "Employee")
+      .length,
   };
 
   return (
@@ -203,37 +187,6 @@ export default function EmployeesPage() {
           <CardContent>
             <div className="text-2xl font-bold">{employeeStats.total}</div>
             <p className="text-xs text-muted-foreground">All employees</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active</CardTitle>
-            <UserCheck className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {employeeStats.active}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {((employeeStats.active / employeeStats.total) * 100).toFixed(0)}%
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Inactive</CardTitle>
-            <UserX className="h-4 w-4 text-gray-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-gray-600">
-              {employeeStats.inactive}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {((employeeStats.inactive / employeeStats.total) * 100).toFixed(
-                0
-              )}
-              %
-            </p>
           </CardContent>
         </Card>
         <Card>
@@ -285,10 +238,9 @@ export default function EmployeesPage() {
         </CardHeader>
         <CardContent>
           <EmployeesTable
-            data={employees}
+            data={employeesData ?? []}
             onView={handleViewDetails}
             onEdit={handleEditClick}
-            onDelete={handleDeleteClick}
           />
         </CardContent>
       </Card>
@@ -297,14 +249,14 @@ export default function EmployeesPage() {
       <EmployeeFormModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onSubmit={handleAddEmployee}
+        onSubmit={handleCreateEmployee}
         title="Add New Employee"
         submitText="Add Employee"
         mode="add"
       />
 
       {/* Edit Employee Modal */}
-      <EmployeeFormModal
+      {/* <EmployeeFormModal
         isOpen={isEditModalOpen}
         onClose={() => {
           setIsEditModalOpen(false);
@@ -315,7 +267,7 @@ export default function EmployeesPage() {
         submitText="Update Employee"
         mode="edit"
         initialData={selectedEmployee}
-      />
+      /> */}
 
       {/* Employee Details Modal */}
       <EmployeeDetailsModal
@@ -328,10 +280,6 @@ export default function EmployeesPage() {
         onEdit={() => {
           setIsDetailsModalOpen(false);
           setIsEditModalOpen(true);
-        }}
-        onDelete={() => {
-          setIsDetailsModalOpen(false);
-          handleDeleteClick(selectedEmployee!);
         }}
       />
 
@@ -346,7 +294,7 @@ export default function EmployeesPage() {
             <AlertDialogDescription>
               Are you sure you want to delete{" "}
               <span className="font-semibold">
-                {selectedEmployee?.employeeName}
+                {selectedEmployee?.account.fullName}
               </span>
               ? This action cannot be undone and will permanently remove all
               employee data from the system.

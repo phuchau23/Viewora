@@ -37,6 +37,17 @@ export function useUserProfile() {
   });
 }
 
+export function useDeleteUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => UserService.deleteUser(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+}
+
 /**
  * Hook to update user profile
  */

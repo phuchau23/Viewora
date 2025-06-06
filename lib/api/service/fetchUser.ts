@@ -87,6 +87,13 @@ export const UserService = {
       const response = await apiService.get<ProfileResponse>("/users/profile");
       return response.data;
     },
+    
+    deleteUser: async (id: number): Promise<UserResponse> => {
+      const response = await apiService.patch<UserResponse>(
+        `/users/${id}/active`
+      );
+      return response.data;
+  },
 
     updateUserProfile: async (profileData: Partial<ProfileUpdateDataResponse> | FormData): Promise<ProfileUpdateResponse> => {
         // The API service already handles FormData appropriately in its interceptors
