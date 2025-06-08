@@ -9,12 +9,16 @@ interface SocialAuthButtonsProps {
   label?: string;
   onGoogleClick?: () => void;
   onFacebookClick?: () => void;
+  isGoogleLoading?: boolean; // Thêm để hiển thị trạng thái loading
+  isFacebookLoading?: boolean;
 }
 
 export function SocialAuthButtons({
   label = "Hoặc đăng nhập bằng",
   onGoogleClick,
   onFacebookClick,
+  isGoogleLoading = false,
+  isFacebookLoading = false,
 }: SocialAuthButtonsProps) {
   return (
     <div className="flex flex-col items-center w-full gap-4">
@@ -30,16 +34,30 @@ export function SocialAuthButtons({
           variant="outline"
           className="w-full flex items-center justify-center gap-2 text-lg hover:bg-red-200 hover:text-red-800"
           onClick={onGoogleClick}
+          disabled={isGoogleLoading}
         >
-          <FcGoogle className="text-xl" />
+          {isGoogleLoading ? (
+            <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+            </svg>
+          ) : (
+            <FcGoogle className="text-xl" />
+          )}
           Google
         </Button>
         <Button
           variant="outline"
           className="w-full flex items-center justify-center gap-2 text-lg hover:bg-blue-200 hover:text-blue-800"
           onClick={onFacebookClick}
+          disabled={isFacebookLoading}
         >
-          <FaFacebook className="text-xl text-[#1877F2]" />
+          {isFacebookLoading ? (
+            <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+            </svg>
+          ) : (
+            <FaFacebook className="text-xl text-[#1877F2]" />
+          )}
           Facebook
         </Button>
       </div>

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/lib/providers/queryProvider";
-import { Toaster } from "@/components/ui/toaster"; // ✅ Đúng thư viện
+import { Toaster } from "@/components/ui/toaster"; 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -27,7 +27,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system">
             <div className="flex min-h-screen flex-col">
               <main className="flex-1">{children}</main>
-              <Toaster /> {/* ✅ Đặt ở đây */}
+              <Toaster /> 
             </div>
           </ThemeProvider>
         </QueryProvider>

@@ -45,8 +45,24 @@ export interface VerifyEmailResponse {
   message: string;
   data?: null;
 }
+
+export interface LoginWithGoogleResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data?: {
+    token: string;
+  };
+}
+export interface LoginWithFacebookResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data?: { token: string };
+}
+
 export const fetchAuth = {
-    register: async (data: RegisterRequest): Promise<RegisterResponse> => {
+  register: async (data: RegisterRequest): Promise<RegisterResponse> => {
         const { avatarFile, ...additionalData } = data;
         const files = avatarFile ? [avatarFile] : [];
         const formattedData = {
@@ -108,5 +124,40 @@ export const fetchAuth = {
       console.error('Verify email error:', error);
       throw error;
     }
-  },    
+  },  
+  
+  loginWithGoogle: async (googleToken: string): Promise<LoginWithGoogleResponse> => {
+    try {
+      const response = await apiService.post<LoginWithGoogleResponse>('/auth/google-login', {
+        token: googleToken,
+      });
+      
+      if (response.data.code !== 200) {
+        throw new Error(response.data.message || 'Đăng nhập Google thất bại.');
+      }
+      
+      return response.data;
+    } catch (error: any) {
+      console.error('Google login API error:', error);
+      throw error;
+    }
+  },
+
+  loginWithFacebook: async (facebookToken: string): Promise<LoginWithFacebookResponse> => {
+    try {
+      console.log('Sending Facebook token to backend:', facebookToken);
+      const response = await apiService.post<LoginWithFacebookResponse>('/auth/facebook-login', {
+        token: facebookToken,
+      });
+      console.log('Backend response:', response.data);
+      if (response.data.code !== 200) {
+        throw new Error(response.data.message || 'Đăng nhập Facebook thất bại.');
+      }
+      return response.data;
+    } catch (error: any) {
+      console.error('Facebook login API error:', error.message, error.response?.data);
+      throw new Error(error.response?.data?.message || error.message || 'Lỗi server');
+    }
+  },
 };
+

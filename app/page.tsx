@@ -11,7 +11,6 @@ import {
   CalendarDays,
   Star,
   Clock,
-  Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -56,7 +55,7 @@ export default function Home() {
     <main className="font-sans">
       <Header />
       <div className="flex flex-col">
-        {/* Hero Slider */}
+      {/* Hero Slider */}
         <section className="relative h-[70vh] md:h-[80vh] overflow-hidden">
           <div className="absolute inset-0 bg-black/40 z-10"></div>
 

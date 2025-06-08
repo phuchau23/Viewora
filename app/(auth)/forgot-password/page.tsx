@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2, Mail } from "lucide-react";
+import { useForgotPassword } from "@/hooks/useAuth";
+
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -18,7 +20,7 @@ export default function ForgotPasswordPage() {
   const [timeLeft, setTimeLeft] = useState(300);
   const [timerActive, setTimerActive] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => { 
     if (!timerActive || timeLeft <= 0) return;
 
     const timerInterval = setInterval(() => {
@@ -75,22 +77,22 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  const handleResendOtp = async () => {
-    setLoading(true);
-    setMessage("");
-    setError("");
+  // const handleResendOtp = async () => {
+  //   setLoading(true);
+  //   setMessage("");
+  //   setError("");
 
-    try {
-      await new Promise((res) => setTimeout(res, 1000));
-      setMessage("Mã OTP mới đã được gửi đến email của bạn.");
-      setTimeLeft(300);
-      setTimerActive(true);
-    } catch (err) {
-      setError("Không thể gửi lại mã OTP. Vui lòng thử lại sau!");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //   try {
+  //     await new Promise((res) => setTimeout(res, 1000));
+  //     setMessage("Mã OTP mới đã được gửi đến email của bạn.");
+  //     setTimeLeft(300);
+  //     setTimerActive(true);
+  //   } catch (err) {
+  //     setError("Không thể gửi lại mã OTP. Vui lòng thử lại sau!");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div className=" my-auto h-[calc(100vh-4rem)] flex justify-center items-center   ">
@@ -107,7 +109,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Form bước 1 */}
-        {step === 1 ? (
+        {/* {step === 1 ? ( */}
           <form onSubmit={handleEmailSubmit} className="space-y-4">
             <Input
               type="email"
@@ -132,7 +134,7 @@ export default function ForgotPasswordPage() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+              {loading && <Loader2 className="animate-spin mr-2 h-4 w-4 " />}
               {loading ? "Đang gửi..." : "Gửi mã xác minh"}
             </Button>
           </form>
@@ -143,7 +145,7 @@ export default function ForgotPasswordPage() {
             loading={loading}
             message={message}
             error={error}
-            onResend={handleResendOtp}
+            email={email}
           />
         )}
 

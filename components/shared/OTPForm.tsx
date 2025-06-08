@@ -37,20 +37,6 @@ const OTPForm = ({ Email, onSuccess }: OTPFormProps) => {
     }
   }, [timeLeft]);
 
-  // Handle resending OTP
-  // const handleResendOtp = async () => {
-  //   setIsResending(true);
-  //   try {
-  //     await fetchAuth.resendOtp(email); // Assuming this API exists
-  //     setTimeLeft(60); // Reset countdown
-  //     toast.success("Mã OTP mới đã được gửi");
-  //   } catch (err) {
-  //     toast.error("Gửi lại mã OTP thất bại");
-  //   } finally {
-  //     setIsResending(false);
-  //   }
-  // };
-
   // Handle form submission for OTP verification
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

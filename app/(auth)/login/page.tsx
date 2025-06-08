@@ -2,17 +2,18 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Film } from "lucide-react";
 import { SocialAuthButtons } from "@/components/shared/SocialAuthButtons";
-import router from "next/router";
-import { useLogin } from "@/hooks/useAuth";
-
+import { useFacebookLogin, useGoogleLogin, useLogin } from "@/hooks/useAuth";
+import { getRedirectResult } from "firebase/auth";
+import { auth } from "@/lib/firebase/firebaseConfig";
+import { toast } from "@/hooks/use-toast";
+import { signInWithFacebook, signInWithGoogle } from "@/lib/firebase/auth";
 const bgImages = [
   "/images/login-bg.jpg",
   "/images/login-bg2.jpg",
@@ -29,7 +30,17 @@ export default function LoginPage() {
   const [bgIndex, setBgIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useLogin();
-
+  console.log("Available hooks:", Object.keys(useGoogleLogin)); // Debug exports
+  const {
+    googleLogin,
+    isLoading: googleLoading,
+    error: googleError,
+  } = useGoogleLogin();
+  const {
+    facebookLogin,
+    isLoading: facebookLoading,
+    error: facebookError,
+  } = useFacebookLogin();
   // Auto change background image
   useEffect(() => {
     const interval = setInterval(() => {
@@ -43,21 +54,55 @@ export default function LoginPage() {
     await login(loginData);
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setLoginData((prev) => ({
-      ...prev,
-      email: value,
-    }));
+  const handleInputChange = (field: string, value: string) => {
+    setLoginData((prev) => ({ ...prev, [field]: value }));
+  };
+  useEffect(() => {
+    const handleRedirect = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          const idToken = await result.user.getIdToken();
+          console.log("Redirect idToken:", idToken);
+          // Determine provider and trigger appropriate login
+          const providerId = result.providerId;
+          if (providerId?.includes("google")) {
+            googleLogin();
+          } else if (providerId?.includes("facebook")) {
+            facebookLogin();
+          }
+        }
+      } catch (error: any) {
+        console.error("Redirect error:", error);
+        toast({
+          title: "Thất bại",
+          description: error.message || "Lỗi khi xử lý đăng nhập.",
+          variant: "destructive",
+        });
+      }
+    };
+    handleRedirect();
+  }, [googleLogin, facebookLogin, toast]);
+
+  const testGoogleLogin = async () => {
+    try {
+      const { idToken, user } = await signInWithGoogle();
+      console.log("Test Google login:", { idToken, user });
+    } catch (error) {
+      console.error("Test Google login error:", error);
+    }
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setLoginData((prev) => ({
-      ...prev,
-      password: value,
-    }));
+  // Test signInWithFacebook
+  const testFacebookLogin = async () => {
+    try {
+      const { idToken, user } = await signInWithFacebook();
+      console.log("Test Facebook login:", { idToken, user });
+    } catch (error) {
+      console.error("Test Facebook login error:", error);
+    }
   };
+
   return (
     <div className="h-screen flex flex-row">
       {/* Left: Background Slideshow + Slogan + Icon */}
@@ -108,7 +153,7 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 value={loginData.email}
-                onChange={handleEmailChange}
+                onChange={(e) => handleInputChange("email", e.target.value)}
                 required
                 placeholder="Nhập email"
                 className="mt-2 text-lg"
@@ -124,7 +169,9 @@ export default function LoginPage() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={loginData.password}
-                  onChange={handlePasswordChange}
+                  onChange={(e) =>
+                    handleInputChange("password", e.target.value)
+                  }
                   required
                   placeholder="Nhập mật khẩu"
                   className="pr-12 mt-2 text-lg"
@@ -151,11 +198,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button
-              type="submit"
-              variant="default"
-              className="text-lg w-full"
-            >
+            <Button type="submit" variant="default" className="text-lg w-full">
               {isLoading ? "Đang đăng nhập..." : "ĐĂNG NHẬP"}
             </Button>
 
@@ -170,47 +213,19 @@ export default function LoginPage() {
               </Button>
             </div>
 
-            <SocialAuthButtons
-              label="Hoặc đăng ký bằng"
-              onGoogleClick={() => console.log("Google clicked")}
-              onFacebookClick={() => console.log("Facebook clicked")}
-            />
-          </form>
-
-          {/* {showForgotPassword && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-              <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full">
-                <div className="flex justify-between">
-                <h2 className="text-xl text-gray-700 font-bold">Khôi phục mật khẩu</h2>
-                <button
-                className="text-gray-500 hover:text-gray-700 text-2xl font-bold mb-4"
-                  onClick={() => setShowForgotPassword(false)}
-                > 
-                  x
-                </button>
-                </div>
-                <label className="block text-lg text-gray-700 mb-2">
-                  Nhập email để nhận mã OTP
-                </label>
-                
-                <input
-                  type="email"
-                  className="w-full px-4 py-3 border rounded-lg mb-4 bg-gray-50"
-                  placeholder="Nhập email của bạn"
-                  value={forgotEmail}
-                  onChange={(e) => setForgotEmail(e.target.value)}
-                  required
-                />
-                <button
-                  className="w-full bg-orange-600 text-white text-lg font-bold py-3 rounded-lg"
-                  onClick={handleSendOTP}
-                >
-                  <Link href="/forgot-password" className="text-white">Gửi mã OTP</Link>
-                </button>
-                
-              </div>
+            <div className="flex flex-col items-center">
+              <h1>Đăng nhập</h1>
+              {googleError && <p className="text-red-500">{googleError}</p>}
+              <SocialAuthButtons
+                label="Hoặc đăng nhập bằng"
+                onGoogleClick={googleLogin}
+                onFacebookClick={facebookLogin}
+                isGoogleLoading={googleLoading}
+                isFacebookLoading={facebookLoading}
+              />
+              {googleLoading && <p>Đang xử lý...</p>}
             </div>
-          )} */}
+          </form>
         </div>
       </div>
     </div>
