@@ -1,26 +1,25 @@
 // src/hooks/useAuth.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchAuth,
   LoginRequest,
   LoginResponse,
+  LoginWithGoogleResponse,
   RegisterRequest,
   RegisterResponse,
   VerifyEmailRequest,
   VerifyEmailResponse,
 } from "@/lib/api/service/fetchAuth";
-import { saveTokenToCookie } from "@/lib/api/cookies";
+import { saveTokenToCookie } from "@/lib/ultils/cookies";
 import { useToast } from "@/hooks/use-toast";
-import { signInWithFacebook, signInWithGoogle } from "@/lib/firebase/auth";
+import { signInWithGoogle } from "@/lib/firebase/auth";
 import { logEvent } from "firebase/analytics";
 import { getAnalytics } from "firebase/analytics";
 
-// Debug log to confirm module loading
-console.log("Loading useAuth.tsx, exporting: useRegister, useLogin, useVerifyEmail, useGoogleLogin");
 
 // Hook: useRegister
 export function useRegister() {
@@ -180,133 +179,104 @@ export function useGoogleLogin() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false); // Theo dõi trạng thái redirect
+
+  // Xử lý redirect khi ứng dụng khởi động
+  useEffect(() => {
+    const checkRedirectResult = async () => {
+      try {
+        setIsRedirecting(true);
+        const result = await handleGoogleRedirectResult();
+        if (result && result.idToken) {
+          const response = await fetchAuth.loginWithGoogle(result.idToken);
+          if (response.code !== 200) {
+            throw new Error(response.message || 'Đăng nhập Google thất bại.');
+          }
+          handleSuccess(response);
+        }
+      } catch (err: any) {
+        handleError(err, true);
+      } finally {
+        setIsRedirecting(false);
+      }
+    };
+    checkRedirectResult();
+  }, []);
 
   const { mutate: googleLogin, isPending: isLoading } = useMutation({
     mutationFn: async () => {
-      console.log("Starting Google login...");
-      const { idToken } = await signInWithGoogle();
-      console.log("Got idToken:", idToken);
-      const response = await fetchAuth.loginWithGoogle(idToken);
-      console.log("Backend response:", response);
+      console.log('Starting Google login...');
+      const googleResult = await signInWithGoogle();
+      
+      if (!googleResult) {
+        console.log('Redirect initiated, awaiting result...');
+        setIsRedirecting(true);
+        return null;
+      }
 
+      const { idToken } = googleResult;
+      console.log('Google ID token:', idToken); // Log trước khi gửi
+      if (!idToken) {
+        throw new Error('Không lấy được Google ID token.');
+      }
+
+      const response = await fetchAuth.loginWithGoogle(idToken);
       if (response.code !== 200) {
-        throw new Error(response.message || "Đăng nhập Google thất bại.");
+        throw new Error(response.message || 'Đăng nhập Google thất bại.');
       }
 
       return response;
     },
     onSuccess: (response) => {
-      const token = response.data?.token;
-      if (!token) {
-        setError("Không lấy được token từ phản hồi.");
-        toast({
-          title: "Thất bại",
-          description: "Không lấy được token từ phản hồi.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      console.log("Received token:", token);
-      saveTokenToCookie(token);
-      toast({ title: "Thành công", description: "Bạn đã đăng nhập bằng Google" });
-      logEvent(getAnalytics(), 'login', { method: 'google' }); // Analytics
-      router.push("/");
-      queryClient.invalidateQueries({ queryKey: ["auth-token-2"] });
-      setError(null);
+      if (!response) return; // Bỏ qua nếu đang chờ redirect
+      handleSuccess(response);
     },
     onError: (err: any) => {
-      console.error("Google login error:", err);
-      let errorMessage = "Đăng nhập Google thất bại.";
-      if (err.message.includes("auth/popup-closed-by-user")) {
-        errorMessage = "Bạn đã đóng cửa sổ đăng nhập. Vui lòng thử lại.";
-        logEvent(getAnalytics(), 'login_error', { method: 'google', error: 'popup-closed' });
-      } else if (err.response?.status === 404) {
-        errorMessage = "Dịch vụ đăng nhập Google chưa sẵn sàng.";
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      setError(errorMessage);
-      toast({
-        title: "Thất bại",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      handleError(err, false);
     },
   });
+
+  const handleSuccess = (response: LoginWithGoogleResponse) => {
+    const token = response.data?.token;
+    if (!token) {
+      const errorMessage = 'Không lấy được token từ phản hồi.';
+      setError(errorMessage);
+      toast({
+        title: 'Thất bại',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    saveTokenToCookie(token);
+    toast({ title: 'Thành công', description: 'Bạn đã đăng nhập bằng Google' });
+    logEvent(getAnalytics(), 'login', { method: 'google' });
+    router.push('/');
+    queryClient.invalidateQueries({ queryKey: ['auth-token-2'] });
+    setError(null);
+  };
+
+  const handleError = (err: any, isRedirect: boolean) => {
+    console.error('Google login error:', err);
+    const errorMessage =
+      err.response?.data?.message || err.message || 'Đăng nhập Google thất bại.';
+    setError(errorMessage);
+    toast({
+      title: 'Thất bại',
+      description: errorMessage,
+      variant: 'destructive',
+    });
+    if (isRedirect) {
+      router.push('/login');
+    }
+  };
 
   return {
     googleLogin,
     isLoading,
     error,
-    clearError: () => setError(null),
-  };
-}
-
-export function useFacebookLogin() {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-  const [error, setError] = useState<string | null>(null);
-
-  const { mutate: facebookLogin, isPending: isLoading } = useMutation({
-    mutationFn: async () => {
-      console.log("Starting Facebook login...");
-      const { idToken } = await signInWithFacebook();
-      console.log("Got idToken:", idToken);
-      const response = await fetchAuth.loginWithFacebook(idToken);
-      console.log("Backend response:", response);
-
-      if (response.code !== 200) {
-        throw new Error(response.message || "Đăng nhập Facebook thất bại.");
-      }
-
-      return response;
-    },
-    onSuccess: (response) => {
-      const token = response.data?.token;
-      if (!token) {
-        setError("Không lấy được token từ phản hồi.");
-        toast({
-          title: "Thất bại",
-          description: "Không lấy được token từ phản hồi.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      console.log("Received token:", token);
-      saveTokenToCookie(token);
-      toast({ title: "Thành công", description: "Bạn đã đăng nhập bằng Facebook" });
-      logEvent(getAnalytics(), 'login', { method: 'facebook' }); // Analytics
-      router.push("/");
-      queryClient.invalidateQueries({ queryKey: ["auth-token-2"] });
-      setError(null);
-    },
-    onError: (err: any) => {
-      console.error("Facebook login error:", err);
-      let errorMessage = "Đăng nhập Facebook thất bại.";
-      if (err.message.includes("auth/popup-closed-by-user")) {
-        errorMessage = "Bạn đã đóng cửa sổ đăng nhập. Vui lòng thử lại.";
-        logEvent(getAnalytics(), 'login_error', { method: 'facebook', error: 'popup-closed' });
-      } else if (err.response?.status === 404) {
-        errorMessage = "Dịch vụ đăng nhập Facebook chưa sẵn sàng.";
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      setError(errorMessage);
-      toast({
-        title: "Thất bại",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    },
-  });
-
-  return {
-    facebookLogin,
-    isLoading,
-    error,
+    isRedirecting,
     clearError: () => setError(null),
   };
 }

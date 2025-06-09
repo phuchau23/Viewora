@@ -46,19 +46,18 @@ export interface VerifyEmailResponse {
   data?: null;
 }
 
+export interface LoginWithGoogleRequest {
+  idToken: string;
+}
+
 export interface LoginWithGoogleResponse {
   code: number;
   statusCode: string;
   message: string;
   data?: {
     token: string;
+    fullName?: string;
   };
-}
-export interface LoginWithFacebookResponse {
-  code: number;
-  statusCode: string;
-  message: string;
-  data?: { token: string };
 }
 
 export const fetchAuth = {
@@ -124,38 +123,32 @@ export const fetchAuth = {
     }
   },  
   
-  loginWithGoogle: async (googleToken: string): Promise<LoginWithGoogleResponse> => {
+  loginWithGoogle: async (idToken: string): Promise<LoginWithGoogleResponse> => {
+    if (!idToken) {
+      console.error('No Google ID token provided');
+      throw new Error('Google ID token không hợp lệ.');
+    }
+    console.log('Sending to /auth/google-login:', { idToken });
     try {
       const response = await apiService.post<LoginWithGoogleResponse>('/auth/google-login', {
-        token: googleToken,
+        idToken,
       });
-      
-      if (response.data.code !== 200) {
-        throw new Error(response.data.message || 'Đăng nhập Google thất bại.');
-      }
-      
-      return response.data;
-    } catch (error: any) {
-      console.error('Google login API error:', error);
-      throw error;
-    }
-  },
-
-  loginWithFacebook: async (facebookToken: string): Promise<LoginWithFacebookResponse> => {
-    try {
-      console.log('Sending Facebook token to backend:', facebookToken);
-      const response = await apiService.post<LoginWithFacebookResponse>('/auth/facebook-login', {
-        token: facebookToken,
+      console.log('BE response:', {
+        status: response.status,
+        data: response.data,
+        headers: response.headers,
       });
-      console.log('Backend response:', response.data);
-      if (response.data.code !== 200) {
-        throw new Error(response.data.message || 'Đăng nhập Facebook thất bại.');
+      if (!response.data || response.data.code !== 200) {
+        throw new Error(response.data?.message || 'Đăng nhập Google thất bại.');
       }
       return response.data;
     } catch (error: any) {
-      console.error('Facebook login API error:', error.message, error.response?.data);
-      throw new Error(error.response?.data?.message || error.message || 'Lỗi server');
+      console.error('Google login error:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+      });
+      throw new Error(error.response?.data?.message || 'Lỗi server');
     }
   },
 };
-

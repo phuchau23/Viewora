@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import { Film, User, Menu, MapPin, Search, LogOut } from "lucide-react";
+import { User, Menu, MapPin, Search, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
@@ -81,12 +81,7 @@ export default function Header() {
             <SheetContent side="left" className="w-64 sm:w-80">
               <div className="flex items-center h-16 gap-2">
                 <Link href="/" className="text-xl font-bold">
-                  <Image
-                    src="/logo1.png"
-                    alt="Viewora Logo"
-                    width={120}
-                    height={40}
-                  />
+                  <Image src="/logo1.png" alt="Viewora Logo" width={120} height={40} />
                 </Link>
               </div>
               <nav className="mt-6 flex flex-col gap-4">

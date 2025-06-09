@@ -8,18 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { SocialAuthButtons } from "@/components/shared/SocialAuthButtons";
-import { useFacebookLogin, useGoogleLogin, useLogin } from "@/hooks/useAuth";
+import { useGoogleLogin, useLogin } from "@/hooks/useAuth";
 import { getRedirectResult } from "firebase/auth";
 import { auth } from "@/lib/firebase/firebaseConfig";
 import { toast } from "@/hooks/use-toast";
-import { signInWithFacebook, signInWithGoogle } from "@/lib/firebase/auth";
+import { signInWithGoogle } from "@/lib/firebase/auth";
 import Image from "next/image";
 
 const bgImages = [
-  "/images/login-bg.jpg",
-  "/images/login-bg2.jpg",
-  "/images/login-bg3.jpg",
-  "/images/login-bg4.jpg",
+  "/login-bg.jpg",
+  "/login-bg2.jpg",
+  "/login-bg3.jpg",
+  "/login-bg4.jpg",
 ];
 export default function LoginPage() {
   const [loginData, setLoginData] = useState({
@@ -31,17 +31,11 @@ export default function LoginPage() {
   const [bgIndex, setBgIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useLogin();
-  console.log("Available hooks:", Object.keys(useGoogleLogin)); // Debug exports
   const {
     googleLogin,
     isLoading: googleLoading,
     error: googleError,
   } = useGoogleLogin();
-  const {
-    facebookLogin,
-    isLoading: facebookLoading,
-    error: facebookError,
-  } = useFacebookLogin();
   // Auto change background image
   useEffect(() => {
     const interval = setInterval(() => {
@@ -69,8 +63,6 @@ export default function LoginPage() {
           const providerId = result.providerId;
           if (providerId?.includes("google")) {
             googleLogin();
-          } else if (providerId?.includes("facebook")) {
-            facebookLogin();
           }
         }
       } catch (error: any) {
@@ -83,26 +75,7 @@ export default function LoginPage() {
       }
     };
     handleRedirect();
-  }, [googleLogin, facebookLogin, toast]);
-
-  const testGoogleLogin = async () => {
-    try {
-      const { idToken, user } = await signInWithGoogle();
-      console.log("Test Google login:", { idToken, user });
-    } catch (error) {
-      console.error("Test Google login error:", error);
-    }
-  };
-
-  // Test signInWithFacebook
-  const testFacebookLogin = async () => {
-    try {
-      const { idToken, user } = await signInWithFacebook();
-      console.log("Test Facebook login:", { idToken, user });
-    } catch (error) {
-      console.error("Test Facebook login error:", error);
-    }
-  };
+  }, [googleLogin, toast]);
 
   return (
     <div className="h-screen flex flex-row">
@@ -134,12 +107,7 @@ export default function LoginPage() {
 
       <div className="absolute top-4 right-4 flex items-center gap-2 w-64 h-16">
         <Link href="/" className="text-xl font-bold">
-          <Image
-            src="/logo1.png"
-            alt="Viewora Logo"
-            width={120}
-            height={40}
-          />
+          <Image src="/logo1.png" alt="Viewora Logo" width={120} height={40} />
         </Link>
       </div>
 
@@ -224,9 +192,7 @@ export default function LoginPage() {
               <SocialAuthButtons
                 label="Hoặc đăng nhập bằng"
                 onGoogleClick={googleLogin}
-                onFacebookClick={facebookLogin}
                 isGoogleLoading={googleLoading}
-                isFacebookLoading={facebookLoading}
               />
               {googleLoading && <p>Đang xử lý...</p>}
             </div>
