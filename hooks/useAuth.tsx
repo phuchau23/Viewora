@@ -36,7 +36,7 @@ export function useRegister() {
     mutationFn: (data: RegisterRequest) => fetchAuth.register(data),
     onSuccess: (response: RegisterResponse) => {
       console.log("Register response:", response);
-      if (response.statusCode === "200") {
+      if (response.code === 200) {
         toast({
           title: "Thành công",
           description: "Bạn đã đăng ký thành công, hãy kiểm tra email để xác minh tài khoản",
@@ -54,7 +54,8 @@ export function useRegister() {
     },
     onError: (error: any) => {
       console.error("Registration failed:", error);
-      const errorMessage = error.response?.data?.message || error.message || "Đăng ký thất bại";
+      const errorMessage =
+        error.response?.data?.message || error.message || "Đăng ký thất bại";
       setError(errorMessage);
       toast({
         title: "Thất bại",
@@ -111,7 +112,8 @@ export function useLogin() {
     },
     onError: (err: any) => {
       console.error("Login error:", err);
-      const errorMessage = err.response?.data?.message || err.message || "Đăng nhập thất bại.";
+      const errorMessage =
+        err.response?.data?.message || err.message || "Đăng nhập thất bại.";
       setError(errorMessage);
       toast({
         title: "Thất bại",
@@ -153,7 +155,8 @@ export function useVerifyEmail() {
     },
     onError: (err: any) => {
       console.error("Verify OTP error:", err);
-      const errorMessage = err.response?.data?.message || err.message || "Xác minh thất bại.";
+      const errorMessage =
+        err.response?.data?.message || err.message || "Xác minh thất bại.";
       setError(errorMessage);
       toast({
         title: "Thất bại",

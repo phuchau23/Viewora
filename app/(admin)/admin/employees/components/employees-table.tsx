@@ -53,21 +53,22 @@ import {
   Trash2,
   Filter,
 } from "lucide-react";
-import { Employee } from "@/lib/data";
+import { Employee } from "@/lib/api/service/fetchEmployees";
 
 interface EmployeesTableProps {
   data: Employee[];
   onView: (employee: Employee) => void;
   onEdit: (employee: Employee) => void;
-  onDelete: (employee: Employee) => void;
 }
 
-export function EmployeesTable({
-  data,
-  onView,
-  onEdit,
-  onDelete,
-}: EmployeesTableProps) {
+export function EmployeesTable({ data, onView, onEdit }: EmployeesTableProps) {
+  const getInitials = (fullName: string) =>
+    fullName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -75,6 +76,8 @@ export function EmployeesTable({
     pageIndex: 0,
     pageSize: 10,
   });
+
+  console.log(data);
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -98,62 +101,29 @@ export function EmployeesTable({
     }
   };
 
-  const columns = useMemo<ColumnDef<Employee>[]>(
+  const columns = useMemo<ColumnDef<Employee, unknown>[]>(
     () => [
       {
-        accessorKey: "employeeId",
+        accessorFn: (row) => row.account.fullName,
+        id: "fullName",
         header: ({ column }) => (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2 lg:px-3"
           >
-            Employee ID
+            Full Name
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
         cell: ({ row }) => (
-          <div className="font-mono text-sm font-medium">
-            {row.getValue("employeeId")}
-          </div>
+          <div className=" text-sm font-medium">{row.getValue("fullName")}</div>
         ),
         size: 120,
       },
       {
-        accessorKey: "employeeName",
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-8 px-2 lg:px-3"
-          >
-            Employee Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        ),
-        cell: ({ row }) => (
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-8 w-8">
-              <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
-                {row
-                  .getValue<string>("employeeName")
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <div className="font-medium">{row.getValue("employeeName")}</div>
-              <div className="text-sm text-muted-foreground">
-                {row.original.account}
-              </div>
-            </div>
-          </div>
-        ),
-        size: 200,
-      },
-      {
-        accessorKey: "email",
+        accessorFn: (row) => row.account.email,
+        id: "email",
         header: ({ column }) => (
           <Button
             variant="ghost"
@@ -164,13 +134,26 @@ export function EmployeesTable({
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className="text-sm">{row.getValue("email")}</div>
-        ),
+        cell: ({ row }) => {
+          const email = row.getValue("email") as string;
+          return (
+            <div className="flex items-center space-x-3">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  {email?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <div className="font-medium">{email}</div>
+              </div>
+            </div>
+          );
+        },
         size: 200,
       },
       {
-        accessorKey: "role",
+        accessorFn: (row) => row.account.role,
+        id: "role",
         header: ({ column }) => (
           <Button
             variant="ghost"
@@ -192,7 +175,7 @@ export function EmployeesTable({
         },
       },
       {
-        accessorKey: "status",
+        accessorKey: "isActive",
         header: ({ column }) => (
           <Button
             variant="ghost"
@@ -204,8 +187,8 @@ export function EmployeesTable({
           </Button>
         ),
         cell: ({ row }) => (
-          <Badge variant={getStatusColor(row.getValue("status"))}>
-            {row.getValue("status")}
+          <Badge variant={getStatusColor(row.getValue("isActive"))}>
+            {row.getValue("isActive") ? "Active" : "Inactive"}
           </Badge>
         ),
         size: 100,
@@ -251,14 +234,6 @@ export function EmployeesTable({
                     <Edit className="mr-2 h-4 w-4" />
                     Edit Employee
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => onDelete(employee)}
-                    className="text-destructive"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete Employee
-                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -267,11 +242,13 @@ export function EmployeesTable({
         size: 120,
       },
     ],
-    [onView, onEdit, onDelete]
+    [onView, onEdit]
   );
 
+  const data2 = data ?? [];
+
   const table = useReactTable({
-    data,
+    data: data2,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -304,38 +281,15 @@ export function EmployeesTable({
               maxLength={28}
             />
           </div>
-          <Select
+          {/* <Select
             value={
-              (table.getColumn("role")?.getFilterValue() as string[])?.join(
+              (table.getColumn("isActive")?.getFilterValue() as string[])?.join(
                 ","
               ) ?? ""
             }
             onValueChange={(value) =>
               table
-                .getColumn("role")
-                ?.setFilterValue(value ? value.split(",") : undefined)
-            }
-          >
-            <SelectTrigger className="w-[130px]">
-              <Filter className="mr-2 h-4 w-4" />
-              <SelectValue placeholder="Role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
-              <SelectItem value="Admin">Admin</SelectItem>
-              <SelectItem value="Manager">Manager</SelectItem>
-              <SelectItem value="Employee">Employee</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select
-            value={
-              (table.getColumn("status")?.getFilterValue() as string[])?.join(
-                ","
-              ) ?? ""
-            }
-            onValueChange={(value) =>
-              table
-                .getColumn("status")
+                .getColumn("isActive")
                 ?.setFilterValue(value ? value.split(",") : undefined)
             }
           >
@@ -348,12 +302,12 @@ export function EmployeesTable({
               <SelectItem value="Active">Active</SelectItem>
               <SelectItem value="Inactive">Inactive</SelectItem>
             </SelectContent>
-          </Select>
+          </Select> */}
         </div>
         <div className="flex items-center space-x-2">
           <span className="text-sm text-muted-foreground">
-            {table.getFilteredRowModel().rows.length} of{" "}
-            {table.getCoreRowModel().rows.length} employee(s)
+            {table.getFilteredRowModel()?.rows?.length ?? 0} of{" "}
+            {table.getCoreRowModel()?.rows?.length ?? 0} employee(s)
           </span>
         </div>
       </div>
@@ -381,8 +335,8 @@ export function EmployeesTable({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+            {table.getCoreRowModel().rows.length ? (
+              table.getCoreRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}

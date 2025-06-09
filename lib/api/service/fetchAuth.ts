@@ -115,13 +115,11 @@ export const fetchAuth = {
         "file", // Không dùng field này vì không có file, nhưng cần truyền
         additionalData
       );
-      console.log('Verify email response:', response.data);
       if (!response.data) {
         throw new Error("Không nhận được dữ liệu từ server");
       }
       return response.data;
     } catch (error) {
-      console.error('Verify email error:', error);
       throw error;
     }
   },  

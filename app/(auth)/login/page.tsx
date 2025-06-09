@@ -7,13 +7,14 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Film } from "lucide-react";
 import { SocialAuthButtons } from "@/components/shared/SocialAuthButtons";
 import { useFacebookLogin, useGoogleLogin, useLogin } from "@/hooks/useAuth";
 import { getRedirectResult } from "firebase/auth";
 import { auth } from "@/lib/firebase/firebaseConfig";
 import { toast } from "@/hooks/use-toast";
 import { signInWithFacebook, signInWithGoogle } from "@/lib/firebase/auth";
+import Image from "next/image";
+
 const bgImages = [
   "/images/login-bg.jpg",
   "/images/login-bg2.jpg",
@@ -121,7 +122,7 @@ export default function LoginPage() {
         <div className="relative flex flex-col h-full justify-center items-center z-20 px-14">
           <div className="text-center">
             <h2 className="text-white text-4xl md:text-5xl font-mono mb-6 drop-shadow-lg">
-              Welcome to CinemaTix
+              Welcome to Viewora
             </h2>
             <p className="text-gray-200 text-2xl mb-12">
               Đặt vé xem phim, bắp nước và ưu đãi chỉ với 1 chạm!
@@ -132,9 +133,13 @@ export default function LoginPage() {
       </div>
 
       <div className="absolute top-4 right-4 flex items-center gap-2 w-64 h-16">
-        <Film className="h-6 w-6 text-primary" />
         <Link href="/" className="text-xl font-bold">
-          CinemaTix
+          <Image
+            src="/logo1.png"
+            alt="Viewora Logo"
+            width={120}
+            height={40}
+          />
         </Link>
       </div>
 

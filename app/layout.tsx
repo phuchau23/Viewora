@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CINEVERSE - Book Movie Tickets Online",
+  title: "Viewora - Book Movie Tickets Online",
   description:
     "Book movie tickets online for the latest movies in theaters near you.",
   icons: {

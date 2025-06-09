@@ -48,84 +48,118 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
-import { initialRoles, Role } from "@/lib/data";
+import { Role, RoleCreateRequest } from "@/lib/api/service/fetchRole";
+import { useRoles, useCreateRole, useDeleteRole } from "@/hooks/useRole";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Mock data
 
 export default function RoleManagement() {
-  const [roles, setRoles] = useState<Role[]>(initialRoles);
+  const queryClient = useQueryClient();
+  const { roles } = useRoles();
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
+  const { mutate: deleteRole, isSuccess, isError } = useDeleteRole();
+
   const [formData, setFormData] = useState({
     name: "",
-    userCount: 0,
-    status: "Active" as "Active" | "Inactive",
+    description: "",
   });
+  const { mutate: createRole } = useCreateRole();
 
   // Filter roles based on search term
-  const filteredRoles = roles.filter((role) =>
-    role.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredRoles = roles
+    ?.filter((role) => role.status === true) // Lọc chỉ status = true
+    .filter((role) =>
+      role.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   // Reset form data
   const resetForm = () => {
     setFormData({
       name: "",
-      userCount: 0,
-      status: "Active",
+      description: "",
     });
   };
 
   // Handle create role
+  // const handleCreate = () => {
+  //   const payload = {
+  //     name: formData.name,
+  //     description: formData.description,
+  //   };
+
+  //   createRole(payload, {
+  //     onSuccess: () => {
+  //       setIsCreateOpen(false);
+  //       resetForm();
+  //       queryClient.invalidateQueries({ queryKey: ["roles"] });
+  //       // Optional: Có thể refetch roles tại đây nếu chưa có query invalidate
+  //     },
+  //     onError: (error) => {
+  //       console.error("Create role failed", error);
+  //     },
+  //   });
+  // };
+
   const handleCreate = () => {
-    const newRole: Role = {
-      id: Math.max(...roles.map((r) => r.id)) + 1,
-      name: formData.name,
-      userCount: formData.userCount,
-      createdDate: new Date().toISOString().split("T")[0],
-      status: formData.status,
-    };
-    setRoles([...roles, newRole]);
-    setIsCreateOpen(false);
-    resetForm();
+    const form = new FormData();
+    form.append("name", formData.name);
+    form.append("description", formData.description);
+
+    createRole(form, {
+      onSuccess: () => {
+        setIsCreateOpen(false);
+        setFormData({ name: "", description: "" }); // resetForm()
+        queryClient.invalidateQueries({ queryKey: ["roles"] });
+      },
+      onError: (error) => {
+        console.error("Create role failed", error);
+      },
+    });
   };
 
   // Handle edit role
-  const handleEdit = (role: Role) => {
-    setEditingRole(role);
-    setFormData({
-      name: role.name,
-      userCount: role.userCount,
-      status: role.status,
-    });
-    setIsEditOpen(true);
-  };
+  // const handleEdit = (role: Role) => {
+  //   setEditingRole(role);
+  //   setFormData({
+  //     name: role.name,
+  //     description: role.description,
+  //   });
+  //   setIsEditOpen(true);
+  // };
 
   // Handle update role
-  const handleUpdate = () => {
-    if (!editingRole) return;
+  // const handleUpdate = () => {
+  //   if (!editingRole) return;
 
-    const updatedRoles = roles.map((role) =>
-      role.id === editingRole.id
-        ? {
-            ...role,
-            name: formData.name,
-            userCount: formData.userCount,
-            status: formData.status,
-          }
-        : role
-    );
-    setRoles(updatedRoles);
-    setIsEditOpen(false);
-    setEditingRole(null);
-    resetForm();
-  };
+  //   const updatedRoles = roles?.map((role) =>
+  //     role.roleId === editingRole.roleId
+  //       ? {
+  //           ...role,
+  //           name: formData.name,
+  //           description: formData.description,
+  //         }
+  //       : role
+  //   );
+  //   setRoles(updatedRoles);
+  //   setIsEditOpen(false);
+  //   setEditingRole(null);
+  //   resetForm();
+  // };
 
   // Handle delete role
   const handleDelete = (id: number) => {
-    setRoles(roles.filter((role) => role.id !== id));
+    deleteRole(id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["roles"] }); // Làm mới danh sách
+      },
+      onError: (error) => {
+        console.error("Delete role failed", error);
+      },
+    });
   };
 
   return (
@@ -177,36 +211,18 @@ export default function RoleManagement() {
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="userCount">User Count</Label>
+                    <Label htmlFor="description">Description</Label>
                     <Input
-                      id="userCount"
-                      type="number"
-                      value={formData.userCount}
+                      id="description"
+                      value={formData.description}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          userCount: Number.parseInt(e.target.value) || 0,
+                          description: e.target.value,
                         })
                       }
-                      placeholder="0"
+                      placeholder="Enter description"
                     />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select
-                      value={formData.status}
-                      onValueChange={(value: "Active" | "Inactive") =>
-                        setFormData({ ...formData, status: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Active">Active</SelectItem>
-                        <SelectItem value="Inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </div>
                 </div>
                 <DialogFooter>
@@ -232,16 +248,15 @@ export default function RoleManagement() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
                   <TableHead>Role Name</TableHead>
-                  <TableHead>User Count</TableHead>
+                  <TableHead>Description</TableHead>
                   <TableHead>Created Date</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredRoles.length === 0 ? (
+                {filteredRoles?.length === 0 ? (
                   <TableRow>
                     <TableCell
                       colSpan={6}
@@ -253,32 +268,27 @@ export default function RoleManagement() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredRoles.map((role) => (
-                    <TableRow key={role.id}>
-                      <TableCell className="font-medium">{role.id}</TableCell>
+                  filteredRoles?.map((role) => (
+                    <TableRow key={role.roleId}>
                       <TableCell>{role.name}</TableCell>
-                      <TableCell>{role.userCount}</TableCell>
+                      <TableCell>{role.description}</TableCell>
                       <TableCell>
-                        {new Date(role.createdDate).toLocaleDateString()}
+                        {new Date(role.dateCreate).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant={
-                            role.status === "Active" ? "default" : "secondary"
-                          }
-                        >
-                          {role.status}
+                        <Badge variant={role.status ? "default" : "secondary"}>
+                          {role.status ? "Active" : "Inactive"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
+                          {/* <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleEdit(role)}
                           >
                             <Pencil className="h-4 w-4" />
-                          </Button>
+                          </Button> */}
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button variant="outline" size="sm">
@@ -287,21 +297,29 @@ export default function RoleManagement() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Role</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete the role
-                                  &quot;
-                                  {role.name}&quot;? This action cannot be
-                                  undone.
+                                <AlertDialogTitle className="text-xl font-semibold text-red-600">
+                                  Delete Role
+                                </AlertDialogTitle>
+                                <AlertDialogDescription className="text-sm text-muted-foreground mt-2">
+                                  Are you sure you want to delete the role{" "}
+                                  <strong className="text-black">
+                                    &quot;{role.name}&quot;
+                                  </strong>
+                                  ? <br />
+                                  This action cannot be undone.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDelete(role.id)}
+
+                              <AlertDialogFooter className="mt-4 flex justify-end gap-2">
+                                <AlertDialogCancel asChild>
+                                  <Button variant="outline">Cancel</Button>
+                                </AlertDialogCancel>
+                                <Button
+                                  variant="destructive"
+                                  onClick={() => handleDelete(role.roleId)}
                                 >
                                   Delete
-                                </AlertDialogAction>
+                                </Button>
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
@@ -336,46 +354,28 @@ export default function RoleManagement() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-userCount">User Count</Label>
+                  <Label htmlFor="edit-description">Description</Label>
                   <Input
-                    id="edit-userCount"
-                    type="number"
-                    value={formData.userCount}
+                    id="edit-description"
+                    value={formData.description}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        userCount: Number.parseInt(e.target.value) || 0,
+                        description: e.target.value,
                       })
                     }
-                    placeholder="0"
+                    placeholder="Enter description"
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="edit-status">Status</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value: "Active" | "Inactive") =>
-                      setFormData({ ...formData, status: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Active">Active</SelectItem>
-                      <SelectItem value="Inactive">Inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
               </div>
-              <DialogFooter>
+              {/* <DialogFooter>
                 <Button variant="outline" onClick={() => setIsEditOpen(false)}>
                   Cancel
                 </Button>
                 <Button onClick={handleUpdate} disabled={!formData.name.trim()}>
                   Update Role
                 </Button>
-              </DialogFooter>
+              </DialogFooter> */}
             </DialogContent>
           </Dialog>
         </CardContent>

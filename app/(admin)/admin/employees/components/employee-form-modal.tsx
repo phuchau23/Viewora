@@ -23,12 +23,12 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Upload, Eye, EyeOff } from "lucide-react";
-import { Employee } from "@/lib/data";
+import { Employee } from "@/lib/api/service/fetchEmployees";
 
 interface EmployeeFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (employeeData: any) => boolean;
+  onSubmit: () => void;
   title: string;
   submitText: string;
   mode: "add" | "edit";
@@ -54,9 +54,8 @@ export function EmployeeFormModal({
     phoneNumber: "",
     address: "",
     dateOfBirth: "",
-    sex: "Male" as "Male" | "Female",
-    role: "Employee" as Employee["role"],
-    status: "Active" as Employee["status"],
+    gender: "Male" as "Male" | "Female",
+    role: "Employee" as Employee["account"]["role"],
     image: "",
   });
 
@@ -67,19 +66,18 @@ export function EmployeeFormModal({
   useEffect(() => {
     if (mode === "edit" && initialData) {
       setFormData({
-        account: initialData.account,
-        password: "", // Don't pre-fill password for security
+        account: "", // Optional, unless you use it elsewhere
+        password: "", // Don't pre-fill passwords
         confirmPassword: "",
-        employeeName: initialData.employeeName,
-        identityCard: initialData.identityCard,
-        email: initialData.email,
-        phoneNumber: initialData.phoneNumber,
-        address: initialData.address,
-        dateOfBirth: initialData.dateOfBirth,
-        sex: initialData.sex,
-        role: initialData.role,
-        status: initialData.status,
-        image: initialData.image || "",
+        employeeName: initialData.account.fullName || "",
+        identityCard: initialData.account.identityCard || "",
+        email: initialData.account.email || "",
+        phoneNumber: initialData.account.phoneNumber || "",
+        address: initialData.account.address || "",
+        dateOfBirth: initialData.account.dateOfBirth || "",
+        gender: initialData.account.gender as "Male" | "Female",
+        role: initialData.account.role as Employee["account"]["role"],
+        image: initialData.account.avatar || "", // Use avatar if image is stored there
       });
     } else {
       setFormData({
@@ -92,9 +90,8 @@ export function EmployeeFormModal({
         phoneNumber: "",
         address: "",
         dateOfBirth: "",
-        sex: "Male",
+        gender: "Male",
         role: "Employee",
-        status: "Active",
         image: "",
       });
     }
@@ -159,10 +156,8 @@ export function EmployeeFormModal({
     e.preventDefault();
 
     if (validateForm()) {
-      const success = onSubmit(formData);
-      if (success) {
-        onClose();
-      }
+      onSubmit();
+      onClose();
     }
   };
 
@@ -385,35 +380,24 @@ export function EmployeeFormModal({
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="male"
-                      checked={formData.sex === "Male"}
-                      onCheckedChange={() => handleInputChange("sex", "Male")}
+                      checked={formData.gender === "Male"}
+                      onCheckedChange={() =>
+                        handleInputChange("gender", "Male")
+                      }
                     />
                     <Label htmlFor="male">Male</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="female"
-                      checked={formData.sex === "Female"}
-                      onCheckedChange={() => handleInputChange("sex", "Female")}
+                      checked={formData.gender === "Female"}
+                      onCheckedChange={() =>
+                        handleInputChange("gender", "Female")
+                      }
                     />
                     <Label htmlFor="female">Female</Label>
                   </div>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(value) => handleInputChange("status", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Active">Active</SelectItem>
-                    <SelectItem value="Inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </div>
           </div>
