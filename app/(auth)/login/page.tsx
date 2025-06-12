@@ -12,7 +12,6 @@ import { useGoogleLogin, useLogin } from "@/hooks/useAuth";
 import { getRedirectResult } from "firebase/auth";
 import { auth } from "@/lib/firebase/firebaseConfig";
 import { toast } from "@/hooks/use-toast";
-import { signInWithGoogle } from "@/lib/firebase/auth";
 import Image from "next/image";
 
 const bgImages = [
@@ -52,30 +51,7 @@ export default function LoginPage() {
   const handleInputChange = (field: string, value: string) => {
     setLoginData((prev) => ({ ...prev, [field]: value }));
   };
-  useEffect(() => {
-    const handleRedirect = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-          const idToken = await result.user.getIdToken();
-          console.log("Redirect idToken:", idToken);
-          // Determine provider and trigger appropriate login
-          const providerId = result.providerId;
-          if (providerId?.includes("google")) {
-            googleLogin();
-          }
-        }
-      } catch (error: any) {
-        console.error("Redirect error:", error);
-        toast({
-          title: "Thất bại",
-          description: error.message || "Lỗi khi xử lý đăng nhập.",
-          variant: "destructive",
-        });
-      }
-    };
-    handleRedirect();
-  }, [googleLogin, toast]);
+
 
   return (
     <div className="h-screen flex flex-row">
@@ -127,7 +103,6 @@ export default function LoginPage() {
                 type="email"
                 value={loginData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
-                required
                 placeholder="Nhập email"
                 className="mt-2 text-lg"
               />
@@ -145,7 +120,6 @@ export default function LoginPage() {
                   onChange={(e) =>
                     handleInputChange("password", e.target.value)
                   }
-                  required
                   placeholder="Nhập mật khẩu"
                   className="pr-12 mt-2 text-lg"
                 />
@@ -187,8 +161,6 @@ export default function LoginPage() {
             </div>
 
             <div className="flex flex-col items-center">
-              <h1>Đăng nhập</h1>
-              {googleError && <p className="text-red-500">{googleError}</p>}
               <SocialAuthButtons
                 label="Hoặc đăng nhập bằng"
                 onGoogleClick={googleLogin}

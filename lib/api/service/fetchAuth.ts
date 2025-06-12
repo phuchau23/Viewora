@@ -1,5 +1,23 @@
+'use client'
 import apiService from "../core";
+// register
+export interface RegisterRequest {
+  Email: string;
+  FullName: string;
+  DateOfBirth: string;
+  Password: string;
+  PhoneNumber: string;
+  Gender: number | undefined;
+}
 
+export interface RegisterResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data?: [];
+}
+
+// login
 export interface LoginRequest {
   email: string;
   password: string;
@@ -12,28 +30,13 @@ export interface LoginResponse {
   data?: Token;
 }
 
+// token
 export interface Token {
   fullName: string;
   token: string;
 }
 
-export interface RegisterRequest {
-  Email: string;
-  FullName: string;
-  DateOfBirth: string;
-  Password: string;
-  PhoneNumber: string;
-  Gender: number;
-  avatarFile?: File;
-}
-
-export interface RegisterResponse {
-  code: number;
-  statusCode: string;
-  message: string;
-  data?: [];
-}
-
+// verify email
 export interface VerifyEmailRequest {
   optCode: number;
   Email: string;
@@ -43,9 +46,10 @@ export interface VerifyEmailResponse {
   code: number;
   statusCode: string;
   message: string;
-  data?: null;
+  data?: [];
 }
 
+// login with google
 export interface LoginWithGoogleRequest {
   idToken: string;
 }
@@ -60,95 +64,101 @@ export interface LoginWithGoogleResponse {
   };
 }
 
+// forgot password
+export interface ForgotPasswordRequest {
+  Email: string;
+}
+
+export interface ForgotPasswordResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data?: [];
+}
+
+// verify reset password
+export interface VerifyResetPasswordRequest {
+  optCode: number;
+  Email: string;
+}
+
+export interface VerifyResetPasswordResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data?: [];
+} 
+
+// reset password
+export interface ResetPasswordRequest {
+  Email: string;
+  optCode: number;
+  Password: string;
+}
+
+export interface ResetPasswordResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data?: [];
+}
+
+// resend verify email
+export interface ResendVerifyEmailRequest {
+  Email: string;
+}
+
+export interface ResendVerifyEmailResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data?: [];
+}
+
+
 export const fetchAuth = {
   register: async (data: RegisterRequest): Promise<RegisterResponse> => {
-        const { avatarFile, ...additionalData } = data;
-        const files = avatarFile ? [avatarFile] : [];
-        const formattedData = {
-          Email: additionalData.Email,
-          FullName: additionalData.FullName,
-          DateOfBirth: additionalData.DateOfBirth,
-          Password: additionalData.Password,
-          PhoneNumber: additionalData.PhoneNumber,
-          Gender: additionalData.Gender,
-        };
-        console.log('Sending register data:', formattedData);
-        try {
-          const response = await apiService.upload<RegisterResponse>(
-            "/auth/register",
-            files,
-            "avatarFile",
-            formattedData
-          );
-          console.log('Register response:', response.data);
-          if (!response.data) {
-            throw new Error("Không nhận được dữ liệu từ server");
-          }
-          return response.data;
-        } catch (error) {
-          console.error('Register API error:', error);
-          throw error;
-        }
-      },
-
-  login: async (data: LoginRequest): Promise<LoginResponse> => {
-    const response = await apiService.post<LoginResponse>("/auth/login", {
-      email: data.email,
-      password: data.password,
-    });
+    const response = await apiService.post<RegisterResponse>("/auth/register", data);
     return response.data;
   },
 
-  verifyEmail: async (
-    data: VerifyEmailRequest
-  ): Promise<VerifyEmailResponse> => {
-    const additionalData = {
-      optCode: data.optCode,
-      Email: data.Email,
-    };
-    console.log('Verify email payload:', additionalData);
-    try {
-      const response = await apiService.upload<VerifyEmailResponse>(
-        "/auth/verify-email",
-        [], // Không có file
-        "file", // Không dùng field này vì không có file, nhưng cần truyền
-        additionalData
-      );
-      if (!response.data) {
-        throw new Error("Không nhận được dữ liệu từ server");
-      }
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },  
-  
-  loginWithGoogle: async (idToken: string): Promise<LoginWithGoogleResponse> => {
-    if (!idToken) {
-      console.error('No Google ID token provided');
-      throw new Error('Google ID token không hợp lệ.');
-    }
-    console.log('Sending to /auth/google-login:', { idToken });
-    try {
-      const response = await apiService.post<LoginWithGoogleResponse>('/auth/google-login', {
-        idToken,
-      });
-      console.log('BE response:', {
-        status: response.status,
-        data: response.data,
-        headers: response.headers,
-      });
-      if (!response.data || response.data.code !== 200) {
-        throw new Error(response.data?.message || 'Đăng nhập Google thất bại.');
-      }
-      return response.data;
-    } catch (error: any) {
-      console.error('Google login error:', {
-        status: error.response?.status,
-        data: error.response?.data,
-        message: error.message,
-      });
-      throw new Error(error.response?.data?.message || 'Lỗi server');
-    }
+  verifyEmail: async (data: VerifyEmailRequest): Promise<VerifyEmailResponse> => {
+    const response = await apiService.post<VerifyEmailResponse>("/auth/verify-email", data);
+    return response.data;
   },
+
+  resendVerifyEmail: async (data: ResendVerifyEmailRequest): Promise<ResendVerifyEmailResponse> => {
+    const response = await apiService.post<ResendVerifyEmailResponse>("/auth/resend-verify-email", data);
+    return response.data;
+  },
+
+  login: async (data: LoginRequest): Promise<LoginResponse> => {
+    const response = await apiService.post<LoginResponse>("/auth/login", {email: data.email, password: data.password}, true); // Sử dụng JSON
+    return response.data;
+  },
+
+  forgotPassword: async (data: ForgotPasswordRequest): Promise<ForgotPasswordResponse> => {
+    const response = await apiService.post<ForgotPasswordResponse>("/auth/forgot-password", data);
+    return response.data;
+  },
+
+  verifyResetPassword: async (data: VerifyResetPasswordRequest): Promise<VerifyResetPasswordResponse> => {
+    const response = await apiService.post<VerifyResetPasswordResponse>("/auth/verify-reset-password", data);
+    return response.data;
+  },
+
+  resetPassword: async (data: ResetPasswordRequest): Promise<ResetPasswordResponse> => {
+    const response = await apiService.post<ResetPasswordResponse>("/auth/reset-password", data);
+    return response.data;
+  },
+
+  loginWithGoogle: async (data: LoginWithGoogleRequest): Promise<LoginWithGoogleResponse> => {
+    const idToken = data;
+    console.log("idToken trước khi gửi:", idToken);
+
+
+      const response = await apiService.post<LoginWithGoogleResponse>("/auth/google-login", { id_token: idToken }, true); // Sử dụng JSON
+      if (!response.data || response.data.code !== 200) throw new Error(response.data?.message || "Đăng nhập Google thất bại.");
+      return response.data;
+    }  
 };

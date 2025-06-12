@@ -3,12 +3,13 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAFgDKr1s7wOOoyidr8rgYNKe3SsvB4ShA",
-  authDomain: "viewora-2025.firebaseapp.com",
-  projectId: "viewora-2025",
-  storageBucket: "viewora-2025.firebasestorage.app",
-  messagingSenderId: "65057299219",
-  appId: "1:65057299219:web:b2692c2d9d18ef787e18e6"
+  apiKey: "AIzaSyDDtNbKkvKTSpqiuPsbuY4EkNmvI9X0QaE",
+  authDomain: "viewora-bb11a.firebaseapp.com",
+  projectId: "viewora-bb11a",
+  storageBucket: "viewora-bb11a.firebasestorage.app",
+  messagingSenderId: "148914899812",
+  appId: "1:148914899812:web:551e571f3828e2cd89c871",
+  measurementId: "G-FGY25ZW2D6"
 };
 
 const app = initializeApp(firebaseConfig);

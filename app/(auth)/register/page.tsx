@@ -18,12 +18,9 @@ import {
   Check,
   X,
   Shield,
-  ArrowLeft,
-  Play,
   Calendar,
 } from "lucide-react";
 import Link from "next/link";
-import { SocialAuthButtons } from "@/components/shared/SocialAuthButtons";
 import { useRegister } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -33,23 +30,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import OTPForm from "@/components/shared/OTPForm";
-import Image from "next/image";
-
+import { toast } from "@/hooks/use-toast";
+import HeaderRegister from "./components/HeaderRegister";
+import { WelcomeSection } from "./components/WelcomSection";
+import { usePasswordStrength } from "@/hooks/usePasswordStrength";
 export default function RegisterPage() {
   const { register, isLoading, error } = useRegister();
   const [showOTPForm, setShowOTPForm] = useState(false);
   const [formData, setFormData] = useState({
-    email: "",
-    fullName: "",
-    dateOfBirth: "",
-    password: "",
-    confirmPassword: "",
-    phoneNumber: "",
-    gender: undefined as number | undefined,
+    Email: "",
+    FullName: "",
+    DateOfBirth: "",
+    Password: "",
+    ConfirmPassword: "",
+    PhoneNumber: "",
+    Gender: undefined as number | undefined,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const { strength, color, text } = usePasswordStrength(formData.Password);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -58,177 +58,95 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      console.log("FormData before submit:", formData);
-      const registerData = {
-        Email: formData.email,
-        FullName: formData.fullName,
-        DateOfBirth: formData.dateOfBirth,
-        Password: formData.password,
-        PhoneNumber: formData.phoneNumber,
-        Gender: formData.gender!,
-      };
-      console.log("Register data:", registerData);
-      console.log(
-        "Gender type:",
-        typeof formData.gender,
-        "Value:",
-        formData.gender
-      );
-
-      await register(registerData);
-      // Chỉ hiển thị OTPForm khi đăng ký thành công (không có lỗi)
-      if (!error) {
-        localStorage.setItem("registerData", JSON.stringify(registerData));
-        setShowOTPForm(true);
-      }
-    } catch (err) {
-      console.error("Đăng ký thất bại:", err);
+    // Validate form
+    if (!formData.Email || !/^\S+@\S+\.\S+$/.test(formData.Email)) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng nhập email hợp lệ",
+        variant: "destructive",
+      });
+      return;
     }
-  };
-
-  const handleSocialLogin = (provider: string) => {
-    console.log(`Login with ${provider}`);
-  };
-
-  const passwordStrength = (password: string) => {
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-    return strength;
-  };
-
-  const getPasswordStrengthColor = (strength: number) => {
-    switch (strength) {
-      case 0:
-      case 1:
-        return "bg-red-500";
-      case 2:
-        return "bg-yellow-500";
-      case 3:
-        return "bg-blue-500";
-      case 4:
-        return "bg-green-500";
-      default:
-        return "bg-gray-300";
+    if (!formData.FullName || formData.FullName.length < 2) {
+      toast({
+        title: "Lỗi",
+        description: "Họ và tên phải có ít nhất 2 ký tự",
+        variant: "destructive",
+      });
+      return;
     }
-  };
-
-  const getPasswordStrengthText = (strength: number) => {
-    switch (strength) {
-      case 0:
-      case 1:
-        return "Yếu";
-      case 2:
-        return "Trung bình";
-      case 3:
-        return "Mạnh";
-      case 4:
-        return "Rất mạnh";
-      default:
-        return "";
+    if (!formData.DateOfBirth) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng chọn ngày sinh",
+        variant: "destructive",
+      });
+      return;
     }
-  };
+    if (formData.Gender === undefined) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng chọn giới tính",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!formData.PhoneNumber || !/^\+?\d{10,15}$/.test(formData.PhoneNumber)) {
+      toast({
+        title: "Lỗi",
+        description: "Số điện thoại không hợp lệ",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!formData.Password || formData.Password.length < 8) {
+      toast({
+        title: "Lỗi",
+        description: "Mật khẩu phải có ít nhất 8 ký tự",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!isPasswordMatch) {
+      toast({
+        title: "Lỗi",
+        description: "Mật khẩu xác nhận không khớp",
+        variant: "destructive",
+      });
+      return;
+    }
 
+    // Gọi API register
+    register(formData, {
+      onSuccess: (response) => {
+        if (response.code === 200) {
+          setShowOTPForm(true); // Chuyển sang OTP form
+        }
+      },
+    });
+  };
   const isPasswordMatch =
-    formData.password && formData.password === formData.confirmPassword;
+    formData.Password && formData.Password === formData.ConfirmPassword;
 
   return (
     <div className="h-screen from-slate-900 via-gray-900 to-black">
       {/* Header */}
-      <header className="border-b border-gray-800 backdrop-blur-md">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Play className="w-5 h-5 fill-current" />
-              </div>
-              <span className="text-2xl font-bold">
-                <Image
-                  src="/logo1.png"
-                  alt="Viewora Logo"
-                  width={120}
-                  height={40}
-                />
-              </span>
-            </Link>
-            <Link href="/">
-              <Button variant="ghost" className="hover:text-white">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Quay lại trang chủ
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
+      <HeaderRegister />
       <div className="container mx-auto py-12">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             {/* Left Side - Welcome Section */}
-            <div className="space-y-8">
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
-                    Đăng Ký
-                    <span className="block bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                      Tài Khoản
-                    </span>
-                  </h1>
-                  <p className="text-lg leading-relaxed">
-                    Tạo tài khoản để trải nghiệm dịch vụ đặt vé xem phim tuyệt
-                    vời nhất
-                  </p>
-                </div>
-
-                <div className="flex items-center space-x-4">
-                  <span>Đã có tài khoản?</span>
-                  <Link href="/login">
-                    <Button
-                      variant="outline"
-                      className="border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white"
-                    >
-                      Đăng nhập
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-
-              <SocialAuthButtons
-                label="Hoặc đăng ký bằng"
-                onGoogleClick={() => console.log("Google clicked")}
-                onFacebookClick={() => console.log("Facebook clicked")}
-              />
-
-              {/* Features */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Lợi ích khi đăng ký:</h3>
-                <div className="space-y-2 text-bold text-gray-500">
-                  {[
-                    "Đặt vé nhanh chóng và tiện lợi",
-                    "Nhận thông báo phim mới và ưu đãi",
-                    "Tích điểm và đổi quà hấp dẫn",
-                    "Lưu lịch sử đặt vé và quản lý dễ dàng",
-                  ].map((benefit, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                        <Check className="w-3 h-3 text-white" />
-                      </div>
-                      <span className="text-gray-500">{benefit}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
+            <WelcomeSection />
             {/* Right Side - Registration Form */}
             {showOTPForm ? (
-              <OTPForm
-                Email={formData.email}
-                onSuccess={() => setShowOTPForm(false)}
-              />
+              <div className="w-full h-full flex items-center justify-center">
+                <OTPForm
+                  Email={formData.Email}
+                  onComplete={() => setShowOTPForm(false)}
+                  timeLeft={60}
+                  onResend={() => setShowOTPForm(false)}
+                />
+              </div>
             ) : (
               <Card className="border-gray-700 backdrop-blur-sm">
                 <CardHeader className="space-y-2">
@@ -240,13 +158,6 @@ export default function RegisterPage() {
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* Hiển thị lỗi từ useRegister */}
-                  {error && (
-                    <div className="bg-red-500/10 border border-red-500 text-red-400 p-3 rounded-md">
-                      {error}
-                    </div>
-                  )}
-
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <Separator className="bg-gray-600" />
 
@@ -259,17 +170,17 @@ export default function RegisterPage() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="fullName" className="font-medium">
+                          <Label htmlFor="FullName" className="font-medium">
                             Họ và tên *
                           </Label>
                           <div className="relative">
                             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                             <Input
-                              id="fullName"
+                              id="FullName"
                               placeholder="Nhập họ và tên"
-                              value={formData.fullName}
+                              value={formData.FullName}
                               onChange={(e) =>
-                                handleInputChange("fullName", e.target.value)
+                                handleInputChange("FullName", e.target.value)
                               }
                               className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
                               required
@@ -278,17 +189,17 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="phoneNumber" className="font-medium">
+                          <Label htmlFor="PhoneNumber" className="font-medium">
                             Số điện thoại *
                           </Label>
                           <div className="relative">
                             <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                             <Input
-                              id="phoneNumber"
+                              id="PhoneNumber"
                               placeholder="0912345678"
-                              value={formData.phoneNumber}
+                              value={formData.PhoneNumber}
                               onChange={(e) =>
-                                handleInputChange("phoneNumber", e.target.value)
+                                handleInputChange("PhoneNumber", e.target.value)
                               }
                               className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
                               required
@@ -298,17 +209,17 @@ export default function RegisterPage() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="dateOfBirth" className="font-medium">
+                          <Label htmlFor="DateOfBirth" className="font-medium">
                             Ngày sinh *
                           </Label>
                           <div className="relative">
                             <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                             <Input
-                              id="dateOfBirth"
+                              id="DateOfBirth"
                               type="date"
-                              value={formData.dateOfBirth}
+                              value={formData.DateOfBirth}
                               onChange={(e) =>
-                                handleInputChange("dateOfBirth", e.target.value)
+                                handleInputChange("DateOfBirth", e.target.value)
                               }
                               className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
                               required
@@ -316,7 +227,7 @@ export default function RegisterPage() {
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="gender" className="font-medium">
+                          <Label htmlFor="Gender" className="font-medium">
                             Giới tính *
                           </Label>
                           <div className="relative">
@@ -327,23 +238,23 @@ export default function RegisterPage() {
                                   variant="outline"
                                   className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
                                 >
-                                  {formData.gender === 0
+                                  {formData.Gender === 0
                                     ? "Nam"
-                                    : formData.gender === 1
+                                    : formData.Gender === 1
                                     ? "Nữ"
-                                    : formData.gender === 2
+                                    : formData.Gender === 2
                                     ? "Khác"
                                     : "Giới tính"}
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent className="w-full">
                                 <DropdownMenuRadioGroup
-                                  value={formData.gender?.toString()}
+                                  value={formData.Gender?.toString()}
                                   onValueChange={(value) => {
                                     const newGender = parseInt(value);
                                     setFormData((prev) => ({
                                       ...prev,
-                                      gender: newGender,
+                                      Gender: newGender,
                                     }));
                                     console.log(
                                       "Updated Gender:",
@@ -378,18 +289,18 @@ export default function RegisterPage() {
                         </h3>
 
                         <div className="space-y-2">
-                          <Label htmlFor="email" className="font-medium">
+                          <Label htmlFor="Email" className="font-medium">
                             Email *
                           </Label>
                           <div className="relative">
                             <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                             <Input
-                              id="email"
+                              id="Email"
                               type="email"
                               placeholder="example@email.com"
-                              value={formData.email}
+                              value={formData.Email}
                               onChange={(e) =>
-                                handleInputChange("email", e.target.value)
+                                handleInputChange("Email", e.target.value)
                               }
                               className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
                               required
@@ -397,18 +308,18 @@ export default function RegisterPage() {
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="password" className="font-medium">
+                          <Label htmlFor="Password" className="font-medium">
                             Mật khẩu *
                           </Label>
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                             <Input
-                              id="password"
+                              id="Password"
                               type={showPassword ? "text" : "password"}
                               placeholder="••••••••"
-                              value={formData.password}
+                              value={formData.Password}
                               onChange={(e) =>
-                                handleInputChange("password", e.target.value)
+                                handleInputChange("Password", e.target.value)
                               }
                               className="pl-10 pr-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
                               required
@@ -428,18 +339,14 @@ export default function RegisterPage() {
                             </Button>
                           </div>
                         </div>
-                        {formData.password && (
+                        {formData.Password && (
                           <div className="space-y-2">
                             <div className="flex space-x-1">
                               {[1, 2, 3, 4].map((level) => (
                                 <div
                                   key={level}
                                   className={`h-1 flex-1 rounded ${
-                                    level <= passwordStrength(formData.password)
-                                      ? getPasswordStrengthColor(
-                                          passwordStrength(formData.password)
-                                        )
-                                      : "bg-gray-600"
+                                    level <= strength ? color : "bg-gray-600"
                                   }`}
                                 />
                               ))}
@@ -448,23 +355,21 @@ export default function RegisterPage() {
                               Độ mạnh:{" "}
                               <span
                                 className={`font-medium ${
-                                  passwordStrength(formData.password) >= 3
+                                  strength >= 3
                                     ? "text-green-400"
-                                    : passwordStrength(formData.password) >= 2
+                                    : strength >= 2
                                     ? "text-yellow-400"
                                     : "text-red-400"
                                 }`}
                               >
-                                {getPasswordStrengthText(
-                                  passwordStrength(formData.password)
-                                )}
+                                {text}
                               </span>
                             </p>
                           </div>
                         )}
                         <div className="space-y-2">
                           <Label
-                            htmlFor="confirmPassword"
+                            htmlFor="ConfirmPassword"
                             className="font-medium"
                           >
                             Xác nhận mật khẩu *
@@ -472,13 +377,13 @@ export default function RegisterPage() {
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                             <Input
-                              id="confirmPassword"
+                              id="ConfirmPassword"
                               type={showConfirmPassword ? "text" : "password"}
                               placeholder="••••••••"
-                              value={formData.confirmPassword}
+                              value={formData.ConfirmPassword}
                               onChange={(e) =>
                                 handleInputChange(
-                                  "confirmPassword",
+                                  "ConfirmPassword",
                                   e.target.value
                                 )
                               }
@@ -501,7 +406,7 @@ export default function RegisterPage() {
                               )}
                             </Button>
                           </div>
-                          {formData.confirmPassword && (
+                          {formData.ConfirmPassword && (
                             <div className="flex items-center space-x-2">
                               {isPasswordMatch ? (
                                 <Check className="w-4 h-4 text-green-400" />

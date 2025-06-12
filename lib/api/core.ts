@@ -1,5 +1,10 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { getCookie } from 'cookies-next';
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from "axios";
+
 // API error response data structure
 export interface ApiErrorData {
   message?: string;
@@ -26,7 +31,6 @@ export interface RequestParams {
   [key: string]: string | number | boolean | undefined | null | string[];
 }
 
-// API service class
 export class ApiService {
   private client: AxiosInstance;
   private authToken: string | null = null;
@@ -35,9 +39,7 @@ export class ApiService {
   constructor(baseURL: string, timeout = 10000, onAuthError?: () => void) {
     this.client = axios.create({
       baseURL,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { "Content-Type": "application/json" },
       timeout,
     });
 
@@ -45,81 +47,102 @@ export class ApiService {
     this.setupInterceptors();
   }
 
-  // Set auth token
   setAuthToken(token: string | null): void {
     this.authToken = token;
   }
 
-  // Setup request/response interceptors
   private setupInterceptors(): void {
-    // Request interceptor
-    this.client.interceptors.request.use(
-      config => {
-        // Add auth header if token exists
-        if (this.authToken) {
-          config.headers.Authorization = `Bearer ${this.authToken}`;
-        }
-
-        // Handle FormData automatically
-        if (config.data instanceof FormData) {
-          delete config.headers['Content-Type'];
-        }
-
-        return config;
-      },
-      error => Promise.reject(error)
-    );
-
-    // Response interceptor
     this.client.interceptors.request.use(
       (config) => {
-        const token = getCookie("auth-token")?.toString();
-        if (token && config.headers) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-
-        // For FormData, remove Content-Type to allow browser set it
-        if (config.data instanceof FormData) {
+        if (this.authToken)
+          config.headers.Authorization = `Bearer ${this.authToken}`;
+        if (config.data instanceof FormData)
           delete config.headers["Content-Type"];
-        }
-
+        console.log("Request config:", {
+          method: config.method,
+          url: config.url,
+          headers: config.headers,
+          data: config.data,
+        });
         return config;
       },
       (error) => Promise.reject(error)
     );
+
+    this.client.interceptors.response.use(
+      (response) => response,
+      (error: AxiosError<ApiErrorData>) => {
+        if (error.response?.status === 401 && this.onAuthError)
+          this.onAuthError();
+        return Promise.reject({
+          status: error.response?.status,
+          message: error.response?.data?.message || error.message,
+          error: error.response?.data,
+        } as ApiError);
+      }
+    );
   }
 
-  
+  private toFormData(
+    data: Record<string, unknown>,
+    options: { flattenObjects?: boolean } = {}
+  ): FormData {
+    const formData = new FormData();
+    const { flattenObjects = false } = options;
 
-  // Process parameters for GET requests
-  private createParams(params?: RequestParams): URLSearchParams | undefined {
-    if (!params) return undefined;
-
-    const urlParams = new URLSearchParams();
-
-    Object.entries(params).forEach(([key, value]) => {
+    const processValue = (key: string, value: unknown) => {
       if (value === undefined || value === null) return;
 
       if (Array.isArray(value)) {
-        value.forEach(item => urlParams.append(key, String(item)));
+        value.forEach((item, index) => processValue(`${key}[${index}]`, item));
+      } else if (
+        value instanceof Object &&
+        !(value instanceof File) &&
+        !(value instanceof Blob)
+      ) {
+        if (flattenObjects) {
+          Object.entries(value).forEach(([subKey, subValue]) =>
+            processValue(`${key}[${subKey}]`, subValue)
+          );
+        } else {
+          formData.append(key, JSON.stringify(value));
+        }
+      } else if (value instanceof File || value instanceof Blob) {
+        formData.append(key, value, (value as File).name || "file");
       } else {
-        urlParams.append(key, String(value));
+        formData.append(key, String(value));
       }
-    });
+    };
 
+    Object.entries(data).forEach(([key, value]) => processValue(key, value));
+    return formData;
+  }
+
+  private createParams(params?: RequestParams): URLSearchParams | undefined {
+    if (!params) return undefined;
+    const urlParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === undefined || value === null) return;
+      if (Array.isArray(value))
+        value.forEach((item) => urlParams.append(key, String(item)));
+      else urlParams.append(key, String(value));
+    });
     return urlParams;
   }
 
-  // Generic request method
-  private async request<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    // Handle FormData in config.data
-    if (config.data instanceof FormData) {
-      // FormData will be handled by the interceptor which removes Content-Type
-      // to let the browser set the correct boundary
+  private async request<T>(
+    config: AxiosRequestConfig & { useJson?: boolean }
+  ): Promise<ApiResponse<T>> {
+    const updatedConfig: AxiosRequestConfig = { ...config };
+    if (
+      updatedConfig.method?.toUpperCase() === "POST" &&
+      updatedConfig.data &&
+      !(updatedConfig.data instanceof FormData) &&
+      !config.useJson
+    ) {
+      updatedConfig.data = this.toFormData(updatedConfig.data);
     }
-
-    const response: AxiosResponse<T> = await this.client(config);
-
+    const response: AxiosResponse<T> = await this.client(updatedConfig);
     return {
       data: response.data,
       status: response.status,
@@ -127,87 +150,77 @@ export class ApiService {
     };
   }
 
-  // GET request
   async get<T>(url: string, params?: RequestParams): Promise<ApiResponse<T>> {
     return this.request<T>({
-      method: 'GET',
+      method: "GET",
       url,
       params: this.createParams(params),
     });
   }
 
-  async patch<T>(url: string, data?: Record<string, unknown>): Promise<ApiResponse<T>> {
-    return this.request<T>({
-      method: 'PATCH',
-      url,
-      data,
-    });
-  }
-  // POST request
-  async post<T, D = unknown>(
+  async patch<T>(
     url: string,
-    data?: D
+    data?: Record<string, unknown>
   ): Promise<ApiResponse<T>> {
-    return this.request<T>({
-      method: 'POST',
-      url,
-      data,
-    });
+    return this.request<T>({ method: "PATCH", url, data });
   }
 
-  // PUT request
+  async post<T, D = unknown>(
+    url: string,
+    data?: D,
+    useJson: boolean = false
+  ): Promise<ApiResponse<T>> {
+    const config: AxiosRequestConfig & { useJson?: boolean } = {
+      method: "POST",
+      url,
+      data: useJson ? JSON.stringify(data) : data,
+      headers: useJson ? { "Content-Type": "application/json" } : {},
+      useJson,
+    };
+    return this.request<T>(config);
+  }
+
   async put<T, D = Record<string, unknown> | FormData>(
     url: string,
     data?: D
   ): Promise<ApiResponse<T>> {
-    return this.request<T>({
-      method: 'PUT',
-      url,
-      data,
-    });
+    return this.request<T>({ method: "PUT", url, data });
   }
 
-  // DELETE request
-  async delete<T>(url: string, params?: RequestParams): Promise<ApiResponse<T>> {
+  async delete<T>(
+    url: string,
+    params?: RequestParams
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({
-      method: 'DELETE',
+      method: "DELETE",
       url,
       params: this.createParams(params),
     });
   }
 
-  // Upload file(s)
   async upload<T>(
     url: string,
     files: File | File[],
-    fieldName = 'file',
+    fieldName = "file",
     additionalData?: Record<string, string | number | boolean>,
     onProgress?: (percentage: number) => void
   ): Promise<ApiResponse<T>> {
     const formData = new FormData();
-
-    // Add file(s)
-    if (Array.isArray(files)) {
-      files.forEach(file => formData.append(fieldName, file));
-    } else {
-      formData.append(fieldName, files);
-    }
-
-    // Add additional data
+    if (Array.isArray(files))
+      files.forEach((file) => formData.append(fieldName, file));
+    else formData.append(fieldName, files);
     if (additionalData) {
       Object.entries(additionalData).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
+        if (value !== undefined && value !== null)
           formData.append(key, String(value));
-        }
       });
     }
-
     return this.request<T>({
-      method: 'POST',
+      method: "POST",
       url,
       data: formData,
       onUploadProgress: onProgress
-        ? progressEvent => {
+        ? (progressEvent) => {
             const percentage = Math.round(
               (progressEvent.loaded * 100) / (progressEvent.total || 100)
             );
@@ -218,7 +231,8 @@ export class ApiService {
   }
 }
 
-// Create and export the default API service instance
-const apiService = new ApiService(process.env.NEXT_PUBLIC_API_BASE_URL || '', 600000);
-
+const apiService = new ApiService(
+  process.env.NEXT_PUBLIC_API_BASE_URL || "",
+  600000
+);
 export default apiService;
