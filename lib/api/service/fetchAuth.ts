@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import apiService from "../core";
 // register
 export interface RegisterRequest {
@@ -87,13 +87,13 @@ export interface VerifyResetPasswordResponse {
   statusCode: string;
   message: string;
   data?: [];
-} 
+}
 
 // reset password
 export interface ResetPasswordRequest {
   Email: string;
-  optCode: number;
-  Password: string;
+  OtpCode: number;
+  NewPassword: string;
 }
 
 export interface ResetPasswordResponse {
@@ -115,50 +115,84 @@ export interface ResendVerifyEmailResponse {
   data?: [];
 }
 
-
 export const fetchAuth = {
   register: async (data: RegisterRequest): Promise<RegisterResponse> => {
-    const response = await apiService.post<RegisterResponse>("/auth/register", data);
+    const response = await apiService.post<RegisterResponse>(
+      "/auth/register",
+      data
+    );
     return response.data;
   },
 
-  verifyEmail: async (data: VerifyEmailRequest): Promise<VerifyEmailResponse> => {
-    const response = await apiService.post<VerifyEmailResponse>("/auth/verify-email", data);
+  verifyEmail: async (
+    data: VerifyEmailRequest
+  ): Promise<VerifyEmailResponse> => {
+    const response = await apiService.post<VerifyEmailResponse>(
+      "/auth/verify-email",
+      data
+    );
     return response.data;
   },
 
-  resendVerifyEmail: async (data: ResendVerifyEmailRequest): Promise<ResendVerifyEmailResponse> => {
-    const response = await apiService.post<ResendVerifyEmailResponse>("/auth/resend-verify-email", data);
+  resendVerifyEmail: async (
+    data: ResendVerifyEmailRequest
+  ): Promise<ResendVerifyEmailResponse> => {
+    const response = await apiService.post<ResendVerifyEmailResponse>(
+      "/auth/resend-verification",
+      data
+    );
     return response.data;
   },
 
   login: async (data: LoginRequest): Promise<LoginResponse> => {
-    const response = await apiService.post<LoginResponse>("/auth/login", {email: data.email, password: data.password}, true); // Sử dụng JSON
+    const response = await apiService.post<LoginResponse>(
+      "/auth/login",
+      { email: data.email, password: data.password },
+      true
+    ); // Sử dụng JSON
     return response.data;
   },
 
-  forgotPassword: async (data: ForgotPasswordRequest): Promise<ForgotPasswordResponse> => {
-    const response = await apiService.post<ForgotPasswordResponse>("/auth/forgot-password", data);
+  forgotPassword: async (
+    data: ForgotPasswordRequest
+  ): Promise<ForgotPasswordResponse> => {
+    const response = await apiService.post<ForgotPasswordResponse>(
+      "/auth/forgot-password",
+      data
+    );
     return response.data;
   },
 
-  verifyResetPassword: async (data: VerifyResetPasswordRequest): Promise<VerifyResetPasswordResponse> => {
-    const response = await apiService.post<VerifyResetPasswordResponse>("/auth/verify-reset-password", data);
+  verifyResetPassword: async (
+    data: VerifyResetPasswordRequest
+  ): Promise<VerifyResetPasswordResponse> => {
+    const response = await apiService.post<VerifyResetPasswordResponse>(
+      "/auth/verify-reset-password",
+      data
+    );
     return response.data;
   },
 
-  resetPassword: async (data: ResetPasswordRequest): Promise<ResetPasswordResponse> => {
-    const response = await apiService.post<ResetPasswordResponse>("/auth/reset-password", data);
+  resetPassword: async (
+    data: ResetPasswordRequest
+  ): Promise<ResetPasswordResponse> => {
+    const response = await apiService.post<ResetPasswordResponse>(
+      "/auth/reset-password",
+      data
+    );
     return response.data;
   },
 
-  loginWithGoogle: async (data: LoginWithGoogleRequest): Promise<LoginWithGoogleResponse> => {
-    const idToken = data;
-    console.log("idToken trước khi gửi:", idToken);
-
-
-      const response = await apiService.post<LoginWithGoogleResponse>("/auth/google-login", { id_token: idToken }, true); // Sử dụng JSON
-      if (!response.data || response.data.code !== 200) throw new Error(response.data?.message || "Đăng nhập Google thất bại.");
-      return response.data;
-    }  
+  loginWithGoogle: async (
+    data: LoginWithGoogleRequest
+  ): Promise<LoginWithGoogleResponse> => {
+    const response = await apiService.post<LoginWithGoogleResponse>(
+      "/auth/google-login",
+      data,
+      true
+    );
+    if (!response.data || response.data.code !== 200)
+      throw new Error(response.data?.message || "Đăng nhập Google thất bại.");
+    return response.data;
+  },
 };

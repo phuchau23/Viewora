@@ -71,29 +71,22 @@ export default function ForgotPasswordPage() {
 
   const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage("");
-    setError("");
-    try {
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("otpCode", otp);
-      formData.append("newPassword", newPassword);
-      resetPassword(formData, {
-        onSuccess: (response) => {
-          if (response.code === 200) {
-            setMessage(response.message);
-            setStep(4); // Bước hoàn tất, có thể chuyển hướng
-          } else {
-            setError(response.message || "Đặt lại mật khẩu thất bại");
-          }
-        },
+    if (newPassword.length < 8) {
+      toast({
+        title: "Lỗi",
+        description: "Mật khẩu mới phải có ít nhất 8 ký tự",
+        variant: "destructive",
       });
-    } catch (err) {
-      setError("Đã có lỗi xảy ra. Vui lòng thử lại!");
-    } finally {
-      setLoading(false);
+      return;
     }
+    resetPassword(
+      { Email: email, NewPassword: newPassword, OtpCode: otp },
+      {
+        onSuccess: () => {
+          setStep(4);
+        },
+      }
+    );
   };
 
   return (

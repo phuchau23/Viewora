@@ -142,7 +142,6 @@ export default function RegisterPage() {
               <div className="w-full h-full flex items-center justify-center">
                 <OTPForm
                   Email={formData.Email}
-                  onComplete={() => setShowOTPForm(false)}
                   timeLeft={60}
                   onResend={() => setShowOTPForm(false)}
                 />
