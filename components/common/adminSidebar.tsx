@@ -9,6 +9,7 @@ import {
   Home,
   User,
   ContactRound,
+  Film
 } from "lucide-react";
 
 import {
@@ -52,10 +53,16 @@ const adminNavItems = [
     icon: User,
   },
   {
+    title: "Movies",
+    url: "/admin/movies",
+    icon: Film,
+  },
+  {
     title: "Settings",
     url: "/admin/settings",
     icon: Settings,
   },
+
 ];
 
 export function AdminSidebar({

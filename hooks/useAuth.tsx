@@ -79,7 +79,6 @@ export function useRegister() {
 
 // Hook: useVerifyEmail
 export function useVerifyEmail() {
-  const router = useRouter();
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
 
@@ -95,7 +94,6 @@ export function useVerifyEmail() {
     },
     onSuccess: () => {  
       toast({ title: "Thành công", description: "Bạn đã xác minh OTP" });
-      router.push("/login");
       setError(null);
     },
     onError: (err: any) => {
@@ -120,7 +118,6 @@ export function useVerifyEmail() {
 
 // Hook: useResendVerifyEmail
 export function useResendVerifyEmail() {
-  const router = useRouter();
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
 
@@ -136,7 +133,6 @@ export function useResendVerifyEmail() {
     },
     onSuccess: () => {  
       toast({ title: "Thành công", description: "Bạn đã xác minh OTP" });
-      router.push("/login");
       setError(null);
     },
     onError: (err: any) => {

@@ -143,7 +143,7 @@ export default function RegisterPage() {
                 <OTPForm
                   Email={formData.Email}
                   timeLeft={60}
-                  onResend={() => setShowOTPForm(false)}
+                  actionType="register"
                 />
               </div>
             ) : (
