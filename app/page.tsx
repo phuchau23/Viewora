@@ -1,343 +1,223 @@
 "use client";
+import { useEffect, useRef, useLayoutEffect, useState } from "react";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import {
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  Play,
-  CalendarDays,
-  Star,
-  Clock,
-  Tag,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { movies, formatDuration, promotions } from "@/lib/data";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { movies } from "@/lib/data";
+import MovieSearch from "./movies/components/MovieSearch";
+import CinemaCard from "@/components/common/cinemaCard";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [autoplay, setAutoplay] = useState(true);
-  const featuredMovies = movies
-    .filter((movie) => movie.status === "now-showing")
-    .slice(0, 5);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
+  const heroRef = useRef(null);
+  const titleRef = useRef(null);
+  const searchBoxRef = useRef(null);
+  const comingRef = useRef(null);
+  const showingRef = useRef(null);
 
-    if (autoplay) {
-      interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % featuredMovies.length);
-      }, 5000);
-    }
+  useLayoutEffect(() => {
+    if (!isLoaded) return;
 
-    return () => clearInterval(interval);
-  }, [autoplay, featuredMovies.length]);
+    const ctx = gsap.context(() => {
+      gsap.from(titleRef.current, {
+        y: -50,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reset",
+        },
+      });
 
-  const nextSlide = () => {
-    setAutoplay(false);
-    setCurrentSlide((prev) => (prev + 1) % featuredMovies.length);
-  };
+      gsap.from(searchBoxRef.current, {
+        y: 30,
+        opacity: 0,
+        duration: 1,
+        delay: 0.5,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reset",
+        },
+      });
 
-  const prevSlide = () => {
-    setAutoplay(false);
-    setCurrentSlide(
-      (prev) => (prev - 1 + featuredMovies.length) % featuredMovies.length
-    )
-  };
+      gsap.from(comingRef.current, {
+        opacity: 0,
+        y: 50,
+        duration: 1,
+        scrollTrigger: {
+          trigger: comingRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reset",
+        },
+      });
+
+      gsap.from(showingRef.current, {
+        opacity: 0,
+        y: 50,
+        duration: 1,
+        delay: 0.2,
+        scrollTrigger: {
+          trigger: showingRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reset",
+        },
+      });
+    });
+
+    return () => ctx.revert();
+  }, [isLoaded]);
+
+  if (!isLoaded) {
+    return <Loader onFinish={() => setIsLoaded(true)} />;
+  }
 
   return (
-    <main className="font-sans">
+    <div className="min-h-screen max-w-screen-xl mx-auto px-4 overflow-x-hidden">
       <Header />
-      <div className="flex flex-col">
-        {/* Hero Slider */}
-        <section className="relative h-[70vh] md:h-[80vh] overflow-hidden">
-          <div className="absolute inset-0 bg-black/40 z-10"></div>
 
-          {featuredMovies.map((movie, index) => (
-            <div
-              key={movie.id}
-              className={`absolute inset-0 transition-opacity duration-1000 ${
-                index === currentSlide
-                  ? "opacity-100"
-                  : "opacity-0 pointer-events-none"
-              }`}
-            >
-              <div className="relative h-full w-full">
-                <Image
-                  src={movie.image}
-                  alt={movie.title}
-                  fill
-                  className="object-cover"
-                  priority={index === 0}
-                />
-              </div>
+      <section
+        className="h-[600px] flex flex-col items-center justify-center px-4 relative"
+        ref={heroRef}
+      >
+        <div className="absolute inset-0 bg-background z-0" />
 
-              <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-background via-background/80 to-transparent h-1/3"></div>
+        <div className="relative z-10 text-center mb-8 px-4" ref={titleRef}>
+          <h3 className="text-2xl md:text-4xl font-bold">
+            Tìm kiếm phim bạn yêu thích!
+          </h3>
+          <p className="mt-3 text-sm md:text-base text-black dark:text-white">
+            &quot;Không bỏ lỡ khoảnh khắc – Bắt trọn từng thước phim!&quot;
+          </p>
+        </div>
 
-              <div className="absolute bottom-0 left-0 right-0 z-30 container px-4 pb-16 md:pb-24">
-                <div className="max-w-3xl">
-                  <h1 className="text-3xl md:text-5xl font-bold mb-4">
-                    {movie.title}
-                  </h1>
-                  <div className="flex flex-wrap gap-3 mb-4">
-                    {movie.genre.map((genre) => (
-                      <Badge
-                        key={genre}
-                        variant="secondary"
-                        className="text-xs"
-                      >
-                        {genre}
-                      </Badge>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-4 text-sm mb-6">
-                    <div className="flex items-center">
-                      <Clock className="h-4 w-4 mr-1" />
-                      <span>{formatDuration(movie.duration)}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 mr-1 text-yellow-500" />
-                      <span>{movie.rating}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <CalendarDays className="h-4 w-4 mr-1" />
-                      <span>
-                        {new Date(movie.releaseDate).toLocaleDateString(
-                          "en-US",
-                          { year: "numeric", month: "short", day: "numeric" }
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-4">
-                    <Button asChild>
-                      <Link href={`/booking/${movie.id}`}>Buy Tickets</Link>
-                    </Button>
-                    <Button variant="outline" className="gap-2">
-                      <Play className="h-4 w-4" /> Watch Trailer
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          <div className="absolute bottom-0 right-0 z-30 px-4 pb-16 md:pb-24 flex gap-2">
-            <Button size="icon" variant="ghost" onClick={prevSlide}>
-              <ChevronLeft className="h-6 w-6" />
-            </Button>
-            <Button size="icon" variant="ghost" onClick={nextSlide}>
-              <ChevronRight className="h-6 w-6" />
-            </Button>
-          </div>
-
-          <div className="absolute bottom-32 left-0 right-0 z-30 flex justify-center gap-2">
-            {featuredMovies.map((_, index) => (
-              <button
-                key={index}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === currentSlide ? "bg-primary w-8" : "bg-primary/30"
-                }`}
-                onClick={() => {
-                  setAutoplay(false);
-                  setCurrentSlide(index);
-                }}
-              />
-            ))}
-          </div>
-        </section>
-
-        {/* Movie Categories */}
-        <section className="container px-4 py-12 md:py-16">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold">Movies</h2>
-            <Button variant="ghost" asChild className="gap-2">
-              <Link href="/users/promotions">
-                View All <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-
-          <Tabs defaultValue="now-showing" className="w-full">
-            <TabsList className="mb-8">
-              <TabsTrigger value="now-showing">Now Showing</TabsTrigger>
-              <TabsTrigger value="coming-soon">Coming Soon</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="now-showing" className="mt-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {movies
-                  .filter((movie) => movie.status === "now-showing")
-                  .map((movie) => (
-                    <Card key={movie.id} className="overflow-hidden group">
-                      <div className="relative aspect-[2/3] overflow-hidden">
-                        <Image
-                          src={movie.image}
-                          alt={movie.title}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <div className="absolute bottom-0 left-0 right-0 p-4">
-                            <div className="flex gap-2 mb-2">
-                              <Button size="sm" asChild>
-                                <Link href={`/booking/${movie.id}`}>
-                                  Buy Tickets
-                                </Link>
-                              </Button>
-                              <Button
-                                size="icon"
-                                variant="secondary"
-                                className="h-8 w-8"
-                              >
-                                <Play className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <CardContent className="p-4">
-                        <h3 className="font-semibold truncate mb-1">
-                          <Link
-                            href={`/movies/${movie.id}`}
-                            className="hover:text-primary"
-                          >
-                            {movie.title}
-                          </Link>
-                        </h3>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <span>{movie.genre[0]}</span>
-                          <span>•</span>
-                          <span>{formatDuration(movie.duration)}</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="coming-soon" className="mt-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {movies
-                  .filter((movie) => movie.status === "coming-soon")
-                  .map((movie) => (
-                    <Card key={movie.id} className="overflow-hidden group">
-                      <div className="relative aspect-[2/3] overflow-hidden">
-                        <Image
-                          src={movie.image}
-                          alt={movie.title}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <div className="absolute bottom-0 left-0 right-0 p-4">
-                            <div className="flex gap-2 mb-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="gap-1"
-                              >
-                                <CalendarDays className="h-3 w-3" />{" "}
-                                {new Date(movie.releaseDate).toLocaleDateString(
-                                  "en-US",
-                                  { month: "short", day: "numeric" }
-                                )}
-                              </Button>
-                              <Button
-                                size="icon"
-                                variant="secondary"
-                                className="h-8 w-8"
-                              >
-                                <Play className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                        <Badge className="absolute top-2 right-2 bg-primary/90 hover:bg-primary">
-                          Coming Soon
-                        </Badge>
-                      </div>
-                      <CardContent className="p-4">
-                        <h3 className="font-semibold truncate mb-1">
-                          <Link
-                            href={`/movies/${movie.id}`}
-                            className="hover:text-primary"
-                          >
-                            {movie.title}
-                          </Link>
-                        </h3>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <span>{movie.genre[0]}</span>
-                          <span>•</span>
-                          <span>{formatDuration(movie.duration)}</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </section>
-
-        {/* Promotions */}
-        <section className="bg-muted py-12 md:py-16">
-          <div className="container px-4">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold">
-                Promotions & Offers
-              </h2>
-              <Button variant="ghost" asChild className="gap-2">
-                <Link href="/promotions">
-                  View All <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {promotions.map((promo) => (
-                <Card key={promo.id} className="overflow-hidden group">
-                  <div className="relative aspect-[16/9] overflow-hidden">
-                    <Image
-                      src={promo.image}
-                      alt={promo.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                  <CardContent className="p-5">
-                    <h3 className="text-lg font-semibold mb-2">
-                      {promo.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-4">
-                      {promo.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">
-                        Valid until:{" "}
-                        {new Date(promo.validUntil).toLocaleDateString(
-                          "en-US",
-                          { year: "numeric", month: "short", day: "numeric" }
-                        )}
-                      </span>
-                      <Button variant="outline" size="sm">
-                        Learn More
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
+        <div className="relative z-10 w-full max-w-2xl px-4" ref={searchBoxRef}>
+          <MovieSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+        </div>
+      </section>
+      <div className="mt-12" ref={comingRef}>
+        <h2 className="text-3xl font-semibold text-black dark:text-white border-l-4 border-orange-500 pl-4 mb-4">
+          Coming Soon
+        </h2>
+        <CinemaCard
+          movies={movies.filter((movie) => movie.status === "inComing")}
+        />
       </div>
+
+      <div className="mt-12" ref={showingRef}>
+        <h2 className="text-3xl font-semibold text-black dark:text-white border-l-4 border-red-500 pl-4 mb-4">
+          Now Showing
+        </h2>
+        <CinemaCard
+          movies={movies.filter((movie) => movie.status === "nowShowing")}
+        />
+      </div>
+
       <Footer />
-    </main>
+    </div>
+  );
+}
+
+// ------------------ Loader Component ------------------
+function Loader({ onFinish }: { onFinish: () => void }) {
+  const line1 = "THƯỚC PHIM LĂN BÁNH";
+  const line2 = "CẢM XÚC ĐONG ĐẦY";
+  const textRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLSpanElement>(null);
+  const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    let index1 = 0;
+    let index2 = 0;
+
+    const typeLine1 = () => {
+      if (textRef.current) {
+        textRef.current.innerText = line1.slice(0, index1);
+        index1++;
+        if (index1 <= line1.length) {
+          setTimeout(typeLine1, 80);
+        } else {
+          setTimeout(typeLine2, 500); // 👉 Delay 0.5s trước khi gõ dòng 2
+        }
+      }
+    };
+
+    const typeLine2 = () => {
+      if (textRef.current) {
+        textRef.current.innerText = `${line1}\n${line2.slice(0, index2)}`;
+        index2++;
+        if (index2 <= line2.length) {
+          setTimeout(typeLine2, 80);
+        } else {
+          gsap.to(".loader", {
+            opacity: 0,
+            duration: 2,
+            delay: 1.2,
+            onComplete: () => {
+              setShowLoader(false);
+              onFinish();
+            },
+          });
+        }
+      }
+    };
+
+    typeLine1();
+
+    if (cursorRef.current) {
+      gsap.to(cursorRef.current, {
+        opacity: 0,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut",
+        duration: 0.6,
+      });
+    }
+  }, [onFinish]);
+
+  if (!showLoader) return null;
+
+  return (
+    <div className="loader fixed inset-0 z-[9999] bg-black text-white flex items-center justify-center">
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-20"
+      >
+        <source src="/loader-bg.mp4" type="video/mp4" />
+      </video>
+
+      <div className="text-center relative z-10">
+        <div
+          className={`
+            text-[40px] md:text-[72px] font-extrabold leading-tight tracking-wide whitespace-pre-wrap font-['Bebas_Neue','Anton','sans-serif']
+            bg-gradient-to-r from-yellow-300 via-red-500 to-orange-400 bg-clip-text text-transparent
+            dark:drop-shadow-[0_2px_10px_rgba(255,100,0,0.6)]
+            light:text-black
+          `}
+        >
+          <div ref={textRef} className="inline-block" />
+          <span
+            ref={cursorRef}
+            className="inline-block w-[5px] h-[1em] bg-white ml-2 align-middle"
+          />
+        </div>
+
+        <div className="mt-6 text-sm text-gray-400 font-mono tracking-widest uppercase">
+          Loading cinematic experience...
+        </div>
+      </div>
+    </div>
   );
 }

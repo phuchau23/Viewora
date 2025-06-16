@@ -213,3 +213,48 @@
   @apply animate-pulse bg-gradient-to-r from-secondary via-secondary/50 to-secondary bg-[length:200%_100%];
   animation: skeleton-loading 1.5s infinite;
 }
+
+
+.seat {
+  @apply w-8 h-8 rounded-t-lg flex items-center justify-center text-xs font-medium transition-colors cursor-pointer;
+}
+
+.seat-available {
+  @apply bg-secondary hover:bg-primary/80;
+}
+
+.seat-available.vip {
+  @apply bg-yellow-200 hover:bg-yellow-300;
+}
+
+.seat-selected {
+  @apply bg-primary text-white;
+}
+
+.seat-reserved {
+  @apply bg-muted-foreground cursor-not-allowed;
+}
+
+.couple-seat {
+  @apply w-[88px] bg-pink-500 text-white rounded-full;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.animate-float {
+  animation: float 10s linear infinite;
+}
+
+
+.glow-text {
+  text-shadow: 0 0 10px #ffffffcc, 0 0 20px #ff00cc99;
+}

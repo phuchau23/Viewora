@@ -1,60 +1,63 @@
-// middleware.ts
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import jwt from 'jsonwebtoken'
+import { NextRequest, NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
 
-const PUBLIC_PATHS = ['/', '/login', '/signup'];
+const authRoutes = ['/login', '/register', '/forgot-password'];
 
-export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-
-  // Allow public paths
-  if (PUBLIC_PATHS.includes(pathname)) {
-    return NextResponse.next();
-  }
-
-  const token = req.cookies.get('token')?.value;
-
-  // If no token, redirect to login
-  if (!token) {
-    return NextResponse.redirect(new URL('/login', req.url));
-  }
-
+const getUserRole = (token: string | undefined): string | null => {
+  if (!token) return null;
   try {
-    const secret = process.env.JWT_SECRET!;
-    const decoded = jwt.verify(token, secret) as { role: string };
-
-    const role = decoded.role;
-
-    // Route protection example
-    if (pathname.startsWith('/admin') && role !== 'Admin') {
-      return NextResponse.redirect(new URL('/unauthorized', req.url));
-    }
-
-    if (pathname.startsWith('/user') && role !== 'User') {
-      return NextResponse.redirect(new URL('/unauthorized', req.url));
-    }
-
-    if (pathname.startsWith('/manager') && role !== 'Manager') {
-      return NextResponse.redirect(new URL('/unauthorized', req.url));
-    }
-
-    if (pathname.startsWith('/staff') && role !== 'Staff') {
-      return NextResponse.redirect(new URL('/unauthorized', req.url));
-    }
-
-    return NextResponse.next();
-  } catch (err) {
-    console.error('Invalid token:', err);
-    return NextResponse.redirect(new URL('/login', req.url));
+    const decoded = jwt.decode(token) as { role?: string } | null;
+    return decoded?.role ?? null;
+  } catch (error) {
+    console.error('[AUTH] Failed to decode token:', error);
+    return null;
   }
+};
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const token = request.cookies.get('auth-token')?.value;
+  const userRole = getUserRole(token);
+
+  // Nếu đang ở trang auth rồi đã login => redirect dashboard
+  const isAuthRoute = authRoutes.some(
+    route => pathname === route || pathname.startsWith(`${route}/`)
+  );
+  if (isAuthRoute && token) {
+    return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+  }
+
+  // Phân quyền admin: chỉ admin được vào folder /admin/*
+  const isAdminRoute = pathname.startsWith('/admin/');
+  if (isAdminRoute) {
+    if (!token || userRole !== 'Admin') {
+      // Chặn user không phải admin hoặc chưa login
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+  }
+
+  // Phân quyền staff: chỉ staff được vào //*
+  const isEmployeeRoute = pathname.startsWith('/staff/');
+  if (isEmployeeRoute) {
+    if (!token || userRole !== 'Employee') {  
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+  }
+
+  // Nếu user là Staff mà vào trang không phải /staff → redirect về /staff
+  if (!isEmployeeRoute && userRole === 'Employee' && !pathname.startsWith('/staff/')) {
+    return NextResponse.redirect(new URL('/staff/dashboard', request.url));
+  }
+
+  // Nếu user là Admin mà vào trang không phải /admin → redirect về /admin
+  if (!isAdminRoute && userRole === 'Admin' && !pathname.startsWith('/admin/')) {
+    return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+  }
+
+  // Trường hợp user khác (không staff, không admin) hoặc chưa login cho phép truy cập bình thường
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all routes except static files and public paths
-     */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
-  ],
-}
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|images|fonts|assets).*)'],
+};

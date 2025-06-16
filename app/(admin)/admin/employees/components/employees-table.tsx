@@ -59,9 +59,19 @@ interface EmployeesTableProps {
   data: Employee[];
   onView: (employee: Employee) => void;
   onEdit: (employee: Employee) => void;
+  pagination: PaginationState;
+  setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
+  pageCount: number; // <-- thêm dòng này
 }
 
-export function EmployeesTable({ data, onView, onEdit }: EmployeesTableProps) {
+export function EmployeesTable({
+  data,
+  onView,
+  onEdit,
+  pagination,
+  setPagination,
+  pageCount,
+}: EmployeesTableProps) {
   const getInitials = (fullName: string) =>
     fullName
       .split(" ")
@@ -72,10 +82,6 @@ export function EmployeesTable({ data, onView, onEdit }: EmployeesTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
 
   console.log(data);
 
@@ -254,16 +260,19 @@ export function EmployeesTable({ data, onView, onEdit }: EmployeesTableProps) {
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    manualPagination: true, // bật chế độ phân trang thủ công
+    onPaginationChange: setPagination, // <-- từ props
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
-    onPaginationChange: setPagination,
     state: {
       sorting,
       columnFilters,
       globalFilter,
-      pagination,
+      pagination, // <-- từ props
     },
+
+    pageCount,
   });
 
   return (

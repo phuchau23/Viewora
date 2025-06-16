@@ -127,6 +127,73 @@ export class ApiService {
     };
   }
 
+  // private toFormData(
+  //   data: Record<string, unknown>,
+  //   options: { flattenObjects?: boolean } = {}
+  // ): FormData {
+  //   const formData = new FormData();
+  //   const { flattenObjects = false } = options;
+
+  //   const processValue = (key: string, value: unknown) => {
+  //     if (value === undefined || value === null) return;
+
+  //     if (Array.isArray(value)) {
+  //       value.forEach((item, index) => processValue(`${key}[${index}]`, item));
+  //     } else if (
+  //       value instanceof Object &&
+  //       !(value instanceof File) &&
+  //       !(value instanceof Blob)
+  //     ) {
+  //       if (flattenObjects) {
+  //         Object.entries(value).forEach(([subKey, subValue]) =>
+  //           processValue(`${key}[${subKey}]`, subValue)
+  //         );
+  //       } else {
+  //         formData.append(key, JSON.stringify(value));
+  //       }
+  //     } else if (value instanceof File || value instanceof Blob) {
+  //       formData.append(key, value, (value as File).name || "file");
+  //     } else {
+  //       formData.append(key, String(value));
+  //     }
+  //   };
+
+  //   Object.entries(data).forEach(([key, value]) => processValue(key, value));
+  //   return formData;
+  // }
+
+  // private createParams(params?: RequestParams): URLSearchParams | undefined {
+  //   if (!params) return undefined;
+  //   const urlParams = new URLSearchParams();
+  //   Object.entries(params).forEach(([key, value]) => {
+  //     if (value === undefined || value === null) return;
+  //     if (Array.isArray(value))
+  //       value.forEach((item) => urlParams.append(key, String(item)));
+  //     else urlParams.append(key, String(value));
+  //   });
+  //   return urlParams;
+  // }
+
+  // private async request<T>(
+  //   config: AxiosRequestConfig & { useJson?: boolean }
+  // ): Promise<ApiResponse<T>> {
+  //   const updatedConfig: AxiosRequestConfig = { ...config };
+  //   if (
+  //     updatedConfig.method?.toUpperCase() === "POST" &&
+  //     updatedConfig.data &&
+  //     !(updatedConfig.data instanceof FormData) &&
+  //     !config.useJson
+  //   ) {
+  //     updatedConfig.data = this.toFormData(updatedConfig.data);
+  //   }
+  //   const response: AxiosResponse<T> = await this.client(updatedConfig);
+  //   return {
+  //     data: response.data,
+  //     status: response.status,
+  //     headers: response.headers as Record<string, string>,
+  //   };
+  // }
+
   // GET request
   async get<T>(url: string, params?: RequestParams): Promise<ApiResponse<T>> {
     return this.request<T>({
@@ -154,6 +221,22 @@ export class ApiService {
       data,
     });
   }
+
+
+  // async post<T, D = unknown>(
+  //   url: string,
+  //   data?: D,
+  //   useJson: boolean = false
+  // ): Promise<ApiResponse<T>> {
+  //   const config: AxiosRequestConfig & { useJson?: boolean } = {
+  //     method: "POST",
+  //     url,
+  //     data: useJson ? JSON.stringify(data) : data,
+  //     headers: useJson ? { "Content-Type": "application/json" } : {},
+  //     useJson,
+  //   };
+  //   return this.request<T>(config);
+  // }
 
   // PUT request
   async put<T, D = Record<string, unknown> | FormData>(
