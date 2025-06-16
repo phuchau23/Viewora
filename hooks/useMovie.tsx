@@ -59,3 +59,20 @@ export function useCreateMovie() {
       data,
     };
   }
+
+  export function useUpdateMovie() {
+    const queryClient = useQueryClient();
+    const { mutate, isError, isSuccess, data } = useMutation({
+      mutationFn: (id: string, formData: FormData) => MovieService.updateMovie(id, formData),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["movies"] });
+      },
+    });
+    
+    return {
+      mutate,
+      isError,
+      isSuccess,
+      data,
+    };
+  }

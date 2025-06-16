@@ -9,9 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { SocialAuthButtons } from "@/components/shared/SocialAuthButtons";
 import { useGoogleLogin, useLogin } from "@/hooks/useAuth";
-import { getRedirectResult } from "firebase/auth";
-import { auth } from "@/lib/firebase/firebaseConfig";
-import { toast } from "@/hooks/use-toast";
 import Image from "next/image";
 
 const bgImages = [
@@ -26,15 +23,10 @@ export default function LoginPage() {
     password: "",
   });
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useLogin();
-  const {
-    googleLogin,
-    isLoading: googleLoading,
-    error: googleError,
-  } = useGoogleLogin();
+  const { login, isLoading } = useLogin();
+  const { googleLogin, isLoading: googleLoading } = useGoogleLogin();
   // Auto change background image
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,13 +37,15 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!loginData.email || !loginData.password) {
+      return; // tránh gọi login nếu thiếu dữ liệu
+    }
     await login(loginData);
   };
 
   const handleInputChange = (field: string, value: string) => {
     setLoginData((prev) => ({ ...prev, [field]: value }));
   };
-
 
   return (
     <div className="h-screen flex flex-row">
@@ -101,6 +95,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
+                required
                 value={loginData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 placeholder="Nhập email"
@@ -121,6 +116,7 @@ export default function LoginPage() {
                     handleInputChange("password", e.target.value)
                   }
                   placeholder="Nhập mật khẩu"
+                  required
                   className="pr-12 mt-2 text-lg"
                 />
                 <button

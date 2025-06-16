@@ -1,5 +1,5 @@
-'use client';
-import { FormEvent, useState } from "react";
+"use client";
+import { FormEvent, useState, useEffect } from "react";
 import { useCreateMovie } from "@/hooks/useMovie";
 import { useGetTypes } from "@/hooks/useTypes";
 import {
@@ -19,6 +19,13 @@ import { Textarea } from "@/components/ui/textarea";
 export const CreateModal = () => {
   const [open, setOpen] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+
+  const [posterFile, setPosterFile] = useState<File | null>(null);
+  const [posterPreview, setPosterPreview] = useState<string | null>(null);
+
+  const [bannerFiles, setBannerFiles] = useState<File[]>([]);
+  const [bannerPreviews, setBannerPreviews] = useState<string[]>([]);
+
   const { mutate: createMovie } = useCreateMovie();
   const { types, isLoading } = useGetTypes();
 
@@ -30,26 +37,57 @@ export const CreateModal = () => {
     );
   };
 
+  const handlePosterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPosterFile(file);
+      setPosterPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    setBannerFiles((prev) => [...prev, ...files]);
+    setBannerPreviews((prev) => [
+      ...prev,
+      ...files.map((file) => URL.createObjectURL(file)),
+    ]);
+  };
+
+  const removePoster = () => {
+    if (posterPreview) URL.revokeObjectURL(posterPreview);
+    setPosterFile(null);
+    setPosterPreview(null);
+  };
+
+  const removeBannerAt = (index: number) => {
+    setBannerFiles((prev) => prev.filter((_, i) => i !== index));
+    setBannerPreviews((prev) => {
+      URL.revokeObjectURL(prev[index]);
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    // Thêm các thể loại được chọn vào FormData
-    selectedTypes.forEach((type) => {
-      formData.append("MovieTypeNames", type);
-    });
+    selectedTypes.forEach((type) => formData.append("MovieTypeNames", type));
+    if (posterFile) formData.append("Poster", posterFile);
+    bannerFiles.forEach((file) => formData.append("Banner", file));
 
-    // Gọi API tạo phim
     createMovie(formData, {
-      onSuccess: () => {
-        setOpen(false); // Đóng modal khi thành công
-      },
-      onError: (error) => {
-        console.error("Lỗi khi tạo phim:", error);
-        // Có thể thêm thông báo lỗi cho người dùng ở đây
-      },
+      onSuccess: () => setOpen(false),
+      onError: (error) => console.error("Lỗi khi tạo phim:", error),
     });
   };
+
+  useEffect(() => {
+    return () => {
+      if (posterPreview) URL.revokeObjectURL(posterPreview);
+      bannerPreviews.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [posterPreview, bannerPreviews]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -117,7 +155,6 @@ export const CreateModal = () => {
               <Input name="TrailerUrl" required />
             </div>
 
-            {/* Multi select movie types */}
             <div className="col-span-2">
               <Label>Thể loại (chọn nhiều)</Label>
               <div className="border rounded-md p-2 max-h-[150px] overflow-y-auto">
@@ -137,27 +174,63 @@ export const CreateModal = () => {
                 )}
               </div>
             </div>
+
             <div>
               <Label htmlFor="Poster">Poster</Label>
-              <Input name="Poster" type="file" required />
+              <Input
+                name="Poster"
+                type="file"
+                accept="image/*"
+                required={!posterFile}
+                onChange={handlePosterChange}
+              />
+              {posterPreview && (
+                <div className="mt-2 relative w-fit">
+                  <img
+                    src={posterPreview}
+                    alt="Poster Preview"
+                    className="w-32 h-32 object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={removePoster}
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs"
+                  >
+                    X
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Multiple Banner Upload */}
             <div className="col-span-2">
-              <Label htmlFor="Banner">Banner (nhiều)</Label>
+              <Label htmlFor="Banner">Banner (nhiều ảnh)</Label>
               <Input
                 name="Banner"
                 type="file"
                 multiple
-                required
-                onChange={(e) => {
-                  const files = Array.from(e.target.files ?? []);
-                  console.log(
-                    "Chọn banner:",
-                    files.map((f) => f.name).join(", ")
-                  );
-                }}
+                accept="image/*"
+                onChange={handleBannerChange}
               />
+              {bannerPreviews.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {bannerPreviews.map((url, index) => (
+                    <div key={index} className="relative w-fit">
+                      <img
+                        src={url}
+                        alt={`Banner Preview ${index + 1}`}
+                        className="w-32 h-32 object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeBannerAt(index)}
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs"
+                      >
+                        X
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

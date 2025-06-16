@@ -106,7 +106,7 @@ export const MovieService = {
     return response.data;
   },
 
-  createMovie: async (formData: MovieCreateRequest) => {
+  createMovie: async (formData: FormData) => {
     const response = await apiService.post<MovieCreateResponse>('/movies', formData);
     return response.data;
   },

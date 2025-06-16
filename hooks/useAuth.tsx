@@ -39,7 +39,7 @@ export function useRegister() {
     isPending: isLoading,
     error: registerError,
   } = useMutation({
-    mutationFn: fetchAuth.register,
+    mutationFn:fetchAuth.register,
     onSuccess: (response: RegisterResponse) => {
       if (response.code === 200) {
         toast({
@@ -167,11 +167,6 @@ export function useLogin() {
   const { mutate: login, isPending: isLoading } = useMutation({
     mutationFn: async (data: LoginRequest): Promise<LoginResponse> => {
       const response = await fetchAuth.login(data);
-
-      if (response.code !== 200) {
-        throw new Error(response.message || "Đăng nhập thất bại.");
-      }
-
       return response;
     },
     onSuccess: (response) => {
