@@ -3,7 +3,7 @@ import {
   RoleApiResponse,
   RoleCreateRequest,
 } from "@/lib/api/service/fetchRole";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useRoles() {
   const { isError, isLoading, error, data } = useQuery({
@@ -34,10 +34,14 @@ export function useCreateRole() {
   };
 }
 export function useDeleteRole() {
+  const queryClient = useQueryClient();
   const { mutate, isError, isSuccess, data } = useMutation({
     mutationFn: (roleId: number) => RoleService.deleteRole(roleId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["roles"] });
+    },
   });
-
+  
   return {
     mutate,
     isError,

@@ -1,11 +1,10 @@
-'use client'
-import { useMutation, useQuery } from "@tanstack/react-query";
+"use client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TypeService } from "@/lib/api/service/fetchTypes";
-import { useToast } from "./use-toast";
 import { useState } from "react";
+import { useToast } from "./use-toast";
 
 export function useGetTypes() {
-    const { toast } = useToast();
     const [error, setError] = useState<string | null>(null);
 
     const { data, isLoading, isError } = useQuery({
@@ -24,12 +23,14 @@ export function useGetTypes() {
 export function useCreateType() {
     const { toast } = useToast();
     const [error, setError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
 
     const { mutate: createType, isPending: isLoading } = useMutation({
         mutationFn: TypeService.createType,
         onSuccess: () => {
             toast({ title: "Thành công", description: "Bạn đã tạo loại phim" });
             setError(null);
+            queryClient.invalidateQueries({ queryKey: ["types"] });
         },
         onError: (err: any) => {
             const errorMessage =
@@ -54,12 +55,14 @@ export function useCreateType() {
 export function useDeleteType() {
     const { toast } = useToast();
     const [error, setError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
 
     const { mutate: deleteType, isPending: isLoading } = useMutation({
         mutationFn: TypeService.deleteType,
         onSuccess: () => {
             toast({ title: "Thành công", description: "Bạn đã xóa loại phim" });
             setError(null);
+            queryClient.invalidateQueries({ queryKey: ["types"] });
         },
         onError: (err: any) => {
             const errorMessage =

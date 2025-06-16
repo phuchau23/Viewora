@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useGetTypes, useCreateType, useDeleteType } from "@/hooks/useTypes";
-import { Search, Trash2 } from "lucide-react";
+import { Plus, Search, Trash2, X } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -31,10 +31,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
 } from "@/components/ui/alert-dialog";
+import { useSort } from "@/hooks/useSort";
 
 export function TypeMovies() {
   const [newType, setNewType] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const { sortConfig, handleSort, sortedData } = useSort(["name"]);
+
   const {
     types,
     isLoading: isLoadingTypes,
@@ -51,6 +53,8 @@ export function TypeMovies() {
     isLoading: isDeleting,
     error: errorDelete,
   } = useDeleteType();
+  const sortedTypes = sortedData(types?.data || []);
+
 
   const handleAdd = () => {
     if (newType.trim()) {
@@ -78,80 +82,80 @@ export function TypeMovies() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Movies Management</CardTitle>
-          <CardDescription>Manage movies for your application</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {/* Header Actions */}
-          <div className="flex justify-between items-center mb-6">
-            <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search movies..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-          <Table>
-            <TableHeader>
-              <TableRow className="text-center">
-                <TableHead className="text-center">Tên Loại Phim</TableHead>
-                <TableHead className="text-center">Hành Động</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {types?.data?.map((type) => (
-                <TableRow key={type.id} className="text-center">
-                  <TableCell className="text-center">{type.name}</TableCell>
-                  <TableCell className="text-center">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          <Trash2 className="h-4 w-4" />
+    <div className="container py-6">
+      {/* Header Actions */}
+      <div className="flex justify-between items-center mb-6 py-2">
+        <div className="relative w-72 px-2">
+          <Plus className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Add type..."
+            value={newType}
+            onChange={(e) => setNewType(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Button variant="secondary" onClick={handleAdd}>
+          Add
+        </Button>
+      </div>
+      {/* Scrollable Table */}
+      <div className="max-h-[700px] overflow-y-auto">
+        <Table>
+          <TableHeader className="text-center">
+            <TableRow>
+              <TableHead onClick={() => handleSort("name")}>
+                Tên Loại Phim{" "}
+                {sortConfig.key === "name" &&
+                  (sortConfig.direction === "ascending" ? "↑" : "↓")}
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sortedTypes?.map((type) => (
+              <TableRow key={type.id}>
+                <TableCell className="text-center">{type.name}</TableCell>
+                <TableCell className="text-center">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="rounded-full"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="text-xl font-semibold text-red-600">
+                          Delete Type
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="text-sm text-muted-foreground mt-2">
+                          Are you sure you want to delete the type{" "}
+                          <strong className="text-black">"{type.name}"</strong>
+                          ? <br />
+                          This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter className="mt-4 flex justify-center gap-2">
+                        <AlertDialogCancel asChild>
+                          <Button variant="outline">Cancel</Button>
+                        </AlertDialogCancel>
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleDelete(type.id)}
+                        >
+                          Delete
                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className="text-xl font-semibold text-red-600">
-                            Delete Type
-                          </AlertDialogTitle>
-                          <AlertDialogDescription className="text-sm text-muted-foreground mt-2">
-                            Are you sure you want to delete the type{" "}
-                            <strong className="text-black">
-                              "{type.name}"
-                            </strong>
-                            ? <br />
-                            This action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter className="mt-4 flex justify-center gap-2">
-                          <AlertDialogCancel asChild>
-                            <Button variant="outline">Cancel</Button>
-                          </AlertDialogCancel>
-                          <Button
-                            variant="destructive"
-                            onClick={() => handleDelete(type.id)}
-                          >
-                            Delete
-                          </Button>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          {errorDelete && (
-            <div className="text-red-500 mt-4">{errorDelete}</div>
-          )}
-        </CardContent>
-      </Card>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
