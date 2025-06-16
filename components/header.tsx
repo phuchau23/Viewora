@@ -127,21 +127,6 @@ export default function Header() {
             <span>Ho Chi Minh City</span>
           </div>
 
-          <div className="relative hidden sm:block">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search movies..."
-              className="w-[200px] lg:w-[280px] pl-9 rounded-full bg-secondary"
-            />
-          </div>
-
-          {/* Mobile search */}
-          <Button variant="ghost" size="icon" className="md:hidden">
-            <Search className="h-5 w-5" />
-            <span className="sr-only">Search</span>
-          </Button>
-
           {/* Nút Profile - chỉ hiển thị nếu có token */}
           {token && (
             <Button

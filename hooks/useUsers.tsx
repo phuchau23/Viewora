@@ -6,15 +6,24 @@ import UserService, {
   ProfileUpdateResponse,
 } from "@/lib/api/service/fetchUser";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { UserResponse } from "@/lib/api/service/fetchUser";
+import {
+  UserListResponse,
+  UserSearchParams,
+} from "@/lib/api/service/fetchUser";
 
-export function useUsers() {
+export function useUsers(filters?: UserSearchParams) {
   const { isError, isLoading, error, data } = useQuery({
     queryKey: ["users"],
-    queryFn: () => UserService.getUser(),
-    select: (data: UserResponse) => ({
-      users: data.data,
+    queryFn: () => UserService.getUser(filters),
+    select: (data: UserListResponse) => ({
+      users: data.data.items,
       status: data.statusCode,
+      totalItems: data.data.totalItems,
+      currentPage: data.data.currentPage,
+      totalPages: data.data.totalPages,
+      pageSize: data.data.pageSize,
+      hasPreviousPage: data.data.hasPreviousPage,
+      hasNextPage: data.data.hasNextPage,
     }),
   });
   return {
@@ -22,6 +31,12 @@ export function useUsers() {
     isLoading,
     error,
     users: data?.users,
+    totalItems: data?.totalItems,
+    currentPage: data?.currentPage,
+    totalPages: data?.totalPages,
+    pageSize: data?.pageSize,
+    hasPreviousPage: data?.hasPreviousPage,
+    hasNextPage: data?.hasNextPage,
   };
 }
 import { getCookie } from "cookies-next";

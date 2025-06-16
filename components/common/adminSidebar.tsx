@@ -9,7 +9,8 @@ import {
   Home,
   User,
   ContactRound,
-  Film
+  Film,
+  LogOut,
 } from "lucide-react";
 
 import {
@@ -24,7 +25,10 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-
+import { Button } from "../ui/button";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 // Admin navigation items
 const adminNavItems = [
   {
@@ -58,6 +62,11 @@ const adminNavItems = [
     icon: Film,
   },
   {
+    title: "Rooms",
+    url: "/admin/rooms",
+    icon: Home,
+  },
+  {
     title: "Settings",
     url: "/admin/settings",
     icon: Settings,
@@ -68,6 +77,13 @@ const adminNavItems = [
 export function AdminSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
+  const router = useRouter();
+  const [token, setToken] = useState<string | null>(null);
+  const handleLogout = () => {
+    Cookies.remove("auth-token");
+    setToken(null);
+    router.push("/login");
+  };
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -107,6 +123,14 @@ export function AdminSidebar({
         </SidebarGroup>
       </SidebarContent>
       <SidebarRail />
+      <Button
+        onClick={handleLogout}
+        className="hidden md:flex"
+        variant="outline"
+      >
+        <LogOut className="h-4 w-4 mr-1" />
+        Sign Out
+      </Button>
     </Sidebar>
   );
 }

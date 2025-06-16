@@ -1,9 +1,44 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  images: { unoptimized: true },
-};
+  images: {
+    domains: [
+      // Google
+      'encrypted-tbn0.gstatic.com',
 
-module.exports = nextConfig;
+      // MoMo
+      'cinema.momocdn.net',
+
+      // CGV, Metiz, StarLight
+      'cgvdt.vn',
+      'metiz.vn',
+      'starlight.vn',
+
+      // IMP Awards, TMDB, Elleman
+      'www.impawards.com',
+      'www.themoviedb.org',
+      'www.elleman.vn',
+
+      // Firstpost, Reddit, Wix
+      'images.firstpost.com',
+      'preview.redd.it',
+      'images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com',
+
+      // Khenphim, brvn.vn
+      'khenphim.com',
+      'cdn.brvn.vn',
+
+      // Baotintuc, VCDN
+      'cdnmedia.baotintuc.vn',
+      'iguov8nhvyobj.vcdn.cloud',
+
+      // Fallback nếu bạn dùng imgur hoặc upload sau này
+      'i.imgur.com',
+
+      'vb.1cdn.vn',
+      'images.unsplash.com'
+    ]
+  }
+}
+
+module.exports = nextConfig

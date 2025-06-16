@@ -25,34 +25,55 @@ export interface Account {
 }
 
 export interface EmployeeApiResponse {
-    code: number,
-    statusCode: string,
-    message: string,
-    data: Employee[]
-}
+    code: number;
+    statusCode: string;
+    message: string;
+    data: {
+      items: Employee[];
+      totalItems: number;
+      currentPage: number;
+      totalPages: number;
+      pageSize: number;
+      hasPreviousPage: boolean;
+      hasNextPage: boolean;
+    };
+  }
 
-export interface CreateEmployeeRequest {
+  
+
+  export interface CreateEmployeeRequest {
     position: string;
-    accountId: number;
     department: string;
     workLocation: string;
     baseSalary: number;
-}
+    accountId: number;
+    account: {
+      email: string;
+      fullName: string;
+      dateOfBirth: string; // ISO format: yyyy-MM-dd
+      gender: string;
+      phoneNumber: string;
+      password: string;
+    };
+  }
+
 
 export const EmployeeService = {
-    async getEmployees(): Promise<EmployeeApiResponse> {
-        const response = await apiService.get<EmployeeApiResponse>('/employees');
+    async getEmployees(pageIndex = 1, pageSize = 10): Promise<EmployeeApiResponse> {
+        const response = await apiService.get<EmployeeApiResponse>(`/employees?pageIndex=${pageIndex}&pageSize=${pageSize}`);
         return response.data;
-    },
-
-    createEmployee: async (formData: FormData) => {
-        const response = await apiService.post<CreateEmployeeRequest>("/employees", formData);
+      },
+      async createEmployee(data: CreateEmployeeRequest): Promise<EmployeeApiResponse> {
+        const response = await apiService.post<EmployeeApiResponse>(
+          "/employees",
+          data,
+          false // useJson = false => tự động chuyển thành FormData
+        );
         return response.data;
-    },
-
-    deleteEmployee: async (id: number) => {
-        const response = await apiService.delete(`/employees/${id}`);
-        return response.data;
-    }
+      },
+    // async deleteEmployee(id: number): Promise<EmployeeApiResponse> {
+    //     const response = await apiService.delete(`/employees/${id}`);
+    //     return response.data;
+    // }
 
 }
