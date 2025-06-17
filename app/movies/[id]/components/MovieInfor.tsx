@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { User, Calendar, Clock, Film, Play, X } from "lucide-react";
-import { Movie } from "@/lib/data";
 import Image from "next/image";
+import { Movie } from "@/lib/api/service/fetchMovies";
 
 interface MovieTabsProps {
   movie: Movie;
@@ -48,7 +48,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
           </div>
         </div>
         {/* Tab Content */}
-        <div className="min-h-[600px]">
+        <div className="min-h-[auto]">
           {activeTab === "info" && (
             <div className=" animate-fade-in">
               {/* Main Info */}
@@ -114,7 +114,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                         Diễn viên
                       </h3>
                       <p className="text-lg leading-relaxed text-gray-800 dark:text-white">
-                        {movie.actor.join(", ")}
+                        {movie.actor}
                       </p>
                     </div>
                     <div className="mb-6">
@@ -122,12 +122,12 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                         Thể loại
                       </h3>
                       <div className="flex flex-wrap gap-2">
-                        {movie.movieType.map((genre, index) => (
+                        {movie.movieTypes.map((genre, index) => (
                           <span
                             key={index}
                             className="px-3 py-1 bg-yellow-400 text-gray-900 rounded-full text-sm font-medium dark:bg-yellow-600 dark:text-white"
                           >
-                            {genre}
+                            {genre.name}
                           </span>
                         ))}
                       </div>
@@ -140,7 +140,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                     Nội dung phim
                   </h3>
                   <p className="text-lg leading-relaxed text-gray-800 dark:text-white">
-                    {movie.detail}
+                    {movie.description}
                   </p>
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                   <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden group cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300">
                     <img
                       src={movie.banner}
-                      alt={`${movie.title} trailer`}
+                      alt={`${movie.name} trailer`}
                       className="w-full h-full object-cover opacity-75 group-hover:opacity-60 transition-opacity duration-300"
                     />
 
@@ -205,7 +205,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
 
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                       <h3 className="text-white text-xl font-bold tracking-wide">
-                        {movie.title} - Official Trailer
+                        {movie.name} - Official Trailer
                       </h3>
                       <p className="text-gray-200 text-xs mt-1 font-medium">
                         Thời lượng: {movie.duration} phút
@@ -236,8 +236,8 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
               </button>
 
               <iframe
-                src={getYouTubeEmbedUrl(movie.trailer)}
-                title={`${movie.title} Trailer`}
+                src={getYouTubeEmbedUrl(movie.trailerUrl)}
+                title={`${movie.name} Trailer`}
                 className="w-full h-full rounded-lg"
                 allowFullScreen
               />
