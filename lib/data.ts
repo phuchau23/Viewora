@@ -644,197 +644,6 @@ export function formatDuration(minutes: number): string {
   return `${hours}h ${mins}m`;
 }
 
-export type Movie = {
-  id: string;
-  title: string; // Tên phim
-  banner: string; // Ảnh nền to tràn màn hình
-  poster: string; // Ảnh phim trên tab
-  director: string; // Đạo diễn
-  actor: string[]; // Diễn viên
-  movieType: string[]; // Thể loại
-  duration: number; // Thời lượng (phút)
-  startShow: string; // Ngày công chiếu
-  createAt: number; // Năm phát hành
-  trailer: string; // Demo
-  status: 'inComing' | 'nowShowing' | 'Ended'; // Trạng thái
-  rate: number; // Điểm 1-5
-  age: 'T13' | 'T16' | 'T18'; // Độ tuổi
-    detail: string; // Mô tả
-};
-
-export const movies: Movie[] = [
-  {
-    id: "1",
-    title: "Biệt Đội Săn Ma: Kỷ Nguyên Băng Giá",
-    banner: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5iJsJt8-kWJ6TasjKGnP2lrXgOQutabPbRg&s",
-    poster: "https://cinema.momocdn.net/img/35133717027059114-mLYUMv3l8kPZ7K9NUbcCwFXksnS.jpg",
-    director: "Gil Kenan",
-    actor: ["Paul Rudd", "Carrie Coon", "Finn Wolfhard"],
-    movieType: ["Hài hước", "Kinh dị", "Phiêu lưu"],
-    duration: 115,
-    startShow: "2025-03-21",
-    createAt: 2025,
-    trailer: "https://www.youtube.com/watch?v=PWioEshJe7k",
-    status: "nowShowing",
-    rate: 4.2,
-    age: "T13",
-    detail: "Biệt đội săn ma thế hệ mới đối mặt với mối đe dọa băng giá, đe dọa nhấn chìm cả thế giới trong kỷ băng hà mới."
-  },
-  {
-    id: "2",
-    title: "Mufasa: Vua Sư Tử",
-    banner: "https://www.elleman.vn/app/uploads/2019/07/21/poster-review-phim-vua-su-tu-2019-elle-man.jpg",
-    poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQO9fsg2zPXi6Tltr0CphejUU87RBQJ_BSpUQ&s",
-    director: "Barry Jenkins",
-    actor: ["Aaron Pierre", "Kelvin Harrison Jr.", "Beyoncé"],
-    movieType: ["Hoạt hình", "Gia đình", "Phiêu lưu"],
-    duration: 120,
-    startShow: "2025-12-20",
-    createAt: 2025,
-    trailer: "https://www.youtube.com/watch?v=c75XRkb2MpQ",
-    status: "inComing",
-    rate: 0,
-    age: "T13",
-    detail: "Câu chuyện về hành trình trở thành vua của Mufasa, cha của Simba, với những thử thách và chiến thắng vĩ đại."
-  },
-  {
-    id: "3",
-    title: "Dune: Phần Hai",
-    banner: "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Tintuc/dune(1).jpg",
-    poster: "https://metiz.vn/media/poster_film/poster_dune_2_bb_3_no_qr_1_.jpg",
-    director: "Denis Villeneuve",
-    actor: ["Timothée Chalamet", "Zendaya", "Florence Pugh"],
-    movieType: ["Khoa học viễn tưởng", "Hành động"],
-    duration: 166,
-    startShow: "2025-06-20",
-    createAt: 2024,
-    trailer: "https://www.youtube.com/watch?v=kCO-RO3q7U4",
-    status: "nowShowing",
-    rate: 4.8,
-    age: "T16",
-    detail: "Paul Atreides tiếp tục cuộc chiến trên sa mạc Arrakis, đối mặt với các thế lực thù địch để bảo vệ tương lai của vũ trụ."
-  },
-  {
-    id: "4",
-    title: "Kung Fu Panda 4",
-    banner: "https://images.firstpost.com/uploads/2024/03/Untitled-design-58-2024-03-d80bd9ba368eff2fbb5a6e1f800c770d.jpg?im=FitAndFill=(596,336)",
-    poster: "https://preview.redd.it/what-are-your-thoughts-on-kung-fu-panda-4-v0-h07dcvrojaqc1.png?width=640&crop=smart&auto=webp&s=49b722359060b4184301d2bf8088b9e7fac2445b",
-    director: "Mike Mitchell",
-    actor: ["Jack Black", "Awkwafina", "Viola Davis"],
-    movieType: ["Hoạt hình", "Hành động", "Hài hước"],
-    duration: 94,
-    startShow: "2025-07-15",
-    createAt: 2024,
-    trailer: "https://www.youtube.com/watch?v=_inKs4eeHiI",
-    status: "inComing",
-    rate: 4.0,
-    age: "T13",
-    detail: "Po tiếp tục hành trình trở thành thủ lĩnh tinh thần, đối mặt với một kẻ thù mới có khả năng biến hình đầy nguy hiểm."
-  },
-  {
-    id: "5",
-    title: "Inside Out 2: Những Cảm Xúc Hỗn Độn",
-    banner: "https://cgvdt.vn/files/ckfinder/images/Article/2015/van%20hoa/so%202020/1.jpg",
-    poster: "https://khenphim.com/wp-content/uploads/2024/06/Inside-Out-2-pic1-poster_KP.webp",
-    director: "Kelsey Mann",
-    actor: ["Amy Poehler", "Phyllis Smith", "Lewis Black"],
-    movieType: ["Hoạt hình", "Gia đình", "Hài hước"],
-    duration: 100,
-    startShow: "2025-06-14",
-    createAt: 2025,
-    trailer: "https://www.youtube.com/watch?v=LEjhY15eCx0",
-    status: "nowShowing",
-    rate: 4.5,
-    age: "T13",
-    detail: "Riley bước vào tuổi thiếu niên với hàng loạt cảm xúc mới lạ, khiến thế giới nội tâm trở nên hỗn loạn hơn bao giờ hết."
-  },
-  {
-    id: "6",
-    title: "Deadpool & Wolverine",
-    banner: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/846a9086-8a40-43e0-aa10-2fc7d6d73730/dhs4t97-115690fc-572c-409d-be7d-4f109419bcc8.jpg/v1/fill/w_1280,h_540,q_75,strp/deadpool_and_wolverine_poster_banner_textless__01_by_mintmovi3_dhs4t97-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NTQwIiwicGF0aCI6IlwvZlwvODQ2YTkwODYtOGE0MC00M2UwLWFhMTAtMmZjN2Q2ZDczNzMwXC9kaHM0dDk3LTExNTY5MGZjLTU3MmMtNDA5ZC1iZTdkLTRmMTA5NDE5YmNjOC5qcGciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19._YTMdFYEzXRx3ZQhbzw02V3kGVN9wFbE1Z5jwZ6BHYs",
-    poster: "https://preview.redd.it/marvel-studios-deadpool-wolverine-poster-made-by-me-v0-mtyn5q5io2cd1.png?width=1080&crop=smart&auto=webp&s=0ed2b3456615c1d8aa614590958d7768c84d9069",
-    director: "Shawn Levy",
-    actor: ["Ryan Reynolds", "Hugh Jackman", "Emma Corrin"],
-    movieType: ["Hành động", "Hài hước", "Siêu anh hùng"],
-    duration: 128,
-    startShow: "2025-07-26",
-    createAt: 2025,
-    trailer: "https://www.youtube.com/watch?v=73_1biulkYk",
-    status: "inComing",
-    rate: 0,
-    age: "T16",
-    detail: "Deadpool và Wolverine bắt tay trong một cuộc phiêu lưu xuyên không gian và thời gian, đậm chất hỗn loạn và châm biếm."
-  },
-  {
-    id: "7",
-    title: "Nhà Bà Nữ 2",
-    poster: "https://vb.1cdn.vn/2022/12/03/nbn_teaser-poster_fb.jpg",
-    banner: "https://cdn.brvn.vn/editor/2023/02/A42_330082-NBN-1_1675586806.jpeg",
-    director: "Trấn Thành",
-    actor: ["Trấn Thành", "NSND Ngọc Giàu", "Uyển Ân"],
-    movieType: ["Tâm lý", "Gia đình", "Hài hước"],
-    duration: 112,
-    startShow: "2025-08-01",
-    createAt: 2025,
-    trailer: "https://www.youtube.com/watch?v=sample1234",
-    status: "inComing",
-    rate: 0,
-    age: "T16",
-    detail: "Tiếp nối phần trước, Nhà Bà Nữ lại rơi vào hàng loạt tình huống dở khóc dở cười khi đón chào thành viên mới trong gia đình."
-  },
-  {
-    id: "8",
-    title: "Mission: Impossible – Kẻ Nổi Loạn",
-    banner: "https://cdnmedia.baotintuc.vn/Upload/DmtgOUlHWBO5POIHzIwr1A/files/2023/07/16/mission-impossible-17072023.jpg",
-    poster: "https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/3/image/1800x/71252117777b696995f01934522c402d/m/i/mi8_poster_470x700.jpg",
-    director: "Christopher McQuarrie",
-    actor: ["Tom Cruise", "Rebecca Ferguson", "Simon Pegg"],
-    movieType: ["Hành động", "Giật gân", "Điệp viên"],
-    duration: 143,
-    startShow: "2025-09-10",
-    createAt: 2025,
-    trailer: "https://www.youtube.com/watch?v=avz06PDqDbM",
-    status: "inComing",
-    rate: 0,
-    age: "T18",
-    detail: "Ethan Hunt đối đầu với một tổ chức ngầm mới đe dọa toàn cầu, nơi mọi nhiệm vụ đều trở thành điều không thể."
-  },
-  {
-    id: "9",
-    title: "Mission: Impossible – Kẻ Nổi Loạn",
-    banner: "https://cdnmedia.baotintuc.vn/Upload/DmtgOUlHWBO5POIHzIwr1A/files/2023/07/16/mission-impossible-17072023.jpg",
-    poster: "https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/3/image/1800x/71252117777b696995f01934522c402d/m/i/mi8_poster_470x700.jpg",
-    director: "Christopher McQuarrie",
-    actor: ["Tom Cruise", "Rebecca Ferguson", "Simon Pegg"],
-    movieType: ["Hành động", "Giật gân", "Điệp viên"],
-    duration: 143,
-    startShow: "2025-09-10",
-    createAt: 2025,
-    trailer: "https://www.youtube.com/watch?v=avz06PDqDbM",
-    status: "inComing",
-    rate: 0,
-    age: "T18",
-    detail: "Ethan Hunt đối đầu với một tổ chức ngầm mới đe dọa toàn cầu, nơi mọi nhiệm vụ đều trở thành điều không thể."
-  },
-  {
-    id: "10",
-    title: "Mission: Impossible – Kẻ Nổi Loạn",
-    banner: "https://cdnmedia.baotintuc.vn/Upload/DmtgOUlHWBO5POIHzIwr1A/files/2023/07/16/mission-impossible-17072023.jpg",
-    poster: "https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/3/image/1800x/71252117777b696995f01934522c402d/m/i/mi8_poster_470x700.jpg",
-    director: "Christopher McQuarrie",
-    actor: ["Tom Cruise", "Rebecca Ferguson", "Simon Pegg"],
-    movieType: ["Hành động", "Giật gân", "Điệp viên"],
-    duration: 143,
-    startShow: "2025-09-10",
-    createAt: 2025,
-    trailer: "https://www.youtube.com/watch?v=avz06PDqDbM",
-    status: "nowShowing",
-    rate: 0,
-    age: "T18",
-    detail: "Ethan Hunt đối đầu với một tổ chức ngầm mới đe dọa toàn cầu, nơi mọi nhiệm vụ đều trở thành điều không thể."
-  }
-  
-];
 
 export interface User {
   id: string;
@@ -945,4 +754,92 @@ export const sampleUser: User = {
   joinDate: "",
   department: "",
   location: ""
+};
+
+export const movies: Movie[] = [
+  {
+    id: "1",
+    title: "Biệt Đội Săn Ma: Kỷ Nguyên Băng Giá",
+    banner: "https://images.pexels.com/photos/3131971/pexels-photo-3131971.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    poster: "https://images.pexels.com/photos/3131971/pexels-photo-3131971.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    director: "Gil Kenan",
+    actor: ["Paul Rudd", "Carrie Coon", "Finn Wolfhard"],
+    category: ["Hài hước", "Kinh dị", "Phiêu lưu"],
+    duration: 115,
+    startShow: "2025-03-21",
+    createAt: 2025,
+    trailer: "https://www.youtube.com/watch?v=PWioEshJe7k",
+    status: "nowShowing",
+    rate: 4.2,
+    age: "T13",
+    detail: "Biệt đội săn ma thế hệ mới đối mặt với mối đe dọa băng giá, đe dọa nhấn chìm cả thế giới trong kỷ băng hà mới."
+  },
+  {
+    id: "2",
+    title: "Mufasa: Vua Sư Tử",
+    banner: "https://images.pexels.com/photos/356079/pexels-photo-356079.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    poster: "https://images.pexels.com/photos/356079/pexels-photo-356079.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    director: "Barry Jenkins",
+    actor: ["Aaron Pierre", "Kelvin Harrison Jr.", "Beyoncé"],
+    category: ["Hoạt hình", "Gia đình", "Phiêu lưu"],
+    duration: 120,
+    startShow: "2025-12-20",
+    createAt: 2025,
+    trailer: "https://www.youtube.com/watch?v=c75XRkb2MpQ",
+    status: "inComing",
+    rate: 0,
+    age: "T13",
+    detail: "Câu chuyện về hành trình trở thành vua của Mufasa, cha của Simba, với những thử thách và chiến thắng vĩ đại."
+  },
+  {
+    id: "3",
+    title: "Dune: Phần Hai",
+    banner: "https://images.pexels.com/photos/33129/popcorn-movie-party-entertainment.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    poster: "https://images.pexels.com/photos/33129/popcorn-movie-party-entertainment.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    director: "Denis Villeneuve",
+    actor: ["Timothée Chalamet", "Zendaya", "Florence Pugh"],
+    category: ["Khoa học viễn tưởng", "Hành động"],
+    duration: 166,
+    startShow: "2025-06-20",
+    createAt: 2024,
+    trailer: "https://www.youtube.com/watch?v=kCO-RO3q7U4",
+    status: "nowShowing",
+    rate: 4.8,
+    age: "T16",
+    detail: "Paul Atreides tiếp tục cuộc chiến trên sa mạc Arrakis, đối mặt với các thế lực thù địch để bảo vệ tương lai của vũ trụ."
+  },
+  {
+    id: "4",
+    title: "Kung Fu Panda 4",
+    banner: "https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    poster: "https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    director: "Mike Mitchell",
+    actor: ["Jack Black", "Awkwafina", "Viola Davis"],
+    category: ["Hoạt hình", "Hành động", "Hài hước"],
+    duration: 94,
+    startShow: "2025-07-15",
+    createAt: 2024,
+    trailer: "https://www.youtube.com/watch?v=_inKs4eeHiI",
+    status: "inComing",
+    rate: 4.0,
+    age: "T13",
+    detail: "Po tiếp tục hành trình trở thành thủ lĩnh tinh thần, đối mặt với một kẻ thù mới có khả năng biến hình đầy nguy hiểm."
+  },
+];
+export type Movie = {
+  id: string;
+  title: string; // Tên phim
+  banner: string; // Ảnh nền to tràn màn hình
+  poster: string; // Ảnh phim trên tab
+  director: string; // Đạo diễn
+  actor: string[]; // Diễn viên
+  category: string[]; // Thể loại
+  duration: number; // Thời lượng (phút)
+  startShow: string; // Ngày công chiếu
+  createAt: number; // Năm phát hành
+  trailer: string; // Demo
+  status: 'inComing' | 'nowShowing' | 'Ended'; // Trạng thái
+  rate: number; // Điểm 1-5
+  age: 'T13' | 'T16' | 'T18'; // Độ tuổi
+  detail: string; // Mô tả
 };

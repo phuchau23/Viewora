@@ -1,0 +1,102 @@
+{
+    "loading": "Đang tải...",
+    "accountSettings": "Cài đặt tài khoản",
+    "edit": "Chỉnh sửa",
+    "tabs": {
+      "personal": "Hồ sơ của tôi",
+      "points": "Xem yêu cầu",
+      "preferences": "Theo dõi yêu cầu",
+      "booking": "Lịch sử",
+      "changePassword": "Đổi mật khẩu"
+    },
+    "avatarAlt": "Ảnh đại diện người dùng",
+    "personalInfo": {
+      "title": "Thông tin cá nhân",
+      "fields": {
+        "fullName": "Họ và tên",
+        "rewardPoints": "Điểm thưởng",
+        "email": "Email",
+        "phoneNumber": "Số điện thoại",
+        "gender": "Giới tính",
+        "dateOfBirth": "Ngày sinh",
+        "noName": "Chưa có tên",
+        "noAddress": "Chưa có địa chỉ",
+        "noFullName": "Chưa có họ tên",
+        "noRewardPoints": "Chưa có điểm thưởng",
+        "noEmail": "Chưa có email",
+        "noPhoneNumber": "Chưa có số điện thoại",
+        "noDateOfBirth": "Chưa có ngày sinh",
+        "male": "Nam",
+        "female": "Nữ",
+        "unspecified": "Chưa xác định",
+        "cannotLoad": "Không thể tải thông tin người dùng."
+      }
+    },
+    "modal": {
+      "editProfile": "Chỉnh sửa hồ sơ",
+      "editProfileDescription": "Cập nhật thông tin cá nhân. Tất cả các trường có dấu * là bắt buộc.",
+      "accountInformation": "Thông tin tài khoản",
+      "fullName": "Họ và tên *",
+      "email": "Email *",
+      "avatar": "Ảnh đại diện",
+      "personalInformation": "Thông tin cá nhân",
+      "dateOfBirth": "Ngày sinh *",
+      "gender": "Giới tính *",
+      "selectGender": "Chọn giới tính",
+      "phoneNumber": "Số điện thoại *",
+      "addressInformation": "Thông tin địa chỉ",
+      "address": "Địa chỉ *",
+      "cancel": "Hủy",
+      "saveChanges": "Lưu thay đổi",
+      "success": "Thành công!",
+      "updateSuccessMessage": "Cập nhật thông tin thành công",
+      "passwordChanged": "Đổi mật khẩu thành công!",
+      "passwordChangeSuccessMessage": "Bạn đã đổi mật khẩu thành công.",
+      "changePassword": "Đổi mật khẩu",
+      "changePasswordDescription": "Nhập mật khẩu hiện tại và mật khẩu mới của bạn bên dưới.",
+      "currentPassword": "Mật khẩu hiện tại *",
+      "currentPasswordPlaceholder": "Mật khẩu hiện tại",
+      "newPassword": "Mật khẩu mới *",
+      "newPasswordPlaceholder": "Mật khẩu mới",
+      "confirmNewPassword": "Xác nhận mật khẩu mới *",
+      "confirmNewPasswordPlaceholder": "Xác nhận mật khẩu mới",
+      "changePasswordButton": "Đổi mật khẩu"
+    },
+    "validation": {
+      "fullNameRequired": "Họ và tên là bắt buộc",
+      "emailRequired": "Email là bắt buộc",
+      "invalidEmail": "Vui lòng nhập email hợp lệ",
+      "phoneNumberRequired": "Số điện thoại là bắt buộc",
+      "dateOfBirthRequired": "Ngày sinh là bắt buộc",
+      "genderRequired": "Giới tính là bắt buộc",
+      "addressRequired": "Địa chỉ là bắt buộc",
+      "oldPasswordRequired": "Mật khẩu hiện tại là bắt buộc",
+      "newPasswordRequired": "Mật khẩu mới là bắt buộc",
+      "passwordMinLength": "Mật khẩu phải có ít nhất 8 ký tự",
+      "passwordsMismatch": "Mật khẩu không khớp",
+      "updateFailed": "Cập nhật thất bại. Vui lòng thử lại!"
+    },
+    "toast": {
+      "updateSuccess": "Cập nhật thông tin thành công!",
+      "updateFailed": "Cập nhật thất bại!",
+      "passwordChangeSuccess": "Đổi mật khẩu thành công!",
+      "passwordChangeFailed": "Đổi mật khẩu thất bại!"
+    },
+    "header": {
+      "toggleMenu": "Chuyển đổi menu",
+      "logoAlt": "Logo Viewora",
+      "signIn": "Đăng nhập",
+      "signOut": "Đăng xuất",
+      "location": "Thành phố Hồ Chí Minh",
+      "searchPlaceholder": "Tìm kiếm phim...",
+      "search": "Tìm kiếm",
+      "account": "Tài khoản"
+    },
+    "nav": {
+      "home": "Trang chủ",
+      "movies": "Phim",
+      "cinemas": "Rạp chiếu",
+      "promotions": "Khuyến mãi",
+      "snack":"Combo"
+    }
+  }

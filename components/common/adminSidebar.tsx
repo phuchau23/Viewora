@@ -9,6 +9,8 @@ import {
   Home,
   User,
   ContactRound,
+  TicketPercent,
+  Popcorn,
   Film,
   LogOut,
 } from "lucide-react";
@@ -57,6 +59,16 @@ const adminNavItems = [
     icon: User,
   },
   {
+    title: "Promotion",
+    url: "/admin/promotion",
+    icon: TicketPercent,
+  },
+  {
+    title: "Snack",
+    url: "/admin/snack",
+    icon: Popcorn,
+  },
+  {
     title: "Movies",
     url: "/admin/movies",
     icon: Film,
@@ -71,7 +83,6 @@ const adminNavItems = [
     url: "/admin/settings",
     icon: Settings,
   },
-
 ];
 
 export function AdminSidebar({

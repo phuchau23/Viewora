@@ -1,0 +1,103 @@
+{
+    "loading": "Loading...",
+    "accountSettings": "Account Settings",
+    "edit": "Edit",
+    "tabs": {
+      "personal": "My Profile",
+      "points": "View Requests",
+      "preferences": "Track Request",
+      "booking": "History",
+      "changePassword": "Change Password"
+    },
+    "avatarAlt": "User Avatar",
+    "personalInfo": {
+      "title": "Personal Information",
+      "fields": {
+        "fullName": "Full Name",
+        "rewardPoints": "Reward Points",
+        "email": "Email",
+        "phoneNumber": "Phone Number",
+        "gender": "Gender",
+        "dateOfBirth": "Date of Birth",
+        "noName": "No name",
+        "noAddress": "No address",
+        "noFullName": "No full name",
+        "noRewardPoints": "No reward points",
+        "noEmail": "No email",
+        "noPhoneNumber": "No phone number",
+        "noDateOfBirth": "No date of birth",
+        "male": "Male",
+        "female": "Female",
+        "unspecified": "Unspecified",
+        "cannotLoad": "Cannot load user information."
+      }
+    },
+    "modal": {
+      "editProfile": "Edit Profile",
+      "editProfileDescription": "Update your personal information. All fields marked with * are required.",
+      "accountInformation": "Account Information",
+      "fullName": "Full Name *",
+      "email": "Email *",
+      "avatar": "Avatar",
+      "personalInformation": "Personal Information",
+      "dateOfBirth": "Date of Birth *",
+      "gender": "Gender *",
+      "selectGender": "Select gender",
+      "phoneNumber": "Phone Number *",
+      "addressInformation": "Address Information",
+      "address": "Address *",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "success": "Success!",
+      "updateSuccessMessage": "Update information successfully",
+      "passwordChanged": "Password Changed!",
+      "passwordChangeSuccessMessage": "You have successfully changed your password.",
+      "changePassword": "Change Password",
+      "changePasswordDescription": "Enter your current password and your new password below.",
+      "currentPassword": "Current Password *",
+      "currentPasswordPlaceholder": "Current Password",
+      "newPassword": "New Password *",
+      "newPasswordPlaceholder": "New Password",
+      "confirmNewPassword": "Confirm New Password *",
+      "confirmNewPasswordPlaceholder": "Confirm New Password",
+      "changePasswordButton": "Change Password"
+    },
+    "validation": {
+      "fullNameRequired": "Full name is required",
+      "emailRequired": "Email is required",
+      "invalidEmail": "Please enter a valid email address",
+      "phoneNumberRequired": "Phone number is required",
+      "dateOfBirthRequired": "Date of birth is required",
+      "genderRequired": "Gender is required",
+      "addressRequired": "Address is required",
+      "oldPasswordRequired": "Current password is required",
+      "newPasswordRequired": "New password is required",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "passwordsMismatch": "Passwords do not match",
+      "updateFailed": "Update failed. Please try again!"
+    },
+    "toast": {
+      "updateSuccess": "Update information successfully!",
+      "updateFailed": "Update failed!",
+      "passwordChangeSuccess": "Password changed successfully!",
+      "passwordChangeFailed": "Password change failed!"
+    },
+    "header": {
+      "toggleMenu": "Toggle menu",
+      "logoAlt": "Viewora Logo",
+      "signIn": "Sign In",
+      "signOut": "Sign Out",
+      "location": "Ho Chi Minh City",
+      "searchPlaceholder": "Search movies...",
+      "search": "Search",
+      "account": "Account"
+    },
+    "nav": {
+      "home": "Home",
+      "movies": "Movies",
+      "cinemas": "Cinemas",
+      "promotions": "Promotions",
+      "snack":"Combo"
+
+    }
+  }

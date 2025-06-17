@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Edit3 } from "lucide-react";
@@ -9,12 +10,10 @@ import PersonalInfo from "./components/PersonalInfoPage";
 import Points from "./components/Points";
 import Preferences from "./components/Preferences";
 import BookingHistory from "./components/BookingHistory";
-import { sampleUser, User } from "@/lib/data";
-import { useUpdateProfile, useUserProfile } from "@/hooks/useUsers";
-import { ProfileUpdateDataResponse } from "@/lib/api/service/fetchUser";
+import { useUserProfile } from "@/hooks/useUsers";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { ThemeToggle } from "@/components/common/ThemeToggle";
+import ChangePassword from "./components/ChangePassword";
 
 interface ProfilePageProps {
   userId?: string;
@@ -23,22 +22,26 @@ interface ProfilePageProps {
 export default function ProfilePage({
   userId = "default-id",
 }: ProfilePageProps) {
+  const { t } = useTranslation();
   const { data: profileData, isLoading, error } = useUserProfile();
   const user = profileData?.data;
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("personal");
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
   const renderContent = () => {
     switch (activeTab) {
       case "personal":
         return <PersonalInfo />;
-      case "Points":
+      case "points":
         return <Points user={user!} />;
       case "preferences":
         return <Preferences user={user!} />;
       case "booking":
         return <BookingHistory user={user!} />;
+      case "changePassword":
+        return <ChangePassword />;
       default:
         return null;
     }
@@ -56,7 +59,7 @@ export default function ProfilePage({
     return (
       <div className="flex flex-col justify-center items-center h-screen text-center bg-[#f9fbfc] dark:bg-gray-900 text-black dark:text-white">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-300 mb-4"></div>
-        <h2 className="text-2xl font-bold mb-2">Loading...</h2>
+        <h2 className="text-2xl font-bold mb-2">{t("loading")}</h2>
       </div>
     );
   }
@@ -69,17 +72,19 @@ export default function ProfilePage({
         <div className="container mx-auto p-6 max-w-6xl">
           <div className="flex flex-col md:flex-row items-start gap-6">
             {/* Sidebar */}
-            <aside className="w-full md:w-1/4 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <aside className="w-full md:w-1/3 bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
               <div className="flex items-center gap-4 mb-6">
-                <Avatar className="w-16 h-16">
-                  <AvatarImage
-                    src={user.avatar || "/profile1.png"}
-                    alt="User Avatar"
-                  />
-                  <AvatarFallback>
-                    {`${user.fullName?.[0] ?? ""}${user.email?.[0] ?? ""}`}
-                  </AvatarFallback>
-                </Avatar>
+                <button onClick={() => setIsAvatarModalOpen(true)}>
+                  <Avatar className="w-16 h-16">
+                    <AvatarImage
+                      src={user.avatar || "/profile1.png"}
+                      alt={t("avatarAlt")}
+                    />
+                    <AvatarFallback>
+                      {`${user.fullName?.[0] ?? ""}${user.email?.[0] ?? ""}`}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
                 <div>
                   <h2 className="text-xl font-bold">{`${user.fullName}`}</h2>
                 </div>
@@ -93,17 +98,17 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  🧑 My Profile
+                  🧑 {t("tabs.personal")}
                 </button>
                 <button
-                  onClick={() => setActiveTab("Points")}
+                  onClick={() => setActiveTab("points")}
                   className={`flex items-center gap-2 px-4 py-2 w-full text-sm font-medium rounded ${
-                    activeTab === "Points"
+                    activeTab === "points"
                       ? "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-white"
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  📋 View Requests
+                  📋 {t("tabs.points")}
                 </button>
                 <button
                   onClick={() => setActiveTab("preferences")}
@@ -113,7 +118,7 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  📍 Track Request
+                  📍 {t("tabs.preferences")}
                 </button>
                 <button
                   onClick={() => setActiveTab("booking")}
@@ -123,24 +128,36 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  🕓 History
+                  🕓 {t("tabs.booking")}
+                </button>
+                <button
+                  onClick={() => setActiveTab("changePassword")}
+                  className={`flex items-center gap-2 px-4 py-2 w-full text-sm font-medium rounded ${
+                    activeTab === "changePassword"
+                      ? "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-white"
+                      : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  🔒 {t("tabs.changePassword")}
                 </button>
               </nav>
             </aside>
 
             {/* Main content */}
-            <div className="w-full md:w-3/4 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <div className="w-full md:w-2/3 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
               <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Account Settings</h1>
+                <h1 className="text-2xl font-bold">{t("accountSettings")}</h1>
                 <Button
                   variant="outline"
                   className="border-gray-300 dark:border-gray-700 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   onClick={() => setIsEditModalOpen(true)}
                 >
-                  <Edit3 className="w-4 h-4 mr-2" /> Edit
+                  <Edit3 className="w-4 h-4 mr-2" /> {t("edit")}
                 </Button>
               </div>
-              <h2 className="text-xl font-semibold mb-4">My Profile</h2>
+              <h2 className="text-xl font-semibold mb-4">
+                {t(`tabs.${activeTab}`)}
+              </h2>
               {renderContent()}
             </div>
           </div>
@@ -150,6 +167,26 @@ export default function ProfilePage({
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
         />
+        {isAvatarModalOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setIsAvatarModalOpen(false)}
+          >
+            <div className="relative bg-white dark:bg-gray-800 p-4 rounded-lg">
+              <img
+                src={user.avatar || "/profile1.png"}
+                alt={t("avatarAlt")}
+                className="max-w-[80vw] max-h-[80vh] object-contain"
+              />
+              <button
+                className="absolute top-2 right-2 text-white bg-gray-800 rounded-full p-2"
+                onClick={() => setIsAvatarModalOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       <Footer />
     </div>
