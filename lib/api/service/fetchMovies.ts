@@ -1,7 +1,7 @@
 'use client';
 import apiService from "../core";
 
-export interface MovieType {
+export interface MovieTypes {
     id: string;
     name: string;
 }
@@ -24,7 +24,7 @@ export interface Movie {
     age: string;
     status: string;
     isAvailable: boolean;
-    movieTypes: MovieType[];
+    movieTypes: MovieTypes[];
 }
 export interface MovieResponse {
     code: number;

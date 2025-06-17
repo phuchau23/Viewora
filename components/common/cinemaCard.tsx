@@ -10,15 +10,16 @@ import "swiper/css/effect-coverflow";
 import "swiper/css/autoplay";
 import { Users } from "lucide-react";
 import Link from "next/link";
+import { MovieTypes } from "@/lib/api/service/fetchMovies";
 
 type Movie = {
   id: string;
-  title: string;
+  name: string;
   poster: string;
-  detail: string;
+  description: string;
   director: string;
-  actor: string[];
-  movieType: string[];
+  actor: string;
+  movieTypes: MovieTypes[];
 };
 
 export default function CinemaCard({ movies }: { movies: Movie[] }) {
@@ -74,18 +75,18 @@ export default function CinemaCard({ movies }: { movies: Movie[] }) {
               <div className="w-full h-full transition-transform duration-300 group-hover:scale-110">
                 <img
                   src={movie.poster}
-                  alt={movie.title}
+                  alt={movie.name}
                   className="w-full h-full object-cover"
                 />
               </div>
 
               <div className="absolute bottom-0 left-0 right-0 px-4 py-2 text-white opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 bg-gradient-to-t from-black/70 to-transparent ">
                 <h3 className="text-xl font-bold mb-3 line-clamp-2">
-                  {movie.title}
+                  {movie.name}
                 </h3>
 
                 <p className="text-sm text-gray-200 mb-4 line-clamp-3">
-                  {movie.detail}
+                  {movie.description}
                 </p>
 
                 <div className="space-y-2 mb-4">
@@ -97,7 +98,7 @@ export default function CinemaCard({ movies }: { movies: Movie[] }) {
                   <div className="flex items-center text-sm">
                     <span className="text-gray-300">Cast: </span>
                     <span className="ml-1 truncate">
-                      {movie.actor.slice(0, 2).join(", ")}
+                      {movie.actor.slice(0, 2)}
                     </span>
                     {movie.actor.length > 2 && (
                       <span className="text-amber-400">
@@ -110,17 +111,17 @@ export default function CinemaCard({ movies }: { movies: Movie[] }) {
 
                 {/* Genres */}
                 <div className="flex flex-wrap gap-1 mb-4">
-                  {movie.movieType.slice(0, 3).map((genre, index) => (
+                  {movie.movieTypes.slice(0, 3).map((genre, index) => (
                     <span
                       key={index}
                       className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm text-white border border-white/30"
                     >
-                      {genre}
+                      {genre.name}
                     </span>
                   ))}
-                  {movie.movieType.length > 3 && (
+                  {movie.movieTypes.length > 3 && (
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm text-white border border-white/30">
-                      +{movie.movieType.length - 3}
+                      +{movie.movieTypes.length - 3}
                     </span>
                   )}
                 </div>

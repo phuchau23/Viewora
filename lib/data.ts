@@ -1,4 +1,3 @@
-import { generateSeatData_A, generateSeatData_B, generateSeatData_C, generateSeatData_D, generateSeatData_E, generateSeatData_F } from "@/app/booking/[showtimeId]/components/seatForm"
 
 
 export interface Showtime {
@@ -6,18 +5,10 @@ export interface Showtime {
   movie: string;
   date: string;
   time: string;
-  room: "A" | "B" | "C" | "D" | "E" | "F";
+  room: "1" | "2" | "3" | "4" | "5" | "6";
   theater: string; // e.g., "Hall A"
 }
 
-export const roomConfigurations: Record<"A" | "B" | "C" | "D" | "E" | "F", () => Seat[]> = {
-  A: generateSeatData_A,
-  B: generateSeatData_B,
-  C: generateSeatData_C,
-  D: generateSeatData_D,
-  E: generateSeatData_E,
-  F: generateSeatData_F,
-};
 
 // Sample showtimes (can be fetched from an API)
 export const sampleShowtimes: Showtime[] = [
@@ -26,7 +17,7 @@ export const sampleShowtimes: Showtime[] = [
     movie: "Biệt Đội Săn Ma: Kỷ Nguyên Băng Giá",
     date: "2025-06-10",
     time: "8:30 PM",
-    room: "A",
+    room: "1",
     theater: "Hall A",
   },
   {
@@ -34,7 +25,7 @@ export const sampleShowtimes: Showtime[] = [
     movie: "Mufasa: Vua Sư Tử",
     date: "2025-06-10",
     time: "9:00 PM",
-    room: "B",
+    room: "2",
     theater: "Hall B",
   },
   {
@@ -42,7 +33,7 @@ export const sampleShowtimes: Showtime[] = [
     movie: "Dune: Phần Hai",
     date: "2025-06-10",
     time: "7:30 PM",
-    room: "C",
+    room: "3",
     theater: "Hall C",
   },
   {
@@ -50,7 +41,7 @@ export const sampleShowtimes: Showtime[] = [
     movie: "Deadpool & Wolverine",
     date: "2025-06-10",
     time: "10:00 PM",
-    room: "D",
+    room: "4",
     theater: "Hall D",
   },
   {
@@ -58,7 +49,7 @@ export const sampleShowtimes: Showtime[] = [
     movie: "Nhà Bà Nữ 2",
     date: "2025-06-10",
     time: "11:30 PM",
-    room: "E",
+    room: "5",
     theater: "Hall E",
   },
   {
@@ -66,7 +57,7 @@ export const sampleShowtimes: Showtime[] = [
     movie: "Mission: Impossible – Kẻ Nổi Loạn",
     date: "2025-06-10",
     time: "12:00 PM",
-    room: "F",
+    room: "6",
     theater: "Hall F",
   },
 ];
