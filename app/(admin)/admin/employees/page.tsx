@@ -33,12 +33,15 @@ import { currentUser, hasEmployeeAccess } from "@/lib/data";
 import { EmployeesTable } from "./components/employees-table";
 import { EmployeeFormModal } from "./components/employee-form-modal";
 import { useEmployees } from "@/hooks/useEmployees";
-import { Employee } from "@/lib/api/service/fetchEmployees";
+import {
+  CreateEmployeeRequest,
+  Employee,
+} from "@/lib/api/service/fetchEmployees";
 import { EmployeeDetailsModal } from "./components/employee-details-modal";
 import { useCreateEmployee } from "@/hooks/useEmployees";
+import { toFormData } from "axios";
 
 export default function EmployeesPage() {
-  const { data: employees, isLoading, isError, error } = useEmployees();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -46,21 +49,34 @@ export default function EmployeesPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
     null
   );
-
-  const { mutate: createEmployee } = useCreateEmployee();
-  const { toast } = useToast();
-
-  const employeesData = employees?.data;
-
-  console.log(employees);
-
   const [formData, setFormData] = useState({
     position: "",
     accountId: 0,
     department: "",
     workLocation: "",
     baseSalary: 0,
+    account: {
+      email: "",
+      fullName: "",
+      dateOfBirth: "",
+      gender: "",
+      phoneNumber: "",
+    },
   });
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const { employees, isLoading, totalPage, currentPage } = useEmployees(
+    pagination.pageIndex + 1,
+    pagination.pageSize
+  );
+
+  const { mutate, isSuccess } = useCreateEmployee();
+  const { toast } = useToast();
+  const employeesData = employees;
 
   // Role-based access control
   if (!hasEmployeeAccess(currentUser.role)) {
@@ -129,29 +145,27 @@ export default function EmployeesPage() {
   //   setIsDeleteDialogOpen(true);
   // };
 
-  const handleCreateEmployee = () => {
-    const form = new FormData();
-    form.append("Position", formData.position);
-    form.append("AccountId", formData.accountId.toString());
-    form.append("Department", formData.department);
-    form.append("WorkLocation", formData.workLocation);
-    form.append("BaseSalary", formData.baseSalary.toString());
+  // const handleCreateEmployee = () => {
+  //   const form = new FormData();
+  //   form.append("Position", formData.position);
+  //   form.append("AccountId", formData.accountId.toString());
+  //   form.append("Department", formData.department);
+  //   form.append("WorkLocation", formData.workLocation);
+  //   form.append("BaseSalary", formData.baseSalary.toString());
 
-    createEmployee(form);
-    setIsAddModalOpen(false);
-    toast({
-      title: "Employee Added",
-      description: `${formData.position} has been successfully added.`,
-    });
-  };
+  //   createEmployee(form);
+  //   setIsAddModalOpen(false);
+  //   toast({
+  //     title: "Employee Added",
+  //     description: `${formData.position} has been successfully added.`,
+  //   });
+  // };
 
   const employeeStats = {
-    total: employees?.data.length,
-    admins: employees?.data.filter((e) => e.account.role === "Admin").length,
-    managers: employees?.data.filter((e) => e.account.role === "Manager")
-      .length,
-    employees: employees?.data.filter((e) => e.account.role === "Employee")
-      .length,
+    total: employees?.length,
+    admins: employees?.filter((e) => e.account.role === "Admin").length,
+    managers: employees?.filter((e) => e.account.role === "Manager").length,
+    employees: employees?.filter((e) => e.account.role === "Employee").length,
   };
 
   return (
@@ -178,7 +192,7 @@ export default function EmployeesPage() {
       </div>
 
       {/* Employee Statistics */}
-      <div className="grid gap-4 md:grid-cols-6">
+      {/* <div className="grid gap-4 md:grid-cols-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total</CardTitle>
@@ -225,7 +239,7 @@ export default function EmployeesPage() {
             <p className="text-xs text-muted-foreground">Regular staff</p>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       {/* Enhanced Table with TanStack Table */}
       <Card>
@@ -241,19 +255,22 @@ export default function EmployeesPage() {
             data={employeesData ?? []}
             onView={handleViewDetails}
             onEdit={handleEditClick}
+            pagination={pagination}
+            setPagination={setPagination}
+            pageCount={totalPage ?? 1} // fallback về 1 nếu undefined
           />
         </CardContent>
       </Card>
 
       {/* Add Employee Modal */}
-      <EmployeeFormModal
+      {/* <EmployeeFormModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleCreateEmployee}
         title="Add New Employee"
         submitText="Add Employee"
         mode="add"
-      />
+      /> */}
 
       {/* Edit Employee Modal */}
       {/* <EmployeeFormModal

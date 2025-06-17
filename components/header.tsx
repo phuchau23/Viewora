@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import { Film, User, Menu, MapPin, Search, LogOut } from "lucide-react";
+import { User, Menu, MapPin, Search, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";

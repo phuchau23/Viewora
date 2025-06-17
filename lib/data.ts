@@ -1,17 +1,112 @@
-// export type Movie = {
-//   id: string;
-//   title: string;
-//   image: string;
-//   genre: string[];
-//   duration: number; // in minutes
-//   rating: string;
-//   releaseDate: string;
-//   director: string;
-//   cast: string[];
-//   synopsis: string;
-//   trailerUrl: string;
-//   status: 'now-showing' | 'coming-soon';
-// };
+import { generateSeatData_A, generateSeatData_B, generateSeatData_C, generateSeatData_D, generateSeatData_E, generateSeatData_F } from "@/app/booking/[showtimeId]/components/seatForm"
+
+
+export interface Showtime {
+  id: string;
+  movie: string;
+  date: string;
+  time: string;
+  room: "A" | "B" | "C" | "D" | "E" | "F";
+  theater: string; // e.g., "Hall A"
+}
+
+export const roomConfigurations: Record<"A" | "B" | "C" | "D" | "E" | "F", () => Seat[]> = {
+  A: generateSeatData_A,
+  B: generateSeatData_B,
+  C: generateSeatData_C,
+  D: generateSeatData_D,
+  E: generateSeatData_E,
+  F: generateSeatData_F,
+};
+
+// Sample showtimes (can be fetched from an API)
+export const sampleShowtimes: Showtime[] = [
+  {
+    id: "1",
+    movie: "Biệt Đội Săn Ma: Kỷ Nguyên Băng Giá",
+    date: "2025-06-10",
+    time: "8:30 PM",
+    room: "A",
+    theater: "Hall A",
+  },
+  {
+    id: "2",
+    movie: "Mufasa: Vua Sư Tử",
+    date: "2025-06-10",
+    time: "9:00 PM",
+    room: "B",
+    theater: "Hall B",
+  },
+  {
+    id: "3",
+    movie: "Dune: Phần Hai",
+    date: "2025-06-10",
+    time: "7:30 PM",
+    room: "C",
+    theater: "Hall C",
+  },
+  {
+    id: "4",
+    movie: "Deadpool & Wolverine",
+    date: "2025-06-10",
+    time: "10:00 PM",
+    room: "D",
+    theater: "Hall D",
+  },
+  {
+    id: "5",
+    movie: "Nhà Bà Nữ 2",
+    date: "2025-06-10",
+    time: "11:30 PM",
+    room: "E",
+    theater: "Hall E",
+  },
+  {
+    id: "6",
+    movie: "Mission: Impossible – Kẻ Nổi Loạn",
+    date: "2025-06-10",
+    time: "12:00 PM",
+    room: "F",
+    theater: "Hall F",
+  },
+];
+
+
+export type SeatStatus = "available" | "selected" | "occupied"
+
+export interface Seat {
+    id: string
+    row: string
+    number: number
+    type: "regular" | "vip" | "couple"
+    status: SeatStatus
+    price: number
+  }
+
+  export function getSeatLabel(seat: Seat): string {
+    return seat.status === "selected" ? "✓" : seat.number.toString()
+  }
+
+  export function getSeatStyles(seat: Seat): string {
+    let base = "seat";
+
+    if (seat.status === "occupied") return `${base} seat-reserved`;
+    if (seat.status === "selected") return `${base} seat-selected`;
+
+    if (seat.type === "couple") {
+      return `${base} seat-available couple-seat`;
+    }
+
+    return seat.type === "vip"
+      ? `${base} seat-available vip`
+      : `${base} seat-available`;
+  }
+
+
+
+
+
+
 
 export type Cinema = {
   id: string;
@@ -26,16 +121,6 @@ export type Cinema = {
   };
   phone: string;
   email: string;
-};
-
-export type Showtime = {
-  id: string;
-  movieId: string;
-  cinemaId: string;
-  date: string;
-  time: string;
-  hall: string;
-  price: number;
 };
 
 export interface User {
@@ -249,121 +334,6 @@ export const sampleEmployees: Employee[] = [
 ]
 
 
-// export const movies: Movie[] = [
-//   {
-//     id: "1",
-//     title: "Dune: Part Two",
-//     image: "https://images.pexels.com/photos/3131971/pexels-photo-3131971.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//     genre: ["Sci-Fi", "Adventure", "Drama"],
-//     duration: 166,
-//     rating: "PG-13",
-//     releaseDate: "2024-03-01",
-//     director: "Denis Villeneuve",
-//     cast: ["Timothée Chalamet", "Zendaya", "Rebecca Ferguson", "Josh Brolin"],
-//     synopsis: "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
-//     trailerUrl: "https://www.youtube.com/watch?v=Way9Dexny3w",
-//     status: "now-showing",
-//   },
-//   {
-//     id: "2",
-//     title: "Kung Fu Panda 4",
-//     image: "https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//     genre: ["Animation", "Action", "Comedy"],
-//     duration: 94,
-//     rating: "PG",
-//     releaseDate: "2024-03-08",
-//     director: "Mike Mitchell",
-//     cast: ["Jack Black", "Awkwafina", "Viola Davis", "Bryan Cranston"],
-//     synopsis: "Po must train a new warrior when he's chosen to become the spiritual leader of the Valley of Peace.",
-//     trailerUrl: "https://www.youtube.com/watch?v=_inKs4eeHiI",
-//     status: "now-showing",
-//   },
-//   {
-//     id: "3",
-//     title: "Godzilla x Kong: The New Empire",
-//     image: "https://images.pexels.com/photos/4145354/pexels-photo-4145354.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//     genre: ["Action", "Adventure", "Sci-Fi"],
-//     duration: 115,
-//     rating: "PG-13",
-//     releaseDate: "2024-03-29",
-//     director: "Adam Wingard",
-//     cast: ["Rebecca Hall", "Brian Tyree Henry", "Dan Stevens"],
-//     synopsis: "The legends collide as Godzilla and Kong team up against a massive undiscovered threat hidden within our world.",
-//     trailerUrl: "https://www.youtube.com/watch?v=odM92ap8_c0",
-//     status: "now-showing",
-//   },
-//   {
-//     id: "4",
-//     title: "Inside Out 2",
-//     image: "https://images.pexels.com/photos/12696152/pexels-photo-12696152.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//     genre: ["Animation", "Adventure", "Comedy"],
-//     duration: 107,
-//     rating: "PG",
-//     releaseDate: "2024-06-14",
-//     director: "Kelsey Mann",
-//     cast: ["Amy Poehler", "Phyllis Smith", "Lewis Black", "Tony Hale"],
-//     synopsis: "Riley enters adolescence as new emotions join Joy, Sadness, Anger, Fear, and Disgust in Headquarters.",
-//     trailerUrl: "https://www.youtube.com/watch?v=RGpdfqgaqfQ",
-//     status: "coming-soon",
-//   },
-//   {
-//     id: "5",
-//     title: "A Quiet Place: Day One",
-//     image: "https://images.pexels.com/photos/2346001/pexels-photo-2346001.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//     genre: ["Horror", "Sci-Fi", "Thriller"],
-//     duration: 120,
-//     rating: "PG-13",
-//     releaseDate: "2024-06-28",
-//     director: "Michael Sarnoski",
-//     cast: ["Lupita Nyong'o", "Joseph Quinn", "Alex Wolff"],
-//     synopsis: "Experience the day the world went quiet in this prequel to the post-apocalyptic horror franchise.",
-//     trailerUrl: "https://www.youtube.com/watch?v=8rQwxbg1BQ4",
-//     status: "coming-soon",
-//   },
-//   {
-//     id: "6",
-//     title: "Deadpool & Wolverine",
-//     image: "https://images.pexels.com/photos/1342251/pexels-photo-1342251.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//     genre: ["Action", "Adventure", "Comedy"],
-//     duration: 135,
-//     rating: "R",
-//     releaseDate: "2024-07-26",
-//     director: "Shawn Levy",
-//     cast: ["Ryan Reynolds", "Hugh Jackman", "Emma Corrin", "Matthew Macfadyen"],
-//     synopsis: "Wade Wilson teams up with Wolverine in this highly anticipated Marvel crossover.",
-//     trailerUrl: "https://www.youtube.com/watch?v=X9L_LIhUoVU",
-//     status: "coming-soon",
-//   },
-//   {
-//     id: "7",
-//     title: "The Fall Guy",
-//     image: "https://images.pexels.com/photos/356079/pexels-photo-356079.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//     genre: ["Action", "Comedy"],
-//     duration: 125,
-//     rating: "PG-13",
-//     releaseDate: "2024-05-03",
-//     director: "David Leitch",
-//     cast: ["Ryan Gosling", "Emily Blunt", "Aaron Taylor-Johnson", "Hannah Waddingham"],
-//     synopsis: "A stuntman is drawn into a dangerous conspiracy while trying to win back his ex-girlfriend.",
-//     trailerUrl: "https://www.youtube.com/watch?v=0Md63MMsyTY",
-//     status: "now-showing",
-//   },
-//   {
-//     id: "8",
-//     title: "Furiosa: A Mad Max Saga",
-//     image: "https://images.pexels.com/photos/33129/popcorn-movie-party-entertainment.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//     genre: ["Action", "Adventure", "Sci-Fi"],
-//     duration: 148,
-//     rating: "R",
-//     releaseDate: "2024-05-24",
-//     director: "George Miller",
-//     cast: ["Anya Taylor-Joy", "Chris Hemsworth", "Tom Burke"],
-//     synopsis: "The origin story of the renegade warrior before her encounter with Max Rockatansky.",
-//     trailerUrl: "https://www.youtube.com/watch?v=XdYR1_Ml8A0",
-//     status: "now-showing",
-//   },
-// ];
-
 export const cinemas: Cinema[] = [
   {
     id: "1",
@@ -449,153 +419,6 @@ export const cinemas: Cinema[] = [
     phone: "(028) 3826 8888",
     email: "landmark81@cinematix.com"
   }
-];
-
-export const showtimes: Showtime[] = [
-  {
-    id: "1",
-    movieId: "1",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "10:30",
-    hall: "IMAX 1",
-    price: 120000,
-  },
-  {
-    id: "2",
-    movieId: "1",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "13:45",
-    hall: "IMAX 1",
-    price: 120000,
-  },
-  {
-    id: "3",
-    movieId: "1",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "17:00",
-    hall: "IMAX 1",
-    price: 150000,
-  },
-  {
-    id: "4",
-    movieId: "1",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "20:15",
-    hall: "IMAX 1",
-    price: 150000,
-  },
-  {
-    id: "5",
-    movieId: "1",
-    cinemaId: "2",
-    date: "2024-05-25",
-    time: "11:00",
-    hall: "Hall 3",
-    price: 100000,
-  },
-  {
-    id: "6",
-    movieId: "1",
-    cinemaId: "2",
-    date: "2024-05-25",
-    time: "14:30",
-    hall: "Hall 3",
-    price: 100000,
-  },
-  {
-    id: "7",
-    movieId: "1",
-    cinemaId: "2",
-    date: "2024-05-25",
-    time: "18:15",
-    hall: "Hall 3",
-    price: 120000,
-  },
-  {
-    id: "8",
-    movieId: "1",
-    cinemaId: "2",
-    date: "2024-05-25",
-    time: "21:30",
-    hall: "Hall 3",
-    price: 120000,
-  },
-  {
-    id: "9",
-    movieId: "2",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "09:00",
-    hall: "Hall 2",
-    price: 90000,
-  },
-  {
-    id: "10",
-    movieId: "2",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "12:15",
-    hall: "Hall 2",
-    price: 90000,
-  },
-  {
-    id: "11",
-    movieId: "2",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "15:30",
-    hall: "Hall 2",
-    price: 110000,
-  },
-  {
-    id: "12",
-    movieId: "2",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "18:45",
-    hall: "Hall 2",
-    price: 110000,
-  },
-  {
-    id: "13",
-    movieId: "3",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "10:00",
-    hall: "4DX",
-    price: 150000,
-  },
-  {
-    id: "14",
-    movieId: "3",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "13:30",
-    hall: "4DX",
-    price: 150000,
-  },
-  {
-    id: "15",
-    movieId: "3",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "17:00",
-    hall: "4DX",
-    price: 180000,
-  },
-  {
-    id: "16",
-    movieId: "3",
-    cinemaId: "1",
-    date: "2024-05-25",
-    time: "20:30",
-    hall: "4DX",
-    price: 180000,
-  },
 ];
 
 export const promotions = [
@@ -820,6 +643,7 @@ export function formatDuration(minutes: number): string {
   const mins = minutes % 60;
   return `${hours}h ${mins}m`;
 }
+
 
 export interface User {
   id: string;

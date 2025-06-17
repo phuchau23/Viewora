@@ -57,7 +57,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { UserDetailsModal } from "./components/user-detail-modal";
 import { useDeleteUser, useUsers } from "@/hooks/useUsers";
-import { User } from "@/lib/api/service/fetchUser";
+import { User, UserSearchParams } from "@/lib/api/service/fetchUser";
+import { formatDate } from "@/utils/dates/formatDate";
 
 export default function UserManagerPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,8 +68,12 @@ export default function UserManagerPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useState<UserSearchParams>({
+    pageNumber: 1,
+    pageSize: 10,
+  });
 
-  const { users, isLoading, isError, error } = useUsers();
+  const { users, isLoading, isError, error } = useUsers(searchParams);
   const deleteUserMutation = useDeleteUser();
 
   if (isLoading) return <div>Loading...</div>;
@@ -117,7 +122,8 @@ export default function UserManagerPage() {
   const handleDeleteUser = async () => {
     if (!selectedUser) return;
     try {
-      await deleteUserMutation.mutateAsync(selectedUser.accountId);
+      console.log("Deleting accountId:", selectedUser.id);
+      await deleteUserMutation.mutateAsync(selectedUser.id);
       setIsDeleteDialogOpen(false);
       toast({
         title: selectedUser.isActive ? "User Deactivated" : "User Restored",
@@ -127,6 +133,7 @@ export default function UserManagerPage() {
       });
       setSelectedUser(null);
     } catch (error) {
+      console.log(error);
       toast({
         title: "Error",
         description: selectedUser.isActive
@@ -211,7 +218,7 @@ export default function UserManagerPage() {
           <div className="space-y-4 mt">
             {filteredUsers?.map((user: User) => (
               <div
-                key={user.accountId}
+                key={user.id}
                 className="flex items-center justify-between p-6 border rounded-lg hover:bg-accent/50 transition-colors"
               >
                 <div className="flex items-center space-x-4">
@@ -227,11 +234,11 @@ export default function UserManagerPage() {
                     <div className="flex items-center space-x-2">
                       <h3 className="font-semibold text-lg">{user.fullName}</h3>
                       <Badge
-                        variant={getRoleColor(user.role)}
+                        variant={getRoleColor(user.role?.name)}
                         className="flex items-center space-x-1"
                       >
-                        {getRoleIcon(user.role)}
-                        <span>{user.role}</span>
+                        {getRoleIcon(user.role?.name)}
+                        <span>{user.role?.name}</span>
                       </Badge>
                       <Badge variant={getStatusColor(user.isActive)}>
                         {user.isActive ? "Active" : "Inactive"}
@@ -252,7 +259,9 @@ export default function UserManagerPage() {
                       </div>
                       <div className="flex items-center space-x-1">
                         <Calendar className="h-3 w-3" />
-                        <span>Joined {user.createdAt}</span>
+                        <span>
+                          Joined {formatDate(user.createdAt?.toString() || "")}
+                        </span>
                       </div>
                     </div>
                   </div>

@@ -1,113 +1,85 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import OTPForm from "@/components/shared/OTPForm";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Mail } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useForgotPassword, useResetPassword } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [otp, setOtp] = useState<number>(0);
   const [step, setStep] = useState(1);
-  const [timeLeft, setTimeLeft] = useState(300);
-  const [timerActive, setTimerActive] = useState(false);
 
-  useEffect(() => {
-    if (!timerActive || timeLeft <= 0) return;
-
-    const timerInterval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerInterval);
-          setTimerActive(false);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timerInterval);
-  }, [timerActive, timeLeft]);
+  const { forgotPassword, isLoading: forgotLoading } = useForgotPassword();
+  const { resetPassword, isLoading: resetLoading } = useResetPassword();
 
   const handleEmailSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage("");
-    setError("");
-    try {
-      await new Promise((res) => setTimeout(res, 1000));
-      setMessage("Mã OTP đã được gửi đến email của bạn.");
-      setStep(2);
-      setTimeLeft(300);
-      setTimerActive(true);
-    } catch (err) {
-      setError("Đã có lỗi xảy ra. Vui lòng thử lại sau!");
-    } finally {
-      setLoading(false);
-    }
+    forgotPassword(
+      { Email: email },
+      {
+        onSuccess: () => {
+          setStep(2);
+        },
+      }
+    );
   };
 
-  const onOtpComplete = async (otpValue: string) => {
+  const handleOtpComplete = (otpValue: number) => {
     setOtp(otpValue);
-    setLoading(true);
-    setMessage("");
-    setError("");
+    setStep(3);
+  };
 
-    if (otpValue.length !== 6) {
-      setError("Mã OTP phải có 6 chữ số!");
-      setLoading(false);
+  const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (newPassword.length < 8) {
+      toast({
+        title: "Lỗi",
+        description: "Mật khẩu mới phải có ít nhất 8 ký tự",
+        variant: "destructive",
+      });
       return;
     }
-
-    try {
-      await new Promise((res) => setTimeout(res, 1000));
-      setMessage("Xác minh thành công! Bạn có thể đặt lại mật khẩu.");
-    } catch (err) {
-      setError("Mã OTP không hợp lệ hoặc đã hết hạn!");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResendOtp = async () => {
-    setLoading(true);
-    setMessage("");
-    setError("");
-
-    try {
-      await new Promise((res) => setTimeout(res, 1000));
-      setMessage("Mã OTP mới đã được gửi đến email của bạn.");
-      setTimeLeft(300);
-      setTimerActive(true);
-    } catch (err) {
-      setError("Không thể gửi lại mã OTP. Vui lòng thử lại sau!");
-    } finally {
-      setLoading(false);
-    }
+    resetPassword(
+      { Email: email, NewPassword: newPassword, OtpCode: otp },
+      {
+        onSuccess: () => {
+          setStep(4);
+        },
+      }
+    );
   };
 
   return (
-    <div className=" my-auto h-[calc(100vh-4rem)] flex justify-center items-center   ">
+    <div className="my-auto h-[calc(100vh-4rem)] flex justify-center items-center">
       <div className="w-full max-w-md p-8 rounded-2xl shadow-xl space-y-6 border">
         <div className="space-y-2 text-center">
           <h2 className="text-2xl font-bold">
-            {step === 1 ? "Quên mật khẩu?" : "Nhập mã xác minh"}
+            {step === 1
+              ? "Quên mật khẩu?"
+              : step === 2
+              ? "Nhập mã xác minh"
+              : step === 3
+              ? "Đặt lại mật khẩu"
+              : "Hoàn tất"}
           </h2>
           <p className="text-sm text-muted-foreground">
             {step === 1
-              ? "Nhập email của bạn để nhận mã xác minh khôi phục mật khẩu."
-              : "Vui lòng nhập mã OTP đã được gửi đến email của bạn."}
+              ? "Nhập email để nhận mã xác minh."
+              : step === 2
+              ? "Nhập mã OTP được gửi đến email của bạn."
+              : step === 3
+              ? "Nhập mật khẩu mới để hoàn tất."
+              : "Mật khẩu đã được thay đổi thành công."}
           </p>
         </div>
 
-        {/* Form bước 1 */}
-        {step === 1 ? (
+        {step === 1 && (
           <form onSubmit={handleEmailSubmit} className="space-y-4">
             <Input
               type="email"
@@ -116,35 +88,47 @@ export default function ForgotPasswordPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-
-            {message && (
-              <Alert variant="default">
-                <Mail className="h-4 w-4" />
-                <AlertTitle>Thành công</AlertTitle>
-                <AlertDescription>{message}</AlertDescription>
-              </Alert>
-            )}
-            {error && (
-              <Alert variant="destructive">
-                <AlertTitle>Lỗi</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
-              {loading ? "Đang gửi..." : "Gửi mã xác minh"}
+            <Button type="submit" className="w-full" disabled={forgotLoading}>
+              {forgotLoading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+              {forgotLoading ? "Đang gửi..." : "Gửi mã xác minh"}
             </Button>
           </form>
-        ) : (
+        )}
+
+        {step === 2 && (
           <OTPForm
-            onSubmit={onOtpComplete}
-            timeLeft={timeLeft}
-            loading={loading}
-            message={message}
-            error={error}
-            onResend={handleResendOtp}
+            Email={email}
+            timeLeft={300} // 5 minutes
+            actionType="forgotpassword"
+            onComplete={handleOtpComplete}
           />
+        )}
+
+        {step === 3 && (
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <Input
+              type="password"
+              required
+              placeholder="Mật khẩu mới"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <Button type="submit" className="w-full" disabled={resetLoading}>
+              {resetLoading && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+              {resetLoading ? "Đang đặt lại..." : "Xác nhận mật khẩu mới"}
+            </Button>
+          </form>
+        )}
+
+        {step === 4 && (
+          <div className="text-center space-y-4">
+            <p>
+              Mật khẩu đã được thay đổi thành công.{" "}
+              <Link href="/login" className="text-primary hover:underline">
+                Đăng nhập ngay
+              </Link>
+            </p>
+          </div>
         )}
 
         <div className="text-center text-sm">

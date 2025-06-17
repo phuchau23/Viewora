@@ -4,9 +4,8 @@ import { Bell, Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { NavigationSection } from "@/app/(admin)/admin/booking-system";
 interface BookingHeaderProps {
-  activeSection: NavigationSection;
+  activeSection: string;
 }
 
 const sectionTitles = {
@@ -22,7 +21,7 @@ export function BookingHeader({ activeSection }: BookingHeaderProps) {
         <SidebarTrigger className="-ml-1" />
         <div className="h-4 w-px bg-sidebar-border" />
         <h1 className="text-lg font-semibold">
-          {sectionTitles[activeSection]}
+          {sectionTitles[activeSection as keyof typeof sectionTitles]}
         </h1>
       </div>
       <div className="ml-auto flex items-center gap-2 px-4">

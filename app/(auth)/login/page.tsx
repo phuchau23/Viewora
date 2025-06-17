@@ -2,23 +2,20 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Film } from "lucide-react";
 import { SocialAuthButtons } from "@/components/shared/SocialAuthButtons";
-import router from "next/router";
-import { useLogin } from "@/hooks/useAuth";
+import { useGoogleLogin, useLogin } from "@/hooks/useAuth";
 import Image from "next/image";
 
 const bgImages = [
-  "/images/login-bg.jpg",
-  "/images/login-bg2.jpg",
-  "/images/login-bg3.jpg",
-  "/images/login-bg4.jpg",
+  "/login-bg.jpg",
+  "/login-bg2.jpg",
+  "/login-bg3.jpg",
+  "/login-bg4.jpg",
 ];
 export default function LoginPage() {
   const [loginData, setLoginData] = useState({
@@ -26,11 +23,10 @@ export default function LoginPage() {
     password: "",
   });
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useLogin();
-
+  const { login, isLoading } = useLogin();
+  const { googleLogin, isLoading: googleLoading } = useGoogleLogin();
   // Auto change background image
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,24 +37,16 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!loginData.email || !loginData.password) {
+      return; // tránh gọi login nếu thiếu dữ liệu
+    }
     await login(loginData);
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setLoginData((prev) => ({
-      ...prev,
-      email: value,
-    }));
+  const handleInputChange = (field: string, value: string) => {
+    setLoginData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setLoginData((prev) => ({
-      ...prev,
-      password: value,
-    }));
-  };
   return (
     <div className="h-screen flex flex-row">
       {/* Left: Background Slideshow + Slogan + Icon */}
@@ -89,12 +77,7 @@ export default function LoginPage() {
 
       <div className="absolute top-4 right-4 flex items-center gap-2 w-64 h-16">
         <Link href="/" className="text-xl font-bold">
-          <Image
-            src="/logo1.png"
-            alt="Viewora Logo"
-            width={120}
-            height={40}
-          />
+          <Image src="/logo1.png" alt="Viewora Logo" width={120} height={40} />
         </Link>
       </div>
 
@@ -112,9 +95,9 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                value={loginData.email}
-                onChange={handleEmailChange}
                 required
+                value={loginData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
                 placeholder="Nhập email"
                 className="mt-2 text-lg"
               />
@@ -129,9 +112,11 @@ export default function LoginPage() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={loginData.password}
-                  onChange={handlePasswordChange}
-                  required
+                  onChange={(e) =>
+                    handleInputChange("password", e.target.value)
+                  }
                   placeholder="Nhập mật khẩu"
+                  required
                   className="pr-12 mt-2 text-lg"
                 />
                 <button
@@ -156,11 +141,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button
-              type="submit"
-              variant="default"
-              className="text-lg w-full"
-            >
+            <Button type="submit" variant="default" className="text-lg w-full">
               {isLoading ? "Đang đăng nhập..." : "ĐĂNG NHẬP"}
             </Button>
 
@@ -175,47 +156,15 @@ export default function LoginPage() {
               </Button>
             </div>
 
-            <SocialAuthButtons
-              label="Hoặc đăng ký bằng"
-              onGoogleClick={() => console.log("Google clicked")}
-              onFacebookClick={() => console.log("Facebook clicked")}
-            />
-          </form>
-
-          {/* {showForgotPassword && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-              <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full">
-                <div className="flex justify-between">
-                <h2 className="text-xl text-gray-700 font-bold">Khôi phục mật khẩu</h2>
-                <button
-                className="text-gray-500 hover:text-gray-700 text-2xl font-bold mb-4"
-                  onClick={() => setShowForgotPassword(false)}
-                > 
-                  x
-                </button>
-                </div>
-                <label className="block text-lg text-gray-700 mb-2">
-                  Nhập email để nhận mã OTP
-                </label>
-                
-                <input
-                  type="email"
-                  className="w-full px-4 py-3 border rounded-lg mb-4 bg-gray-50"
-                  placeholder="Nhập email của bạn"
-                  value={forgotEmail}
-                  onChange={(e) => setForgotEmail(e.target.value)}
-                  required
-                />
-                <button
-                  className="w-full bg-orange-600 text-white text-lg font-bold py-3 rounded-lg"
-                  onClick={handleSendOTP}
-                >
-                  <Link href="/forgot-password" className="text-white">Gửi mã OTP</Link>
-                </button>
-                
-              </div>
+            <div className="flex flex-col items-center">
+              <SocialAuthButtons
+                label="Hoặc đăng nhập bằng"
+                onGoogleClick={googleLogin}
+                isGoogleLoading={googleLoading}
+              />
+              {googleLoading && <p>Đang xử lý...</p>}
             </div>
-          )} */}
+          </form>
         </div>
       </div>
     </div>
