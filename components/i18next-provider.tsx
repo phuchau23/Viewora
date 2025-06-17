@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import type React from 'react';
+import type React from "react";
 
-import { useEffect, useState } from 'react';
-import i18n from 'i18next';
-import { initReactI18next, I18nextProvider as Provider } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
-import resourcesToBackend from 'i18next-resources-to-backend';
+import { useEffect, useState } from "react";
+import i18n from "i18next";
+import { initReactI18next, I18nextProvider as Provider } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
+import resourcesToBackend from "i18next-resources-to-backend";
 
 i18n
   .use(initReactI18next)
@@ -17,16 +17,16 @@ i18n
     })
   )
   .init({
-    fallbackLng: 'vi',
-    supportedLngs: ['vi', 'en'],
-    defaultNS: 'common',
-    ns: ['common'],
+    fallbackLng: "vi",
+    supportedLngs: ["vi", "en"],
+    defaultNS: "common",
+    ns: ["common"],
     interpolation: {
       escapeValue: false,
     },
     detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage'],
+      order: ["localStorage", "navigator"],
+      caches: ["localStorage"],
     },
   });
 

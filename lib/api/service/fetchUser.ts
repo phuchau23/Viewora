@@ -13,6 +13,7 @@ export interface User {
     identityCard: string;
     address: string;
     gender: number; // Represents Gender enum (e.g., 0 for Male, 1 for Female)
+    rewardPoint: number;
     createdAt: string | null;
     updatedAt: string | null;
     isVerified: boolean;
@@ -32,6 +33,7 @@ export interface ProfileDataResponse {
   address: string | null;
   dateOfBirth: string;
   gender: number;
+  rewardPoint: number;
 }
 export interface ProfileResponse{
   code: string;
@@ -56,6 +58,7 @@ export interface ProfileUpdateDataResponse {
   address: string | null;
   dateOfBirth: string;
   gender: number;
+  rewardPoint: number;
 }
 
 export interface ProfileUpdateResponse {

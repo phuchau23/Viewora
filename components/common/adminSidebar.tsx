@@ -9,6 +9,8 @@ import {
   Home,
   User,
   ContactRound,
+  TicketPercent,
+  Popcorn,
 } from "lucide-react";
 
 import {
@@ -50,6 +52,16 @@ const adminNavItems = [
     title: "Roles",
     url: "/admin/role",
     icon: User,
+  },
+  {
+    title: "Promotion",
+    url: "/admin/promotion",
+    icon: TicketPercent,
+  },
+  {
+    title: "Snack",
+    url: "/admin/snack",
+    icon: Popcorn,
   },
   {
     title: "Settings",

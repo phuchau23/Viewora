@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
@@ -11,15 +12,18 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./common/ThemeToggle";
 import Image from "next/image";
+import { LanguageSelector } from "./language-selector";
 
 const NAVIGATION = [
   { name: "Home", href: "/" },
   { name: "Movies", href: "/user/movies" },
   { name: "Cinemas", href: "/user/cinemas" },
   { name: "Promotions", href: "/user/promotions" },
+  { name: "Snack", href: "/user/snacks" },
 ];
 
 export default function Header() {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -54,7 +58,7 @@ export default function Header() {
           pathname === href ? "text-primary" : "text-muted-foreground"
         )}
       >
-        {name}
+        {t(`nav.${name.toLowerCase()}`)}
       </Link>
     ));
 
@@ -75,7 +79,7 @@ export default function Header() {
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">
                 <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle menu</span>
+                <span className="sr-only">{t("header.toggleMenu")}</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-64 sm:w-80">
@@ -83,7 +87,7 @@ export default function Header() {
                 <Link href="/" className="text-xl font-bold">
                   <Image
                     src="/logo1.png"
-                    alt="Viewora Logo"
+                    alt={t("header.logoAlt")}
                     width={120}
                     height={40}
                   />
@@ -96,11 +100,11 @@ export default function Header() {
                     variant="outline"
                     onClick={() => router.push("/login")}
                   >
-                    Sign In
+                    {t("header.signIn")}
                   </Button>
                 ) : (
                   <Button variant="outline" onClick={handleLogout}>
-                    Sign Out
+                    {t("header.signOut")}
                   </Button>
                 )}
               </nav>
@@ -112,7 +116,7 @@ export default function Header() {
             <span className="text-xl font-bold hidden md:inline-block">
               <Image
                 src="/logo1.png"
-                alt="Viewora Logo"
+                alt={t("header.logoAlt")}
                 width={120}
                 height={40}
               />
@@ -129,14 +133,14 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center border rounded-full px-3 py-1 text-sm text-muted-foreground">
             <MapPin className="mr-1 h-3 w-3" />
-            <span>Ho Chi Minh City</span>
+            <span>{t("header.location")}</span>
           </div>
 
           <div className="relative hidden sm:block">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search movies..."
+              placeholder={t("header.searchPlaceholder")}
               className="w-[200px] lg:w-[280px] pl-9 rounded-full bg-secondary"
             />
           </div>
@@ -144,7 +148,7 @@ export default function Header() {
           {/* Mobile search */}
           <Button variant="ghost" size="icon" className="md:hidden">
             <Search className="h-5 w-5" />
-            <span className="sr-only">Search</span>
+            <span className="sr-only">{t("header.search")}</span>
           </Button>
 
           {/* Nút Profile - chỉ hiển thị nếu có token */}
@@ -157,18 +161,18 @@ export default function Header() {
             >
               <Link href="/user/account">
                 <User className="h-5 w-5" />
-                <span className="sr-only">Account</span>
+                <span className="sr-only">{t("header.account")}</span>
               </Link>
             </Button>
           )}
-
+          <LanguageSelector />
           {/* Nút Sign In / Sign Out */}
           {!token ? (
             <Button
               onClick={() => router.push("/login")}
               className="hidden md:flex"
             >
-              Sign In
+              {t("header.signIn")}
             </Button>
           ) : (
             <Button
@@ -177,7 +181,7 @@ export default function Header() {
               variant="outline"
             >
               <LogOut className="h-4 w-4 mr-1" />
-              Sign Out
+              {t("header.signOut")}
             </Button>
           )}
 

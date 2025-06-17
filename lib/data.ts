@@ -1,17 +1,17 @@
-export type Movie = {
-  id: string;
-  title: string;
-  image: string;
-  genre: string[];
-  duration: number; // in minutes
-  rating: string;
-  releaseDate: string;
-  director: string;
-  cast: string[];
-  synopsis: string;
-  trailerUrl: string;
-  status: 'now-showing' | 'coming-soon';
-};
+// export type Movie = {
+//   id: string;
+//   title: string;
+//   image: string;
+//   genre: string[];
+//   duration: number; // in minutes
+//   rating: string;
+//   releaseDate: string;
+//   director: string;
+//   cast: string[];
+//   synopsis: string;
+//   trailerUrl: string;
+//   status: 'now-showing' | 'coming-soon';
+// };
 
 export type Cinema = {
   id: string;
@@ -249,120 +249,120 @@ export const sampleEmployees: Employee[] = [
 ]
 
 
-export const movies: Movie[] = [
-  {
-    id: "1",
-    title: "Dune: Part Two",
-    image: "https://images.pexels.com/photos/3131971/pexels-photo-3131971.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    genre: ["Sci-Fi", "Adventure", "Drama"],
-    duration: 166,
-    rating: "PG-13",
-    releaseDate: "2024-03-01",
-    director: "Denis Villeneuve",
-    cast: ["Timothée Chalamet", "Zendaya", "Rebecca Ferguson", "Josh Brolin"],
-    synopsis: "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
-    trailerUrl: "https://www.youtube.com/watch?v=Way9Dexny3w",
-    status: "now-showing",
-  },
-  {
-    id: "2",
-    title: "Kung Fu Panda 4",
-    image: "https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    genre: ["Animation", "Action", "Comedy"],
-    duration: 94,
-    rating: "PG",
-    releaseDate: "2024-03-08",
-    director: "Mike Mitchell",
-    cast: ["Jack Black", "Awkwafina", "Viola Davis", "Bryan Cranston"],
-    synopsis: "Po must train a new warrior when he's chosen to become the spiritual leader of the Valley of Peace.",
-    trailerUrl: "https://www.youtube.com/watch?v=_inKs4eeHiI",
-    status: "now-showing",
-  },
-  {
-    id: "3",
-    title: "Godzilla x Kong: The New Empire",
-    image: "https://images.pexels.com/photos/4145354/pexels-photo-4145354.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    genre: ["Action", "Adventure", "Sci-Fi"],
-    duration: 115,
-    rating: "PG-13",
-    releaseDate: "2024-03-29",
-    director: "Adam Wingard",
-    cast: ["Rebecca Hall", "Brian Tyree Henry", "Dan Stevens"],
-    synopsis: "The legends collide as Godzilla and Kong team up against a massive undiscovered threat hidden within our world.",
-    trailerUrl: "https://www.youtube.com/watch?v=odM92ap8_c0",
-    status: "now-showing",
-  },
-  {
-    id: "4",
-    title: "Inside Out 2",
-    image: "https://images.pexels.com/photos/12696152/pexels-photo-12696152.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    genre: ["Animation", "Adventure", "Comedy"],
-    duration: 107,
-    rating: "PG",
-    releaseDate: "2024-06-14",
-    director: "Kelsey Mann",
-    cast: ["Amy Poehler", "Phyllis Smith", "Lewis Black", "Tony Hale"],
-    synopsis: "Riley enters adolescence as new emotions join Joy, Sadness, Anger, Fear, and Disgust in Headquarters.",
-    trailerUrl: "https://www.youtube.com/watch?v=RGpdfqgaqfQ",
-    status: "coming-soon",
-  },
-  {
-    id: "5",
-    title: "A Quiet Place: Day One",
-    image: "https://images.pexels.com/photos/2346001/pexels-photo-2346001.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    genre: ["Horror", "Sci-Fi", "Thriller"],
-    duration: 120,
-    rating: "PG-13",
-    releaseDate: "2024-06-28",
-    director: "Michael Sarnoski",
-    cast: ["Lupita Nyong'o", "Joseph Quinn", "Alex Wolff"],
-    synopsis: "Experience the day the world went quiet in this prequel to the post-apocalyptic horror franchise.",
-    trailerUrl: "https://www.youtube.com/watch?v=8rQwxbg1BQ4",
-    status: "coming-soon",
-  },
-  {
-    id: "6",
-    title: "Deadpool & Wolverine",
-    image: "https://images.pexels.com/photos/1342251/pexels-photo-1342251.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    genre: ["Action", "Adventure", "Comedy"],
-    duration: 135,
-    rating: "R",
-    releaseDate: "2024-07-26",
-    director: "Shawn Levy",
-    cast: ["Ryan Reynolds", "Hugh Jackman", "Emma Corrin", "Matthew Macfadyen"],
-    synopsis: "Wade Wilson teams up with Wolverine in this highly anticipated Marvel crossover.",
-    trailerUrl: "https://www.youtube.com/watch?v=X9L_LIhUoVU",
-    status: "coming-soon",
-  },
-  {
-    id: "7",
-    title: "The Fall Guy",
-    image: "https://images.pexels.com/photos/356079/pexels-photo-356079.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    genre: ["Action", "Comedy"],
-    duration: 125,
-    rating: "PG-13",
-    releaseDate: "2024-05-03",
-    director: "David Leitch",
-    cast: ["Ryan Gosling", "Emily Blunt", "Aaron Taylor-Johnson", "Hannah Waddingham"],
-    synopsis: "A stuntman is drawn into a dangerous conspiracy while trying to win back his ex-girlfriend.",
-    trailerUrl: "https://www.youtube.com/watch?v=0Md63MMsyTY",
-    status: "now-showing",
-  },
-  {
-    id: "8",
-    title: "Furiosa: A Mad Max Saga",
-    image: "https://images.pexels.com/photos/33129/popcorn-movie-party-entertainment.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    genre: ["Action", "Adventure", "Sci-Fi"],
-    duration: 148,
-    rating: "R",
-    releaseDate: "2024-05-24",
-    director: "George Miller",
-    cast: ["Anya Taylor-Joy", "Chris Hemsworth", "Tom Burke"],
-    synopsis: "The origin story of the renegade warrior before her encounter with Max Rockatansky.",
-    trailerUrl: "https://www.youtube.com/watch?v=XdYR1_Ml8A0",
-    status: "now-showing",
-  },
-];
+// export const movies: Movie[] = [
+//   {
+//     id: "1",
+//     title: "Dune: Part Two",
+//     image: "https://images.pexels.com/photos/3131971/pexels-photo-3131971.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     genre: ["Sci-Fi", "Adventure", "Drama"],
+//     duration: 166,
+//     rating: "PG-13",
+//     releaseDate: "2024-03-01",
+//     director: "Denis Villeneuve",
+//     cast: ["Timothée Chalamet", "Zendaya", "Rebecca Ferguson", "Josh Brolin"],
+//     synopsis: "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
+//     trailerUrl: "https://www.youtube.com/watch?v=Way9Dexny3w",
+//     status: "now-showing",
+//   },
+//   {
+//     id: "2",
+//     title: "Kung Fu Panda 4",
+//     image: "https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     genre: ["Animation", "Action", "Comedy"],
+//     duration: 94,
+//     rating: "PG",
+//     releaseDate: "2024-03-08",
+//     director: "Mike Mitchell",
+//     cast: ["Jack Black", "Awkwafina", "Viola Davis", "Bryan Cranston"],
+//     synopsis: "Po must train a new warrior when he's chosen to become the spiritual leader of the Valley of Peace.",
+//     trailerUrl: "https://www.youtube.com/watch?v=_inKs4eeHiI",
+//     status: "now-showing",
+//   },
+//   {
+//     id: "3",
+//     title: "Godzilla x Kong: The New Empire",
+//     image: "https://images.pexels.com/photos/4145354/pexels-photo-4145354.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     genre: ["Action", "Adventure", "Sci-Fi"],
+//     duration: 115,
+//     rating: "PG-13",
+//     releaseDate: "2024-03-29",
+//     director: "Adam Wingard",
+//     cast: ["Rebecca Hall", "Brian Tyree Henry", "Dan Stevens"],
+//     synopsis: "The legends collide as Godzilla and Kong team up against a massive undiscovered threat hidden within our world.",
+//     trailerUrl: "https://www.youtube.com/watch?v=odM92ap8_c0",
+//     status: "now-showing",
+//   },
+//   {
+//     id: "4",
+//     title: "Inside Out 2",
+//     image: "https://images.pexels.com/photos/12696152/pexels-photo-12696152.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     genre: ["Animation", "Adventure", "Comedy"],
+//     duration: 107,
+//     rating: "PG",
+//     releaseDate: "2024-06-14",
+//     director: "Kelsey Mann",
+//     cast: ["Amy Poehler", "Phyllis Smith", "Lewis Black", "Tony Hale"],
+//     synopsis: "Riley enters adolescence as new emotions join Joy, Sadness, Anger, Fear, and Disgust in Headquarters.",
+//     trailerUrl: "https://www.youtube.com/watch?v=RGpdfqgaqfQ",
+//     status: "coming-soon",
+//   },
+//   {
+//     id: "5",
+//     title: "A Quiet Place: Day One",
+//     image: "https://images.pexels.com/photos/2346001/pexels-photo-2346001.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     genre: ["Horror", "Sci-Fi", "Thriller"],
+//     duration: 120,
+//     rating: "PG-13",
+//     releaseDate: "2024-06-28",
+//     director: "Michael Sarnoski",
+//     cast: ["Lupita Nyong'o", "Joseph Quinn", "Alex Wolff"],
+//     synopsis: "Experience the day the world went quiet in this prequel to the post-apocalyptic horror franchise.",
+//     trailerUrl: "https://www.youtube.com/watch?v=8rQwxbg1BQ4",
+//     status: "coming-soon",
+//   },
+//   {
+//     id: "6",
+//     title: "Deadpool & Wolverine",
+//     image: "https://images.pexels.com/photos/1342251/pexels-photo-1342251.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     genre: ["Action", "Adventure", "Comedy"],
+//     duration: 135,
+//     rating: "R",
+//     releaseDate: "2024-07-26",
+//     director: "Shawn Levy",
+//     cast: ["Ryan Reynolds", "Hugh Jackman", "Emma Corrin", "Matthew Macfadyen"],
+//     synopsis: "Wade Wilson teams up with Wolverine in this highly anticipated Marvel crossover.",
+//     trailerUrl: "https://www.youtube.com/watch?v=X9L_LIhUoVU",
+//     status: "coming-soon",
+//   },
+//   {
+//     id: "7",
+//     title: "The Fall Guy",
+//     image: "https://images.pexels.com/photos/356079/pexels-photo-356079.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     genre: ["Action", "Comedy"],
+//     duration: 125,
+//     rating: "PG-13",
+//     releaseDate: "2024-05-03",
+//     director: "David Leitch",
+//     cast: ["Ryan Gosling", "Emily Blunt", "Aaron Taylor-Johnson", "Hannah Waddingham"],
+//     synopsis: "A stuntman is drawn into a dangerous conspiracy while trying to win back his ex-girlfriend.",
+//     trailerUrl: "https://www.youtube.com/watch?v=0Md63MMsyTY",
+//     status: "now-showing",
+//   },
+//   {
+//     id: "8",
+//     title: "Furiosa: A Mad Max Saga",
+//     image: "https://images.pexels.com/photos/33129/popcorn-movie-party-entertainment.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//     genre: ["Action", "Adventure", "Sci-Fi"],
+//     duration: 148,
+//     rating: "R",
+//     releaseDate: "2024-05-24",
+//     director: "George Miller",
+//     cast: ["Anya Taylor-Joy", "Chris Hemsworth", "Tom Burke"],
+//     synopsis: "The origin story of the renegade warrior before her encounter with Max Rockatansky.",
+//     trailerUrl: "https://www.youtube.com/watch?v=XdYR1_Ml8A0",
+//     status: "now-showing",
+//   },
+// ];
 
 export const cinemas: Cinema[] = [
   {
@@ -621,104 +621,6 @@ export const promotions = [
     validUntil: "2024-08-15",
   },
 ]
-export const sampleUsers: User[] = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@company.com",
-      phone: "+1 (555) 123-4567",
-      role: "Admin",
-      status: "Active",
-      lastLogin: "2 hours ago",
-      joinDate: "2023-01-15",
-      department: "IT",
-      location: "New York, NY",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane.smith@company.com",
-      phone: "+1 (555) 987-6543",
-      role: "Manager",
-      status: "Active",
-      lastLogin: "1 day ago",
-      joinDate: "2023-02-20",
-      department: "Marketing",
-      location: "Los Angeles, CA",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      email: "mike.johnson@company.com",
-      phone: "+1 (555) 456-7890",
-      role: "Moderator",
-      status: "Active",
-      lastLogin: "3 hours ago",
-      joinDate: "2023-03-10",
-      department: "Support",
-      location: "Chicago, IL",
-    },
-    {
-      id: 4,
-      name: "Sarah Davis",
-      email: "sarah.davis@company.com",
-      phone: "+1 (555) 321-0987",
-      role: "User",
-      status: "Inactive",
-      lastLogin: "1 week ago",
-      joinDate: "2023-04-05",
-      department: "Sales",
-      location: "Miami, FL",
-    },
-    {
-      id: 5,
-      name: "Alex Wilson",
-      email: "alex.wilson@company.com",
-      phone: "+1 (555) 654-3210",
-      role: "User",
-      status: "Active",
-      lastLogin: "5 minutes ago",
-      joinDate: "2023-05-12",
-      department: "Design",
-      location: "Seattle, WA",
-    },
-    {
-      id: 6,
-      name: "Emily Brown",
-      email: "emily.brown@company.com",
-      phone: "+1 (555) 789-0123",
-      role: "Manager",
-      status: "Active",
-      lastLogin: "30 minutes ago",
-      joinDate: "2023-01-30",
-      department: "HR",
-      location: "Austin, TX",
-    },
-    {
-      id: 7,
-      name: "David Lee",
-      email: "david.lee@company.com",
-      phone: "+1 (555) 234-5678",
-      role: "User",
-      status: "Suspended",
-      lastLogin: "2 weeks ago",
-      joinDate: "2023-06-18",
-      department: "Finance",
-      location: "Boston, MA",
-    },
-    {
-      id: 8,
-      name: "Lisa Garcia",
-      email: "lisa.garcia@company.com",
-      phone: "+1 (555) 876-5432",
-      role: "Moderator",
-      status: "Active",
-      lastLogin: "1 hour ago",
-      joinDate: "2023-03-25",
-      department: "Operations",
-      location: "Denver, CO",
-    },
-  ]
   
   export const sampleTickets: Ticket[] = [
     {
@@ -1028,4 +930,92 @@ export const sampleUser: User = {
   joinDate: "",
   department: "",
   location: ""
+};
+
+export const movies: Movie[] = [
+  {
+    id: "1",
+    title: "Biệt Đội Săn Ma: Kỷ Nguyên Băng Giá",
+    banner: "https://images.pexels.com/photos/3131971/pexels-photo-3131971.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    poster: "https://images.pexels.com/photos/3131971/pexels-photo-3131971.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    director: "Gil Kenan",
+    actor: ["Paul Rudd", "Carrie Coon", "Finn Wolfhard"],
+    category: ["Hài hước", "Kinh dị", "Phiêu lưu"],
+    duration: 115,
+    startShow: "2025-03-21",
+    createAt: 2025,
+    trailer: "https://www.youtube.com/watch?v=PWioEshJe7k",
+    status: "nowShowing",
+    rate: 4.2,
+    age: "T13",
+    detail: "Biệt đội săn ma thế hệ mới đối mặt với mối đe dọa băng giá, đe dọa nhấn chìm cả thế giới trong kỷ băng hà mới."
+  },
+  {
+    id: "2",
+    title: "Mufasa: Vua Sư Tử",
+    banner: "https://images.pexels.com/photos/356079/pexels-photo-356079.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    poster: "https://images.pexels.com/photos/356079/pexels-photo-356079.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    director: "Barry Jenkins",
+    actor: ["Aaron Pierre", "Kelvin Harrison Jr.", "Beyoncé"],
+    category: ["Hoạt hình", "Gia đình", "Phiêu lưu"],
+    duration: 120,
+    startShow: "2025-12-20",
+    createAt: 2025,
+    trailer: "https://www.youtube.com/watch?v=c75XRkb2MpQ",
+    status: "inComing",
+    rate: 0,
+    age: "T13",
+    detail: "Câu chuyện về hành trình trở thành vua của Mufasa, cha của Simba, với những thử thách và chiến thắng vĩ đại."
+  },
+  {
+    id: "3",
+    title: "Dune: Phần Hai",
+    banner: "https://images.pexels.com/photos/33129/popcorn-movie-party-entertainment.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    poster: "https://images.pexels.com/photos/33129/popcorn-movie-party-entertainment.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    director: "Denis Villeneuve",
+    actor: ["Timothée Chalamet", "Zendaya", "Florence Pugh"],
+    category: ["Khoa học viễn tưởng", "Hành động"],
+    duration: 166,
+    startShow: "2025-06-20",
+    createAt: 2024,
+    trailer: "https://www.youtube.com/watch?v=kCO-RO3q7U4",
+    status: "nowShowing",
+    rate: 4.8,
+    age: "T16",
+    detail: "Paul Atreides tiếp tục cuộc chiến trên sa mạc Arrakis, đối mặt với các thế lực thù địch để bảo vệ tương lai của vũ trụ."
+  },
+  {
+    id: "4",
+    title: "Kung Fu Panda 4",
+    banner: "https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    poster: "https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    director: "Mike Mitchell",
+    actor: ["Jack Black", "Awkwafina", "Viola Davis"],
+    category: ["Hoạt hình", "Hành động", "Hài hước"],
+    duration: 94,
+    startShow: "2025-07-15",
+    createAt: 2024,
+    trailer: "https://www.youtube.com/watch?v=_inKs4eeHiI",
+    status: "inComing",
+    rate: 4.0,
+    age: "T13",
+    detail: "Po tiếp tục hành trình trở thành thủ lĩnh tinh thần, đối mặt với một kẻ thù mới có khả năng biến hình đầy nguy hiểm."
+  },
+];
+export type Movie = {
+  id: string;
+  title: string; // Tên phim
+  banner: string; // Ảnh nền to tràn màn hình
+  poster: string; // Ảnh phim trên tab
+  director: string; // Đạo diễn
+  actor: string[]; // Diễn viên
+  category: string[]; // Thể loại
+  duration: number; // Thời lượng (phút)
+  startShow: string; // Ngày công chiếu
+  createAt: number; // Năm phát hành
+  trailer: string; // Demo
+  status: 'inComing' | 'nowShowing' | 'Ended'; // Trạng thái
+  rate: number; // Điểm 1-5
+  age: 'T13' | 'T16' | 'T18'; // Độ tuổi
+  detail: string; // Mô tả
 };
