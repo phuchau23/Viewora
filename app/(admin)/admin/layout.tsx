@@ -17,6 +17,7 @@ import { AdminSidebar } from "@/components/common/adminSidebar";
 import "@/app/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function AdminLayout({
   children,
@@ -47,6 +48,7 @@ export default function AdminLayout({
             </div>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
+          <Toaster />
         </SidebarInset>
       </SidebarProvider>
     </ThemeProvider>

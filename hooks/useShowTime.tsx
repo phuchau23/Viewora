@@ -1,27 +1,43 @@
-// "use client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  CreateShowtimeDto,
+  ShowTimeService,
+} from "@/lib/api/service/fetchShowTime";
+import { toast } from "sonner";
 
-// import { useQuery } from "@tanstack/react-query";
-// import { ShowTimeService } from "@/lib/api/service/fetchShowTime";
-// import { ShowTime } from "@/lib/api/service/fetchShowTime";
+export const useShowTime = () => {
+  const {
+    data: response,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["showtime"],
+    queryFn: () => ShowTimeService.getShowTime(),
+    enabled: true,
+  });
 
-// export const useShowTimeByMovieId = (movieId?: string) => {
-//   const { data, isLoading, error } = useQuery<ShowTime[]>({
-//     queryKey: ["showtimes", movieId],
-//     queryFn: () => ShowTimeService.getShowTimeByMovieId(movieId!), // đã trả về ShowTime[]
-//     enabled: !!movieId,
-//   });
+  const showTimeArray = response?.data?.items ?? [];
 
-//   console.log("Raw response:", data); // log để kiểm tra
+  return {
+    showTime: showTimeArray,
+    isLoading,
+    error,
+  };
+};
 
-//   return {
-//     showTime: data || [],
-//     isLoading,
-//     error,
-//   };
-// };
-// useShowTimeByMovieId.ts
-import { useQuery } from "@tanstack/react-query";
-import { ShowTimeService } from "@/lib/api/service/fetchShowTime";
+export const useCreateShowTime = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (newShowtime: CreateShowtimeDto) =>
+      ShowTimeService.createShowtime(newShowtime),
+    onSuccess: () => {
+      toast.success("🎉 Suất chiếu đã được tạo thành công!");
+      queryClient.invalidateQueries({ queryKey: ["showtime"] });
+    },
+    onError: () => {},
+  });
+};
 
 export const useShowTimeByMovieId = (movieId: string) => {
   const {
@@ -36,7 +52,6 @@ export const useShowTimeByMovieId = (movieId: string) => {
 
   const rawData = response;
 
-  // ✅ Normalize: luôn trả về mảng
   const showTimeArray = Array.isArray(rawData)
     ? rawData
     : rawData
@@ -48,4 +63,18 @@ export const useShowTimeByMovieId = (movieId: string) => {
     isLoading,
     error,
   };
+};
+export const useDeleteShowTime = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => ShowTimeService.deleteShowtime(id),
+    onSuccess: () => {
+      toast.success("🗑️ Xoá suất chiếu thành công");
+      queryClient.invalidateQueries({ queryKey: ["showtime"] });
+    },
+    onError: (error: any) => {
+      toast.error("❌ Lỗi khi xoá suất chiếu");
+    },
+  });
 };

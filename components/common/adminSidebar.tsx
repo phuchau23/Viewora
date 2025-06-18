@@ -31,6 +31,7 @@ import { Button } from "../ui/button";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Calendar } from "lucide-react";
 // Admin navigation items
 const adminNavItems = [
   {
@@ -77,6 +78,11 @@ const adminNavItems = [
     title: "Rooms",
     url: "/admin/rooms",
     icon: Home,
+  },
+  {
+    title: "Showtime",
+    url: "/admin/showtime",
+    icon: Calendar,
   },
   {
     title: "Settings",

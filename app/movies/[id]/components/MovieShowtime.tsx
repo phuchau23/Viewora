@@ -184,77 +184,92 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
         </div>
 
         {/* Showtime Cards */}
-        {selectedBranch ? (
-          filteredShowTimes.length > 0 ? (
-            filteredShowTimes.map((show) => (
-              <div
-                key={show.id}
-                className="mb-6 p-4 rounded-xl shadow-sm border border-border bg-card"
-              >
-                <div className="flex justify-between mb-2">
-                  <h2 className="font-semibold text-lg text-foreground">
-                    {show.movie.name}
-                  </h2>
-                  <div className="flex items-center text-yellow-500 gap-1">
-                    <Star className="w-4 h-4" />
-                    <span className="text-sm text-muted-foreground">
-                      {show.movie.rate}/5
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-muted-foreground mb-2">
-                  <Clock className="w-4 h-4" />
-                  <span>{formatDuration(show.movie.duration)}</span>
-                  <span className="px-2 py-0.5 text-xs rounded bg-muted">
-                    {show.movie.age}
-                  </span>
-                  <span className="px-2 py-0.5 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
-                    {show.movie.movieType.name}
-                  </span>
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                  {show.movie.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() =>
-                      setExpandedShowId((prev) =>
-                        prev === show.id ? null : show.id
-                      )
-                    }
-                    className="px-4 py-2 rounded-md bg-blue-50 text-blue-800 dark:bg-blue-900 dark:text-blue-300 border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-800 text-sm transition hover:scale-105"
-                  >
-                    {formatTime(show.startTime)} - {formatTime(show.endTime)}
-                  </button>
-                </div>
-
-                {expandedShowId === show.id && (
-                  <div className="mt-4 border-t pt-4">
-                    <h2 className="text-lg font-semibold mb-2 text-foreground">
-                      🪑 Chọn ghế – Phòng {show.room.roomNumber}
-                    </h2>
-                    <RoomSeatingChart
-                      roomId={show.room.id}
-                      movieTitle={show.movie.name}
-                      showtime={formatTime(show.startTime)}
-                      roomNumber={show.room.roomNumber}
-                      branchName={show.room.branch.name}
-                    />
-                  </div>
-                )}
-              </div>
-            ))
-          ) : (
-            <div className="text-center text-muted-foreground py-10">
-              Không có suất chiếu cho ngày đã chọn.
-            </div>
+        {Object.entries(
+          filteredShowTimes.reduce<Record<string, typeof filteredShowTimes>>(
+            (acc, show) => {
+              const groupKey = `${show.movie.movieType.name}-${show.room.id}`;
+              if (!acc[groupKey]) acc[groupKey] = [];
+              acc[groupKey].push(show);
+              return acc;
+            },
+            {}
           )
-        ) : (
-          <div className="text-center text-muted-foreground py-10 text-lg">
-            📍 Hãy chọn một chi nhánh để xem lịch chiếu
-          </div>
-        )}
+        ).map(([key, shows]) => {
+          const [roomType] = key.split("-");
+          const firstShow = shows[0];
+          return (
+            <div
+              key={key}
+              className="mb-6 p-4 rounded-xl shadow-sm border border-border bg-card"
+            >
+              <div className="flex justify-between mb-2">
+                <h2 className="font-semibold text-lg text-foreground">
+                  {firstShow.movie.name} – Phòng {firstShow.room.roomNumber} (
+                  {roomType})
+                </h2>
+                <div className="flex items-center text-yellow-500 gap-1">
+                  <Star className="w-4 h-4" />
+                  <span className="text-sm text-muted-foreground">
+                    {firstShow.movie.rate}/5
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 text-sm text-muted-foreground mb-2">
+                <Clock className="w-4 h-4" />
+                <span>{formatDuration(firstShow.movie.duration)}</span>
+                <span className="px-2 py-0.5 text-xs rounded bg-muted">
+                  {firstShow.movie.age}
+                </span>
+                <span className="px-2 py-0.5 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                  {firstShow.movie.movieType.name}
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                {firstShow.movie.description}
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {shows.map((show) => (
+                  <div key={show.id}>
+                    <div className="text-xs font-bold text-foreground">
+                      {show.room.roomType.name}
+                    </div>
+                    <button
+                      onClick={() =>
+                        setExpandedShowId((prev) =>
+                          prev === show.id ? null : show.id
+                        )
+                      }
+                      className={`px-4 py-2 rounded-md bg-blue-50 text-blue-800 dark:bg-blue-900 dark:text-blue-300 border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-800 text-sm transition hover:scale-105 ${
+                        expandedShowId === show.id
+                          ? "ring-2 ring-primary/50"
+                          : ""
+                      }`}
+                    >
+                      {formatTime(show.startTime)} - {formatTime(show.endTime)}
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {shows.map(
+                (show) =>
+                  expandedShowId === show.id && (
+                    <div key={show.id} className="mt-4 border-t pt-4">
+                      <RoomSeatingChart
+                        roomId={show.room.id}
+                        movieTitle={show.movie.name}
+                        showtime={formatTime(show.startTime)}
+                        roomNumber={show.room.roomNumber}
+                        branchName={show.room.branch.name}
+                      />
+                    </div>
+                  )
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
