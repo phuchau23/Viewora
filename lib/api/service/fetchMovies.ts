@@ -1,4 +1,3 @@
-'use client';
 import apiService from "../core";
 
 export interface MovieType {
@@ -9,7 +8,7 @@ export interface MovieType {
 export interface Movie {
     id: string;
     name: string;
-    banner: string;
+    banner: string[];
     poster: string;
     description: string;
     director: string;
@@ -39,6 +38,13 @@ export interface MovieResponse {
         hasPreviousPage: boolean;
         hasNextPage: boolean;
     };
+}
+
+export interface MovieByIdResponse {
+    code: number;
+    statusCode: string;
+    message: string;
+    data:Movie;
 }
 
 export interface MovieCreateRequest {
@@ -87,11 +93,24 @@ export interface MovieUpdateRequest {
   Status: string;
   IsAvailable: boolean;
   MovieTypeNames: Array<string>;
-  Banner: File;
-  Poster: File;
+  banner: File;
+  poster: File;
 }
 
 export interface MovieUpdateResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data: Movie;
+}
+export interface MoviePlayResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data: Movie;
+}
+
+export interface MovieStopResponse {
   code: number;
   statusCode: string;
   message: string;
@@ -122,7 +141,15 @@ export const MovieService = {
     return response.data;
   },
   getMovieById: async (id: string) => {
-    const response = await apiService.get<MovieResponse>(`/movies/${id}`);
+    const response = await apiService.get<MovieByIdResponse>(`/movies/${id}`);
+    return response.data;
+  },
+  playMovie: async (id: string) => {
+    const response = await apiService.patch<MoviePlayResponse>(`/movies/${id}/nowShowing`);
+    return response.data;
+  },
+  stopMovie: async (id: string) => {
+    const response = await apiService.patch<MovieStopResponse>(`/movies/${id}/ended`);
     return response.data;
   },
 };

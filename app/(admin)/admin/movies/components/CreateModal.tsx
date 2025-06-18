@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogClose,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,15 +20,13 @@ import { Textarea } from "@/components/ui/textarea";
 export const CreateModal = () => {
   const [open, setOpen] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const [posterPreview, setPosterPreview] = useState<string | null>(null);
-
   const [bannerFiles, setBannerFiles] = useState<File[]>([]);
   const [bannerPreviews, setBannerPreviews] = useState<string[]>([]);
 
-  const { mutate: createMovie } = useCreateMovie();
-  const { types, isLoading } = useGetTypes();
+  const { mutate: createMovie, isPending: isCreating } = useCreateMovie(); // Thêm isPending
+  const { types, isLoading: isTypesLoading } = useGetTypes(); // Đổi tên cho rõ ràng
 
   const handleSelectType = (typeName: string) => {
     setSelectedTypes((prev) =>
@@ -94,14 +93,14 @@ export const CreateModal = () => {
       <DialogTrigger asChild>
         <Button>Thêm phim mới</Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto px-4 py-6">
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold text-center mb-4">
               Thêm phim mới
             </DialogTitle>
+            <DialogDescription>Thêm thông tin phim.</DialogDescription>
           </DialogHeader>
-
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="Name">Tên phim</Label>
@@ -141,7 +140,7 @@ export const CreateModal = () => {
                 <option value="">Chọn độ tuổi</option>
                 <option value="P">P</option>
                 <option value="K">K</option>
-                <option value="T13">T13</option>
+                <option value=" eerlijkT13">T13</option>
                 <option value="T16">T16</option>
                 <option value="T18">T18</option>
               </select>
@@ -158,7 +157,7 @@ export const CreateModal = () => {
             <div className="col-span-2">
               <Label>Thể loại (chọn nhiều)</Label>
               <div className="border rounded-md p-2 max-h-[150px] overflow-y-auto">
-                {isLoading ? (
+                {isTypesLoading ? (
                   <p>Đang tải...</p>
                 ) : (
                   types?.data?.map((type) => (
@@ -238,7 +237,9 @@ export const CreateModal = () => {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit" disabled={isCreating}>
+              {isCreating ? "Đang lưu..." : "Save changes"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

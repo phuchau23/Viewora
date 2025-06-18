@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useMemo } from "react";
 import {
@@ -30,7 +30,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -51,40 +50,33 @@ import {
   MoreHorizontal,
   Search,
   Trash2,
-  Filter,
 } from "lucide-react";
 import { Employee } from "@/lib/api/service/fetchEmployees";
+import { useUpdateEmployeeStatus } from "@/hooks/useEmployees";
 
 interface EmployeesTableProps {
   data: Employee[];
   onView: (employee: Employee) => void;
   onEdit: (employee: Employee) => void;
+  onDelete: (employee: Employee) => void;
   pagination: PaginationState;
   setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
-  pageCount: number; // <-- thêm dòng này
+  pageCount: number;
 }
 
 export function EmployeesTable({
   data,
   onView,
   onEdit,
+  onDelete,
   pagination,
   setPagination,
   pageCount,
 }: EmployeesTableProps) {
-  const getInitials = (fullName: string) =>
-    fullName
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase();
-
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-
-  console.log(data);
-
+  const { mutate: updateEmployeeStatus } = useUpdateEmployeeStatus();
   const getRoleColor = (role: string) => {
     switch (role) {
       case "Admin":
@@ -95,16 +87,11 @@ export function EmployeesTable({
         return "secondary";
     }
   };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Active":
-        return "default";
-      case "Inactive":
-        return "secondary";
-      default:
-        return "outline";
-    }
+  const handleUpdateEmployeeStatus = (id: string) => {
+    updateEmployeeStatus({ id });
+  };
+  const getStatusColor = (isActive: boolean) => {
+    return isActive ? "default" : "secondary";
   };
 
   const columns = useMemo<ColumnDef<Employee, unknown>[]>(
@@ -123,7 +110,7 @@ export function EmployeesTable({
           </Button>
         ),
         cell: ({ row }) => (
-          <div className=" text-sm font-medium">{row.getValue("fullName")}</div>
+          <div className="text-sm font-medium">{row.getValue("fullName")}</div>
         ),
         size: 120,
       },
@@ -176,9 +163,6 @@ export function EmployeesTable({
           </Badge>
         ),
         size: 100,
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id));
-        },
       },
       {
         accessorKey: "isActive",
@@ -198,9 +182,6 @@ export function EmployeesTable({
           </Badge>
         ),
         size: 100,
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id));
-        },
       },
       {
         id: "actions",
@@ -225,6 +206,14 @@ export function EmployeesTable({
               >
                 <Edit className="h-4 w-4" />
               </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleUpdateEmployeeStatus(employee.id)}
+                className="h-8 w-8 p-0"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -240,6 +229,10 @@ export function EmployeesTable({
                     <Edit className="mr-2 h-4 w-4" />
                     Edit Employee
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onDelete(employee)}>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Employee
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -248,20 +241,18 @@ export function EmployeesTable({
         size: 120,
       },
     ],
-    [onView, onEdit]
+    [onView, onEdit, onDelete]
   );
 
-  const data2 = data ?? [];
-
   const table = useReactTable({
-    data: data2,
+    data: data ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    manualPagination: true, // bật chế độ phân trang thủ công
-    onPaginationChange: setPagination, // <-- từ props
+    manualPagination: true,
+    onPaginationChange: setPagination,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -269,9 +260,8 @@ export function EmployeesTable({
       sorting,
       columnFilters,
       globalFilter,
-      pagination, // <-- từ props
+      pagination,
     },
-
     pageCount,
   });
 
@@ -290,33 +280,11 @@ export function EmployeesTable({
               maxLength={28}
             />
           </div>
-          {/* <Select
-            value={
-              (table.getColumn("isActive")?.getFilterValue() as string[])?.join(
-                ","
-              ) ?? ""
-            }
-            onValueChange={(value) =>
-              table
-                .getColumn("isActive")
-                ?.setFilterValue(value ? value.split(",") : undefined)
-            }
-          >
-            <SelectTrigger className="w-[130px]">
-              <Filter className="mr-2 h-4 w-4" />
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="Active">Active</SelectItem>
-              <SelectItem value="Inactive">Inactive</SelectItem>
-            </SelectContent>
-          </Select> */}
         </div>
         <div className="flex items-center space-x-2">
           <span className="text-sm text-muted-foreground">
-            {table.getFilteredRowModel()?.rows?.length ?? 0} of{" "}
-            {table.getCoreRowModel()?.rows?.length ?? 0} employee(s)
+            {table.getFilteredRowModel().rows.length} of{" "}
+            {table.getCoreRowModel().rows.length} employee(s)
           </span>
         </div>
       </div>
@@ -344,8 +312,8 @@ export function EmployeesTable({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getCoreRowModel().rows.length ? (
-              table.getCoreRowModel().rows.map((row) => (
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
@@ -412,7 +380,6 @@ export function EmployeesTable({
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
-              <span className="sr-only">Go to first page</span>
               <ChevronsLeft className="h-4 w-4" />
             </Button>
             <Button
@@ -421,7 +388,6 @@ export function EmployeesTable({
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              <span className="sr-only">Go to previous page</span>
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
@@ -430,7 +396,6 @@ export function EmployeesTable({
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              <span className="sr-only">Go to next page</span>
               <ChevronRight className="h-4 w-4" />
             </Button>
             <Button
@@ -439,7 +404,6 @@ export function EmployeesTable({
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >
-              <span className="sr-only">Go to last page</span>
               <ChevronsRight className="h-4 w-4" />
             </Button>
           </div>

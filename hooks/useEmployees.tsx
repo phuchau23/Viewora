@@ -1,51 +1,72 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+'use client';
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   EmployeeService,
-  EmployeeApiResponse,
   CreateEmployeeRequest,
+  UpdateEmployeeRequest,
+  Employee
 } from "@/lib/api/service/fetchEmployees";
 
-export const useEmployees = (pageIndex = 1, pageSize = 10) => {
-  const { data, isLoading, error } = useQuery({
+// Lấy danh sách nhân viên
+export function useGetEmployees(pageIndex = 1, pageSize = 10) {
+  return useQuery({
     queryKey: ["employees", pageIndex, pageSize],
     queryFn: () => EmployeeService.getEmployees(pageIndex, pageSize),
-    select: (response: EmployeeApiResponse) => ({
-      employees: response.data.items,
-      pagination: {
-        totalItems: response.data.totalItems,
-        currentPage: response.data.currentPage,
-        totalPages: response.data.totalPages,
-        pageSize: response.data.pageSize,
-        hasPreviousPage: response.data.hasPreviousPage,
-        hasNextPage: response.data.hasNextPage,
-      },
-    }),
   });
-
-  return {
-    employees: data?.employees || [],
-    pageSize: data?.pagination.pageSize,
-    totalPage: data?.pagination.totalPages,
-    currentPage: data?.pagination.currentPage,
-    isLoading,
-    isError: !!error,
-    error,
-  };
-};
-
-export function useCreateEmployee() {
-  const { mutate, mutateAsync, isError, isSuccess, isPending, data, error } =
-    useMutation<EmployeeApiResponse, Error, CreateEmployeeRequest>({
-      mutationFn: (formData) => EmployeeService.createEmployee(formData),
-    });
-
-  return {
-    mutate,
-    mutateAsync,
-    isError,
-    isSuccess,
-    isPending,
-    data,
-    error,
-  };
 }
+
+// Lấy nhân viên theo ID
+export function useGetEmployeeById(id: string) {
+  return useQuery({
+    queryKey: ["employee", id],
+    queryFn: () => EmployeeService.getEmployeeById(id),
+    enabled: !!id,
+  });
+}
+
+// Tạo nhân viên mới
+export function useCreateEmployee() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateEmployeeRequest | FormData) => EmployeeService.createEmployee(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+    },
+  });
+}
+
+// Cập nhật thông tin nhân viên
+export function useUpdateEmployee() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateEmployeeRequest | FormData }) =>
+      EmployeeService.updateEmployee(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+    },
+  });
+}
+
+// Xóa nhân viên
+export function useDeleteEmployee() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => EmployeeService.deleteEmployee(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+    },
+  });
+}
+
+// Cập nhật trạng thái hoạt động
+export function useUpdateEmployeeStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id }: { id: string }) => EmployeeService.updateEmployeeStatus(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+    },
+  });
+}
+

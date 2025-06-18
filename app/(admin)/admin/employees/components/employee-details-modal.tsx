@@ -133,6 +133,15 @@ export function EmployeeDetailsModal({
                   </p>
                 </div>
               </div>
+              <div className="flex items-center space-x-3">
+                <CreditCard className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Position</p>
+                  <p className="text-sm text-muted-foreground">
+                    {employee.position}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -147,9 +156,9 @@ export function EmployeeDetailsModal({
               <div className="flex items-center space-x-3">
                 <CreditCard className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">Identity Card</p>
+                  <p className="text-sm font-medium">Full Name</p>
                   <p className="text-sm text-muted-foreground">
-                    {employee.account.identityCard}
+                    {employee.account.fullName}
                   </p>
                 </div>
               </div>
@@ -168,6 +177,33 @@ export function EmployeeDetailsModal({
                   <p className="text-sm font-medium">Sex</p>
                   <p className="text-sm text-muted-foreground">
                     {employee.account.gender}
+                  </p>
+                </div>   
+              </div>
+              <div className="flex items-center space-x-3">
+                <CreditCard className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Department</p>
+                  <p className="text-sm text-muted-foreground">
+                    {employee.department}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <CreditCard className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Work Location</p>
+                  <p className="text-sm text-muted-foreground">
+                    {employee.workLocation}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <CreditCard className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Salary</p>
+                  <p className="text-sm text-muted-foreground">
+                    {employee.baseSalary}
                   </p>
                 </div>
               </div>
@@ -200,7 +236,7 @@ export function EmployeeDetailsModal({
                   </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-3">
+              {/* <div className="flex items-center space-x-3">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Address</p>
@@ -208,7 +244,7 @@ export function EmployeeDetailsModal({
                     {employee.account.address}
                   </p>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 

@@ -39,12 +39,12 @@ const OTPForm = ({ Email, timeLeft: initialTimeLeft, actionType, onComplete }: O
     e.preventDefault();
     if (otp.length === 6) {
       const otpCode = parseInt(otp);
-      if (actionType == "register") {
-        verifyEmail({ Email, optCode: otpCode }, {
+      if (actionType === "register") {
+        verifyEmail({ Email, otpCode: otpCode }, {
           onSuccess: () => onComplete?.(otpCode),
         });
       } else {
-        verifyResetPassword({ Email, optCode: otpCode }, {
+        verifyResetPassword({ Email, otpCode: otpCode }, {
           onSuccess: () => onComplete?.(otpCode),
         });
       }

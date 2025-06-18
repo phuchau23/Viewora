@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,11 +12,7 @@ import {
 import {
   Plus,
   Download,
-  Users,
-  UserCheck,
-  UserX,
   Shield,
-  Building,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -32,51 +28,39 @@ import { useToast } from "@/hooks/use-toast";
 import { currentUser, hasEmployeeAccess } from "@/lib/data";
 import { EmployeesTable } from "./components/employees-table";
 import { EmployeeFormModal } from "./components/employee-form-modal";
-import { useEmployees } from "@/hooks/useEmployees";
-import {
-  CreateEmployeeRequest,
-  Employee,
-} from "@/lib/api/service/fetchEmployees";
 import { EmployeeDetailsModal } from "./components/employee-details-modal";
-import { useCreateEmployee } from "@/hooks/useEmployees";
-import { toFormData } from "axios";
+import { useGetEmployees, useCreateEmployee, useUpdateEmployee, useDeleteEmployee } from "@/hooks/useEmployees";
+import { Employee } from "@/lib/api/service/fetchEmployees";
+import { CreateEmployeeModal } from "./components/createEmployee";
+import { EditEmployeeModal } from "./components/editEmployee";
 
 export default function EmployeesPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
-    null
-  );
-  const [formData, setFormData] = useState({
-    position: "",
-    accountId: 0,
-    department: "",
-    workLocation: "",
-    baseSalary: 0,
-    account: {
-      email: "",
-      fullName: "",
-      dateOfBirth: "",
-      gender: "",
-      phoneNumber: "",
-    },
-  });
-
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
+    pageIndex: 0, // Bắt đầu từ trang 1 (0-based index)
     pageSize: 10,
   });
 
-  const { employees, isLoading, totalPage, currentPage } = useEmployees(
+  const { data: employees, isLoading, isError, error } = useGetEmployees(
     pagination.pageIndex + 1,
     pagination.pageSize
   );
 
-  const { mutate, isSuccess } = useCreateEmployee();
+  useEffect(() => {
+    console.log("Pagination changed:", pagination.pageIndex + 1, "Total Pages:", employees?.data?.totalPages);
+    if (employees?.data?.totalPages && pagination.pageIndex >= employees.data.totalPages) {
+      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    }
+  }, [employees?.data?.totalPages, pagination.pageIndex, setPagination]);
+
+  const { mutate: createEmployee } = useCreateEmployee();
+  const { mutate: updateEmployee } = useUpdateEmployee();
+  const { mutate: deleteEmployee } = useDeleteEmployee();
   const { toast } = useToast();
-  const employeesData = employees;
 
   // Role-based access control
   if (!hasEmployeeAccess(currentUser.role)) {
@@ -95,39 +79,69 @@ export default function EmployeesPage() {
     );
   }
 
-  const handleEditEmployee = (
-    employeeData: Omit<
-      Employee,
-      "id" | "employeeId" | "createdDate" | "lastLogin" | "account"
-    >
-  ) => {
-    if (!selectedEmployee) return false;
-
-    const updatedEmployee: Employee = {
-      ...employeeData,
-      id: selectedEmployee.id,
-      account: selectedEmployee.account, // Account is non-editable
-    };
-
-    setIsEditModalOpen(false);
-    setSelectedEmployee(null);
-    toast({
-      title: "Employee Updated",
-      description: `${updatedEmployee.account.fullName} has been successfully updated.`,
+  const handleCreateEmployee = (data: any) => {
+    createEmployee(data, {
+      onSuccess: () => {
+        setIsAddModalOpen(false);
+        toast({
+          title: "Employee Added",
+          description: "New employee has been successfully added.",
+        });
+      },
+      onError: (error) => {
+        toast({
+          title: "Error",
+          description: "Failed to add employee.",
+          variant: "destructive",
+        });
+      },
     });
-    return true;
+  };
+
+  const handleEditEmployee = (data: any) => {
+    if (!selectedEmployee) return;
+    updateEmployee(
+      { id: selectedEmployee.id, data },
+      {
+        onSuccess: () => {
+          setIsEditModalOpen(false);
+          setSelectedEmployee(null);
+          toast({
+            title: "Employee Updated",
+            description: `${selectedEmployee.account.fullName} has been successfully updated.`,
+          });
+        },
+        onError: (error) => {
+          toast({
+            title: "Error",
+            description: "Failed to update employee.",
+            variant: "destructive",
+          });
+        },
+      }
+    );
   };
 
   const handleDeleteEmployee = () => {
     if (!selectedEmployee) return;
-
-    setIsDeleteDialogOpen(false);
-    toast({
-      title: "Employee Deleted",
-      description: `${selectedEmployee.account.fullName} has been successfully deleted.`,
-      variant: "destructive",
+    deleteEmployee(selectedEmployee.id, {
+      onSuccess: () => {
+        setIsDeleteDialogOpen(false);
+        toast({
+          title: "Employee Deleted",
+          description: `${selectedEmployee.account.fullName} has been successfully deleted.`,
+          variant: "destructive",
+        });
+        setSelectedEmployee(null);
+      },
+      onError: (error) => {
+        toast({
+          title: "Error",
+          description: "Failed to delete employee.",
+          variant: "destructive",
+        });
+      },
     });
-    setSelectedEmployee(null);
   };
 
   const handleViewDetails = (employee: Employee) => {
@@ -140,32 +154,9 @@ export default function EmployeesPage() {
     setIsEditModalOpen(true);
   };
 
-  // const handleDeleteClick = (employee: Employee) => {
-  //   setSelectedEmployee(employee);
-  //   setIsDeleteDialogOpen(true);
-  // };
-
-  // const handleCreateEmployee = () => {
-  //   const form = new FormData();
-  //   form.append("Position", formData.position);
-  //   form.append("AccountId", formData.accountId.toString());
-  //   form.append("Department", formData.department);
-  //   form.append("WorkLocation", formData.workLocation);
-  //   form.append("BaseSalary", formData.baseSalary.toString());
-
-  //   createEmployee(form);
-  //   setIsAddModalOpen(false);
-  //   toast({
-  //     title: "Employee Added",
-  //     description: `${formData.position} has been successfully added.`,
-  //   });
-  // };
-
-  const employeeStats = {
-    total: employees?.length,
-    admins: employees?.filter((e) => e.account.role === "Admin").length,
-    managers: employees?.filter((e) => e.account.role === "Manager").length,
-    employees: employees?.filter((e) => e.account.role === "Employee").length,
+  const handleDeleteClick = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    setIsDeleteDialogOpen(true);
   };
 
   return (
@@ -191,57 +182,6 @@ export default function EmployeesPage() {
         </div>
       </div>
 
-      {/* Employee Statistics */}
-      {/* <div className="grid gap-4 md:grid-cols-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{employeeStats.total}</div>
-            <p className="text-xs text-muted-foreground">All employees</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Admins</CardTitle>
-            <Shield className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {employeeStats.admins}
-            </div>
-            <p className="text-xs text-muted-foreground">System admins</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Managers</CardTitle>
-            <Building className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {employeeStats.managers}
-            </div>
-            <p className="text-xs text-muted-foreground">Department heads</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Staff</CardTitle>
-            <Users className="h-4 w-4 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-purple-600">
-              {employeeStats.employees}
-            </div>
-            <p className="text-xs text-muted-foreground">Regular staff</p>
-          </CardContent>
-        </Card>
-      </div> */}
-
-      {/* Enhanced Table with TanStack Table */}
       <Card>
         <CardHeader>
           <CardTitle>Employee Records</CardTitle>
@@ -252,39 +192,33 @@ export default function EmployeesPage() {
         </CardHeader>
         <CardContent>
           <EmployeesTable
-            data={employeesData ?? []}
+            data={employees?.data?.items ?? []}
             onView={handleViewDetails}
             onEdit={handleEditClick}
+            onDelete={handleDeleteClick}
             pagination={pagination}
             setPagination={setPagination}
-            pageCount={totalPage ?? 1} // fallback về 1 nếu undefined
+            pageCount={employees?.data?.totalPages ?? 1}
           />
         </CardContent>
       </Card>
 
       {/* Add Employee Modal */}
-      {/* <EmployeeFormModal
+      <CreateEmployeeModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onSubmit={handleCreateEmployee}
-        title="Add New Employee"
-        submitText="Add Employee"
-        mode="add"
-      /> */}
+      />
 
       {/* Edit Employee Modal */}
-      {/* <EmployeeFormModal
+      <EditEmployeeModal
         isOpen={isEditModalOpen}
         onClose={() => {
           setIsEditModalOpen(false);
           setSelectedEmployee(null);
         }}
         onSubmit={handleEditEmployee}
-        title="Edit Employee"
-        submitText="Update Employee"
-        mode="edit"
         initialData={selectedEmployee}
-      /> */}
+      />
 
       {/* Employee Details Modal */}
       <EmployeeDetailsModal

@@ -46,7 +46,7 @@ export function useCreateMovie() {
   export function useDeleteMovie() {
     const queryClient = useQueryClient();
     const { mutate, isError, isSuccess, data } = useMutation({
-      mutationFn:MovieService.deleteMovie,
+      mutationFn: (id: string) => MovieService.deleteMovie(id),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["movies"] });
       },
@@ -60,19 +60,48 @@ export function useCreateMovie() {
     };
   }
 
-  export function useUpdateMovie() {
-    const queryClient = useQueryClient();
-    const { mutate, isError, isSuccess, data } = useMutation({
-      mutationFn: (id: string, formData: FormData) => MovieService.updateMovie(id, formData),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["movies"] });
-      },
-    });
-    
-    return {
-      mutate,
-      isError,
-      isSuccess,
-      data,
-    };
-  }
+export function useUpdateMovie() {
+  const queryClient = useQueryClient();
+  const { mutate, isError, isSuccess, data } = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: FormData }) =>
+      MovieService.updateMovie(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["movies"] });
+    },
+  });
+
+  return {
+    mutate,
+    isError,
+    isSuccess,
+    data,
+  };
+}
+
+export function useGetMovieById(id: string) {
+  return useQuery({
+    queryKey: ["movie", id],
+    queryFn: () => MovieService.getMovieById(id),
+    enabled: !!id,
+  });
+}
+
+export function usePlayMovie() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => MovieService.playMovie(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["movies"] });
+    },
+  });
+}
+
+export function useStopMovie() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => MovieService.stopMovie(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["movies"] });
+    },
+  });
+}

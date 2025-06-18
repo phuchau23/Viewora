@@ -135,7 +135,8 @@ export class ApiService {
   ): Promise<ApiResponse<T>> {
     const updatedConfig: AxiosRequestConfig = { ...config };
     if (
-      updatedConfig.method?.toUpperCase() === "POST" &&
+      (updatedConfig.method?.toUpperCase() === "POST" ||
+       updatedConfig.method?.toUpperCase() === "PUT") &&
       updatedConfig.data &&
       !(updatedConfig.data instanceof FormData) &&
       !config.useJson
@@ -182,9 +183,24 @@ export class ApiService {
 
   async put<T, D = Record<string, unknown> | FormData>(
     url: string,
-    data?: D
+    data?: D,
+    useJson: boolean = false
   ): Promise<ApiResponse<T>> {
-    return this.request<T>({ method: "PUT", url, data });
+    const config: AxiosRequestConfig & { useJson?: boolean } = {
+      method: "PUT",
+      url,
+      data: useJson ? JSON.stringify(data) : data,
+      headers: useJson ? { "Content-Type": "application/json" } : {},
+      useJson,
+    };
+    if (
+      !useJson &&
+      data &&
+      !(data instanceof FormData)
+    ) {
+      config.data = this.toFormData(data as Record<string, unknown>);
+    }
+    return this.request<T>(config);
   }
 
   async delete<T>(

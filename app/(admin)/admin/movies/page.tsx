@@ -21,9 +21,9 @@ export default function Movies() {
             <TabsTrigger value="movies">
               <List />
             </TabsTrigger>
-            <TabsTrigger value="types">
+            {/* <TabsTrigger value="types">
               <LayoutGrid />
-            </TabsTrigger>
+            </TabsTrigger> */}
           </TabsList>
           <Sheet>
             <SheetTrigger asChild>
@@ -37,7 +37,7 @@ export default function Movies() {
         <TabsContent value="movies">
           <MoviesTables />
         </TabsContent>
-        <TabsContent value="types"></TabsContent>
+        {/* <TabsContent value="types"></TabsContent> */}
       </Tabs>
     </main>
   );

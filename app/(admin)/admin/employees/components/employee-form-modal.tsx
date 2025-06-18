@@ -21,14 +21,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Upload, Eye, EyeOff } from "lucide-react";
 import { Employee } from "@/lib/api/service/fetchEmployees";
+import { Eye, EyeOff } from "lucide-react";
 
 interface EmployeeFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (data: any) => void;
   title: string;
   submitText: string;
   mode: "add" | "edit";
@@ -45,54 +44,38 @@ export function EmployeeFormModal({
   initialData,
 }: EmployeeFormModalProps) {
   const [formData, setFormData] = useState({
-    account: "",
-    password: "",
-    confirmPassword: "",
-    employeeName: "",
-    identityCard: "",
-    email: "",
-    phoneNumber: "",
-    address: "",
-    dateOfBirth: "",
-    gender: "Male" as "Male" | "Female",
-    role: "Employee" as Employee["account"]["role"],
-    image: "",
+    Position: "",
+    Department: "",
+    WorkLocation: "",
+    BaseSalary: 0,
+    Account: {
+      Email: "",
+      FullName: "",
+      DateOfBirth: "",
+      Gender: "Male" as "Male" | "Female",
+      PhoneNumber: "",
+      Password: "",
+    },
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (mode === "edit" && initialData) {
       setFormData({
-        account: "", // Optional, unless you use it elsewhere
-        password: "", // Don't pre-fill passwords
-        confirmPassword: "",
-        employeeName: initialData.account.fullName || "",
-        identityCard: initialData.account.identityCard || "",
-        email: initialData.account.email || "",
-        phoneNumber: initialData.account.phoneNumber || "",
-        address: initialData.account.address || "",
-        dateOfBirth: initialData.account.dateOfBirth || "",
-        gender: initialData.account.gender as "Male" | "Female",
-        role: initialData.account.role as Employee["account"]["role"],
-        image: initialData.account.avatar || "", // Use avatar if image is stored there
-      });
-    } else {
-      setFormData({
-        account: "",
-        password: "",
-        confirmPassword: "",
-        employeeName: "",
-        identityCard: "",
-        email: "",
-        phoneNumber: "",
-        address: "",
-        dateOfBirth: "",
-        gender: "Male",
-        role: "Employee",
-        image: "",
+        Position: initialData.position || "",
+        Department: initialData.department || "",
+        WorkLocation: initialData.workLocation || "",
+        BaseSalary: initialData.baseSalary || 0,
+        Account: {
+          Email: initialData.account.email || "",
+          FullName: initialData.account.fullName || "",
+          DateOfBirth: initialData.account.dateOfBirth || "",
+          Gender: initialData.account.gender as "Male" | "Female",
+          PhoneNumber: initialData.account.phoneNumber || "",
+          Password: "",
+        },
       });
     }
     setErrors({});
@@ -101,52 +84,36 @@ export function EmployeeFormModal({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // AC-02: Validate all mandatory fields are filled
-    if (!formData.employeeName.trim())
-      newErrors.employeeName = "Employee Name is required";
-    if (!formData.identityCard.trim())
-      newErrors.identityCard = "Identity Card is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    if (!formData.phoneNumber.trim())
-      newErrors.phoneNumber = "Phone Number is required";
-    if (!formData.address.trim()) newErrors.address = "Address is required";
-    if (!formData.dateOfBirth)
-      newErrors.dateOfBirth = "Date of Birth is required";
+    // Validate các trường bắt buộc
+    if (!formData.Position.trim()) newErrors.Position = "Position is required";
+    if (!formData.Department.trim()) newErrors.Department = "Department is required";
+    if (!formData.WorkLocation.trim()) newErrors.WorkLocation = "Work Location is required";
+    if (formData.BaseSalary <= 0) newErrors.BaseSalary = "Base Salary must be positive";
+    if (!formData.Account.Email.trim()) newErrors["Account.Email"] = "Email is required";
+    if (!formData.Account.FullName.trim()) newErrors["Account.FullName"] = "Full Name is required";
+    if (!formData.Account.DateOfBirth) newErrors["Account.DateOfBirth"] = "Date of Birth is required";
+    if (!formData.Account.Gender.trim()) newErrors["Account.Gender"] = "Gender is required";
+    if (!formData.Account.PhoneNumber.trim()) newErrors["Account.PhoneNumber"] = "Phone Number is required";
 
+    // Validate các trường chỉ bắt buộc ở chế độ "add"
     if (mode === "add") {
-      if (!formData.account.trim()) newErrors.account = "Account is required";
-      if (!formData.password.trim())
-        newErrors.password = "Password is required";
-      if (!formData.confirmPassword.trim())
-        newErrors.confirmPassword = "Confirm Password is required";
+      if (!formData.Account.Password.trim()) newErrors["Account.Password"] = "Password is required";
     }
 
-    // AC-02: Password and Confirm Password must match
-    if (formData.password && formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Password and Confirm Password must match";
+    // Validate định dạng email
+    if (formData.Account.Email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Account.Email)) {
+      newErrors["Account.Email"] = "Please enter a valid email address";
     }
 
-    // Email format validation
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    // Field length validation (max 28 characters as per AC-01)
+    // Validate độ dài tối đa (28 ký tự)
     const maxLength = 28;
-    if (formData.account.length > maxLength)
-      newErrors.account = `Account must be ${maxLength} characters or less`;
-    if (formData.password.length > maxLength)
-      newErrors.password = `Password must be ${maxLength} characters or less`;
-    if (formData.employeeName.length > maxLength)
-      newErrors.employeeName = `Name must be ${maxLength} characters or less`;
-    if (formData.identityCard.length > maxLength)
-      newErrors.identityCard = `Identity Card must be ${maxLength} characters or less`;
-    if (formData.email.length > maxLength)
-      newErrors.email = `Email must be ${maxLength} characters or less`;
-    if (formData.phoneNumber.length > maxLength)
-      newErrors.phoneNumber = `Phone must be ${maxLength} characters or less`;
-    if (formData.address.length > maxLength)
-      newErrors.address = `Address must be ${maxLength} characters or less`;
+    if (formData.Position.length > maxLength) newErrors.Position = `Position must be ${maxLength} characters or less`;
+    if (formData.Department.length > maxLength) newErrors.Department = `Department must be ${maxLength} characters or less`;
+    if (formData.WorkLocation.length > maxLength) newErrors.WorkLocation = `Work Location must be ${maxLength} characters or less`;
+    if (formData.Account.Email.length > maxLength) newErrors["Account.Email"] = `Email must be ${maxLength} characters or less`;
+    if (formData.Account.FullName.length > maxLength) newErrors["Account.FullName"] = `Full Name must be ${maxLength} characters or less`;
+    if (formData.Account.PhoneNumber.length > maxLength) newErrors["Account.PhoneNumber"] = `Phone must be ${maxLength} characters or less`;
+    if (formData.Account.Password.length > maxLength) newErrors["Account.Password"] = `Password must be ${maxLength} characters or less`;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -154,22 +121,30 @@ export function EmployeeFormModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (validateForm()) {
-      onSubmit();
+      onSubmit(formData);
+      console.log(formData);
       onClose();
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange = (field: string, value: string | number) => {
+    if (field.startsWith("Account.")) {
+      const subField = field.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        Account: { ...prev.Account, [subField]: value },
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    }
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
   const handleBack = () => {
-    onClose(); // AC-05: Return to previous screen without saving
+    onClose();
   };
 
   return (
@@ -185,20 +160,74 @@ export function EmployeeFormModal({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* AC-01: Image Upload Button */}
-          <div className="flex items-center space-x-4">
-            <Avatar className="h-20 w-20">
-              <AvatarFallback className="bg-primary/10 text-primary font-semibold text-lg">
-                {formData.employeeName
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("") || "?"}
-              </AvatarFallback>
-            </Avatar>
-            <Button type="button" variant="outline">
-              <Upload className="mr-2 h-4 w-4" />
-              Upload Image
-            </Button>
+          {/* Employee Information */}
+          <div className="space-y-4">
+            <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
+              Employee Information
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="position">Position *</Label>
+                <Input
+                  id="position"
+                  value={formData.Position}
+                  onChange={(e) => handleInputChange("Position", e.target.value)}
+                  placeholder="Enter position"
+                  maxLength={28}
+                  className={errors.Position ? "border-destructive" : ""}
+                />
+                {errors.Position && (
+                  <p className="text-sm text-destructive">{errors.Position}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="department">Department *</Label>
+                <Input
+                  id="department"
+                  value={formData.Department}
+                  onChange={(e) => handleInputChange("Department", e.target.value)}
+                  placeholder="Enter department"
+                  maxLength={28}
+                  className={errors.Department ? "border-destructive" : ""}
+                />
+                {errors.Department && (
+                  <p className="text-sm text-destructive">{errors.Department}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="workLocation">Work Location *</Label>
+                <Input
+                  id="workLocation"
+                  value={formData.WorkLocation}
+                  onChange={(e) => handleInputChange("WorkLocation", e.target.value)}
+                  placeholder="Enter work location"
+                  maxLength={28}
+                  className={errors.WorkLocation ? "border-destructive" : ""}
+                />
+                {errors.WorkLocation && (
+                  <p className="text-sm text-destructive">{errors.WorkLocation}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="baseSalary">Base Salary *</Label>
+                <Input
+                  id="baseSalary"
+                  type="number"
+                  value={formData.BaseSalary}
+                  onChange={(e) => handleInputChange("BaseSalary", parseFloat(e.target.value) || 0)}
+                  placeholder="Enter base salary"
+                  className={errors.BaseSalary ? "border-destructive" : ""}
+                />
+                {errors.BaseSalary && (
+                  <p className="text-sm text-destructive">{errors.BaseSalary}</p>
+                )}
+              </div>
+            </div>
+
+
           </div>
 
           {/* Account Information */}
@@ -208,52 +237,95 @@ export function EmployeeFormModal({
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="account">Account *</Label>
+                <Label htmlFor="Account.Email">Email *</Label>
                 <Input
-                  id="account"
-                  value={formData.account}
-                  onChange={(e) => handleInputChange("account", e.target.value)}
-                  placeholder="Enter account name"
+                  id="Account.Email"
+                  value={formData.Account.Email}
+                  onChange={(e) => handleInputChange("Account.Email", e.target.value)}
+                  placeholder="Enter email"
                   maxLength={28}
-                  disabled={mode === "edit"} // AC-01: Account non-editable in edit mode
-                  className={errors.account ? "border-destructive" : ""}
+                  className={errors["Account.Email"] ? "border-destructive" : ""}
                 />
-                {errors.account && (
-                  <p className="text-sm text-destructive">{errors.account}</p>
+                {errors["Account.Email"] && (
+                  <p className="text-sm text-destructive">{errors["Account.Email"]}</p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Select
-                  value={formData.role}
-                  onValueChange={(value) => handleInputChange("role", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Employee">Employee</SelectItem>
-                    <SelectItem value="Manager">Manager</SelectItem>
-                    <SelectItem value="Admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="  Account.FullName">Full Name *</Label>
+                <Input
+                  id="Account.FullName"
+                  value={formData.Account.FullName}
+                  onChange={(e) => handleInputChange("Account.FullName", e.target.value)}
+                  placeholder="Enter full name"
+                  maxLength={28}
+                  className={errors["Account.FullName"] ? "border-destructive" : ""}
+                />
+                {errors["Account.FullName"] && (
+                  <p className="text-sm text-destructive">{errors["Account.FullName"]}</p>
+                )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="password">Password *</Label>
+                <Label htmlFor="Account.DateOfBirth">Date of Birth *</Label>
+                <Input
+                  id="Account.DateOfBirth"
+                  type="date"
+                  value={formData.Account.DateOfBirth}
+                  onChange={(e) => handleInputChange("Account.DateOfBirth", e.target.value)}
+                  className={errors["Account.DateOfBirth"] ? "border-destructive" : ""}
+                />
+                {errors["Account.DateOfBirth"] && (
+                  <p className="text-sm text-destructive">{errors["Account.DateOfBirth"]}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="Account.Gender">Gender *</Label>
+                <Select
+                  value={formData.Account.Gender}
+                  onValueChange={(value) => handleInputChange("Account.Gender", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors["Account.Gender"] && (
+                  <p className="text-sm text-destructive">{errors["Account.Gender"]}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="Account.PhoneNumber">Phone Number *</Label>
+                <Input
+                  id="Account.PhoneNumber"
+                  value={formData.Account.PhoneNumber}
+                  onChange={(e) => handleInputChange("Account.PhoneNumber", e.target.value)}
+                  placeholder="Enter phone number"
+                  maxLength={28}
+                  className={errors["Account.PhoneNumber"] ? "border-destructive" : ""}
+                />
+                {errors["Account.PhoneNumber"] && (
+                  <p className="text-sm text-destructive">{errors["Account.PhoneNumber"]}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="Account.Password">Password *</Label>
                 <div className="relative">
                   <Input
-                    id="password"
+                    id="Account.Password"
                     type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={(e) =>
-                      handleInputChange("password", e.target.value)
-                    }
+                    value={formData.Account.Password}
+                    onChange={(e) => handleInputChange("Account.Password", e.target.value)}
                     placeholder="Enter password"
                     maxLength={28}
-                    className={errors.password ? "border-destructive" : ""}
+                    className={errors["Account.Password"] ? "border-destructive" : ""}
                   />
                   <Button
                     type="button"
@@ -262,199 +334,13 @@ export function EmployeeFormModal({
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
-                {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password}</p>
+                {errors["Account.Password"] && (
+                  <p className="text-sm text-destructive">{errors["Account.Password"]}</p>
                 )}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password *</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      handleInputChange("confirmPassword", e.target.value)
-                    }
-                    placeholder="Confirm password"
-                    maxLength={28}
-                    className={
-                      errors.confirmPassword ? "border-destructive" : ""
-                    }
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-sm text-destructive">
-                    {errors.confirmPassword}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Personal Information */}
-          <div className="space-y-4">
-            <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
-              Personal Information
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="employeeName">Employee Name *</Label>
-                <Input
-                  id="employeeName"
-                  value={formData.employeeName}
-                  onChange={(e) =>
-                    handleInputChange("employeeName", e.target.value)
-                  }
-                  placeholder="Enter full name"
-                  maxLength={28}
-                  className={errors.employeeName ? "border-destructive" : ""}
-                />
-                {errors.employeeName && (
-                  <p className="text-sm text-destructive">
-                    {errors.employeeName}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="identityCard">Identity Card *</Label>
-                <Input
-                  id="identityCard"
-                  value={formData.identityCard}
-                  onChange={(e) =>
-                    handleInputChange("identityCard", e.target.value)
-                  }
-                  placeholder="Enter identity card number"
-                  maxLength={28}
-                  className={errors.identityCard ? "border-destructive" : ""}
-                />
-                {errors.identityCard && (
-                  <p className="text-sm text-destructive">
-                    {errors.identityCard}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="dateOfBirth">Date of Birth *</Label>
-                <Input
-                  id="dateOfBirth"
-                  type="date"
-                  value={formData.dateOfBirth}
-                  onChange={(e) =>
-                    handleInputChange("dateOfBirth", e.target.value)
-                  }
-                  className={errors.dateOfBirth ? "border-destructive" : ""}
-                />
-                {errors.dateOfBirth && (
-                  <p className="text-sm text-destructive">
-                    {errors.dateOfBirth}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label>Sex *</Label>
-                <div className="flex items-center space-x-4 pt-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="male"
-                      checked={formData.gender === "Male"}
-                      onCheckedChange={() =>
-                        handleInputChange("gender", "Male")
-                      }
-                    />
-                    <Label htmlFor="male">Male</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="female"
-                      checked={formData.gender === "Female"}
-                      onCheckedChange={() =>
-                        handleInputChange("gender", "Female")
-                      }
-                    />
-                    <Label htmlFor="female">Female</Label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Information */}
-          <div className="space-y-4">
-            <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
-              Contact Information
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="Enter email address"
-                  maxLength={28}
-                  className={errors.email ? "border-destructive" : ""}
-                />
-                {errors.email && (
-                  <p className="text-sm text-destructive">{errors.email}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phoneNumber">Phone Number *</Label>
-                <Input
-                  id="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={(e) =>
-                    handleInputChange("phoneNumber", e.target.value)
-                  }
-                  placeholder="Enter phone number"
-                  maxLength={28}
-                  className={errors.phoneNumber ? "border-destructive" : ""}
-                />
-                {errors.phoneNumber && (
-                  <p className="text-sm text-destructive">
-                    {errors.phoneNumber}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="address">Address *</Label>
-              <Input
-                id="address"
-                value={formData.address}
-                onChange={(e) => handleInputChange("address", e.target.value)}
-                placeholder="Enter full address"
-                maxLength={28}
-                className={errors.address ? "border-destructive" : ""}
-              />
-              {errors.address && (
-                <p className="text-sm text-destructive">{errors.address}</p>
-              )}
             </div>
           </div>
 

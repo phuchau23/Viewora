@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Table,
@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState, useMemo } from "react";
 import { useMovies } from "@/hooks/useMovie";
-import { Pencil, Search, Trash2 } from "lucide-react";
+import { Pencil, Play, Search, StopCircle, Trash2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -21,17 +21,32 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSort } from '@/hooks/useSort';
+import { useSort } from "@/hooks/useSort";
 import { CreateModal } from "./CreateModal";
-import { useDeleteMovie } from '@/hooks/useMovie';
+import { useDeleteMovie } from "@/hooks/useMovie";
+import { EditMovieModal } from "./EditModal";
+import { usePlayMovie } from "@/hooks/useMovie";
+import { useStopMovie } from "@/hooks/useMovie";
 
 export default function MoviesTables() {
   const { movies, isLoading, error } = useMovies();
   const [searchTerm, setSearchTerm] = useState("");
   const { mutate: deleteMovie } = useDeleteMovie();
+  const { mutate: playMovie } = usePlayMovie();
+  const { mutate: stopMovie } = useStopMovie();
+
+  // State để quản lý modal chỉnh sửa
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
 
   // Sử dụng useSort với các trường có thể sắp xếp
-  const { sortConfig, handleSort, sortedData } = useSort(['name', 'director', 'duration', 'status', 'isAvailable']);
+  const { sortConfig, handleSort, sortedData } = useSort([
+    "name",
+    "director",
+    "duration",
+    "status",
+    "isAvailable",
+  ]);
 
   // Logic lọc dựa trên searchTerm
   const searchedMovies = useMemo(() => {
@@ -62,8 +77,25 @@ export default function MoviesTables() {
   }
 
   const handleDelete = (id: string) => {
-    console.log(id);
     deleteMovie(id);
+  };
+
+  // Hàm xử lý khi nhấn nút chỉnh sửa
+  const handleEdit = (movie: any) => {
+    setSelectedMovieId(movie.id); // Lưu ID của phim được chọn
+    setIsEditModalOpen(true); // Mở modal
+  };
+
+  const handlePlay = (id: string, currentStatus: string) => {
+    if (currentStatus === "inComing" || currentStatus === "ended") {
+      playMovie(id);
+    }
+  };
+
+  const handleStop = (id: string, currentStatus: string) => {
+    if (currentStatus === "nowShowing") {
+      stopMovie(id);
+    }
   };
 
   return (
@@ -146,18 +178,53 @@ export default function MoviesTables() {
                 <TableCell>{movie.isAvailable ? "Có" : "Không"}</TableCell>
                 <TableCell>{movie.status}</TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="icon">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleEdit(movie)}
+                  >
                     <Pencil className="w-4 h-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(movie.id)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(movie.id)}
+                  >
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </Button>
+                  {movie.status === "inComing" || movie.status === "ended" ? (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handlePlay(movie.id, movie.status)}
+                    >
+                      <Play className="w-4 h-4 text-green-500" />
+                    </Button>
+                  ) : null}
+                  {movie.status === "nowShowing" ? (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleStop(movie.id, movie.status)}
+                    >
+                      <StopCircle className="w-4 h-4 text-red-500" />
+                    </Button>
+                  ) : null}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </Card>
+
+      {/* Render EditMovieModal */}
+      {selectedMovieId && (
+        <EditMovieModal
+          movieId={selectedMovieId}
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+        />
+      )}
     </div>
   );
 }
