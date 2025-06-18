@@ -220,7 +220,7 @@ function App() {
       >
         <div className="fixed inset-0 bg-black/40" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-background rounded-lg p-6 shadow-lg">
+          <Dialog.Panel className="w-full max-w-7xl max-h-[90vh] overflow-y-auto bg-white dark:bg-background rounded-lg p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <Dialog.Title className="text-lg font-bold">
                 Sơ đồ ghế - Phòng {selectedRoom?.roomNumber}

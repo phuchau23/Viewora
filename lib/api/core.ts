@@ -4,6 +4,7 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse,
 } from "axios";
+import { getCookie } from "cookies-next";
 
 // API error response data structure
 export interface ApiErrorData {
@@ -52,22 +53,17 @@ export class ApiService {
   }
 
   private setupInterceptors(): void {
-    this.client.interceptors.request.use(
-      (config) => {
-        if (this.authToken)
-          config.headers.Authorization = `Bearer ${this.authToken}`;
-        if (config.data instanceof FormData)
-          delete config.headers["Content-Type"];
-        console.log("Request config:", {
-          method: config.method,
-          url: config.url,
-          headers: config.headers,
-          data: config.data,
-        });
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
+   
+this.client.interceptors.request.use(
+  (config) => {
+    const token = getCookie("auth-token"); // lấy trực tiếp cookie mỗi lần request
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    if (config.data instanceof FormData)
+      delete config.headers["Content-Type"];
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
     this.client.interceptors.response.use(
       (response) => response,

@@ -33,6 +33,12 @@ export interface RoomResponse {
 
   
 export const RoomService = {
+
+    getAllRooms: async () => {
+        const response = await apiService.get<RoomResponse>(`/rooms`);
+        return response.data;
+    },
+
     getRoomsByBranchId: async (branchId: string) => {
         const response = await apiService.get<RoomResponse>(`/rooms/branch/${branchId}`);
         return response.data;
