@@ -9,6 +9,8 @@ import {
   Home,
   User,
   ContactRound,
+  TicketPercent,
+  Popcorn,
   Film,
   LogOut,
 } from "lucide-react";
@@ -29,6 +31,7 @@ import { Button } from "../ui/button";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Calendar } from "lucide-react";
 // Admin navigation items
 const adminNavItems = [
   {
@@ -57,6 +60,16 @@ const adminNavItems = [
     icon: User,
   },
   {
+    title: "Promotion",
+    url: "/admin/promotion",
+    icon: TicketPercent,
+  },
+  {
+    title: "Snack",
+    url: "/admin/snack",
+    icon: Popcorn,
+  },
+  {
     title: "Movies",
     url: "/admin/movies",
     icon: Film,
@@ -67,11 +80,15 @@ const adminNavItems = [
     icon: Home,
   },
   {
+    title: "Showtime",
+    url: "/admin/showtime",
+    icon: Calendar,
+  },
+  {
     title: "Settings",
     url: "/admin/settings",
     icon: Settings,
   },
-
 ];
 
 export function AdminSidebar({

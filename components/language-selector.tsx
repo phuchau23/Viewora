@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export function LanguageSelector() {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation("common");
 
   const languages = [
     { code: "vi", name: "Tiếng Việt", flag: "vn" },
@@ -26,7 +26,7 @@ export function LanguageSelector() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
           <Globe className="h-5 w-5" />
-          <span className="sr-only">Select language</span>
+          <span className="sr-only">{t("selectLanguage")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -36,14 +36,12 @@ export function LanguageSelector() {
             onClick={() => changeLanguage(language.code)}
             className={i18n.language === language.code ? "bg-accent" : ""}
           >
-            {/* <span className="mr-2">{language.flag}</span> */}
             <img
               src={`https://flagcdn.com/w40/${language.flag}.png`}
               alt={language.code}
               width={24}
               height={16}
             />
-
             {language.name}
           </DropdownMenuItem>
         ))}

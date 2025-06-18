@@ -23,46 +23,41 @@ import {
 import { movies, formatDuration } from "@/lib/data";
 
 export default function MoviesPage() {
-  const [filter, setFilter] = useState<"all" | "now-showing" | "coming-soon">(
-    "all"
-  );
-  const [sortBy, setSortBy] = useState<"latest" | "title" | "popularity">(
-    "latest"
-  );
+  const [filter, setFilter] = useState<"all" | "now-showing" | "coming-soon">("all");
+  const [sortBy, setSortBy] = useState<"latest" | "title" | "popularity">("latest");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-
+  
   // Get all unique genres
   const allGenres = Array.from(
     new Set(movies.flatMap((movie) => movie.genre))
   ).sort();
-
+  
   const toggleGenre = (genre: string) => {
     setSelectedGenres((prev) =>
-      prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
+      prev.includes(genre)
+        ? prev.filter((g) => g !== genre)
+        : [...prev, genre]
     );
   };
-
+  
   // Filter movies
   let filteredMovies = [...movies];
-
+  
   if (filter !== "all") {
     filteredMovies = filteredMovies.filter((movie) => movie.status === filter);
   }
-
+  
   if (selectedGenres.length > 0) {
     filteredMovies = filteredMovies.filter((movie) =>
       movie.genre.some((genre) => selectedGenres.includes(genre))
     );
   }
-
+  
   // Sort movies
   if (sortBy === "title") {
     filteredMovies.sort((a, b) => a.title.localeCompare(b.title));
   } else if (sortBy === "latest") {
-    filteredMovies.sort(
-      (a, b) =>
-        new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime()
-    );
+    filteredMovies.sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
   }
   // For "popularity" we would need a popularity field, using random for demo
 
@@ -71,7 +66,7 @@ export default function MoviesPage() {
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <h1 className="text-3xl font-bold">Movies</h1>
-
+          
           <div className="flex flex-wrap gap-3">
             <Button
               variant={filter === "all" ? "default" : "outline"}
@@ -119,7 +114,7 @@ export default function MoviesPage() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-
+            
             {selectedGenres.length > 0 && (
               <Button
                 variant="ghost"
@@ -130,7 +125,7 @@ export default function MoviesPage() {
               </Button>
             )}
           </div>
-
+          
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Sort by:</span>
             <Select
@@ -174,11 +169,7 @@ export default function MoviesPage() {
                           Coming Soon
                         </Button>
                       )}
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        className="h-8 w-8"
-                      >
+                      <Button size="icon" variant="secondary" className="h-8 w-8">
                         <Play className="h-4 w-4" />
                       </Button>
                     </div>
@@ -192,10 +183,7 @@ export default function MoviesPage() {
               </div>
               <CardContent className="p-4">
                 <h3 className="font-semibold truncate mb-1">
-                  <Link
-                    href={`/movies/${movie.id}`}
-                    className="hover:text-primary"
-                  >
+                  <Link href={`/movies/${movie.id}`} className="hover:text-primary">
                     {movie.title}
                   </Link>
                 </h3>
@@ -209,30 +197,20 @@ export default function MoviesPage() {
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <span>{formatDuration(movie.duration)}</span>
                   <span>•</span>
-                  <span>
-                    {new Date(movie.releaseDate).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
+                  <span>{new Date(movie.releaseDate).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
-
+        
         {filteredMovies.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-muted-foreground mb-4">
-              No movies found matching your filters.
-            </p>
-            <Button
-              onClick={() => {
-                setFilter("all");
-                setSelectedGenres([]);
-              }}
-            >
+            <p className="text-muted-foreground mb-4">No movies found matching your filters.</p>
+            <Button onClick={() => {
+              setFilter("all");
+              setSelectedGenres([]);
+            }}>
               Clear All Filters
             </Button>
           </div>

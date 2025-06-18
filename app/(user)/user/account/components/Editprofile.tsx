@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -33,7 +34,6 @@ export interface ProfileUpdateDataResponse {
   email: string;
   phoneNumber: string;
   avatar: string | null;
-  identityCard: string | null;
   address: string | null;
   dateOfBirth: string;
   gender: number;
@@ -61,11 +61,14 @@ export default function EditProfileModal({
   onClose,
   onSave,
 }: EditProfileModalProps) {
+  const { t } = useTranslation(); // Sử dụng namespace profilePage
   // Profile state
   const [formData, setFormData] = useState<User>({ ...user });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showPasswordSuccess, setShowPasswordSuccess] = useState(false); // Thêm state cho thông báo đổi password
+  const [showPasswordSuccess, setShowPasswordSuccess] = useState(false);
+  // File states for avatar
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   // Password change state
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -84,17 +87,17 @@ export default function EditProfileModal({
   // Validate profile form
   const validateProfile = (): boolean => {
     const e: FormErrors = {};
-    if (!formData.fullName?.trim()) e.fullName = "Full name is required";
-    if (!formData.email?.trim()) e.email = "Email is required";
+    if (!formData.fullName?.trim())
+      e.fullName = t("validation.fullNameRequired");
+    if (!formData.email?.trim()) e.email = t("validation.emailRequired");
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-      e.email = "Please enter a valid email address";
+      e.email = t("validation.invalidEmail");
     if (!formData.phoneNumber?.trim())
-      e.phoneNumber = "Phone number is required";
-    if (!formData.dateOfBirth) e.dateOfBirth = "Date of birth is required";
-    if (formData.gender == null) e.gender = "Gender is required";
-    if (!formData.identityCard?.trim())
-      e.identityCard = "Identity card is required";
-    if (!formData.address?.trim()) e.address = "Address is required";
+      e.phoneNumber = t("validation.phoneNumberRequired");
+    if (!formData.dateOfBirth)
+      e.dateOfBirth = t("validation.dateOfBirthRequired");
+    if (formData.gender == null) e.gender = t("validation.genderRequired");
+    if (!formData.address?.trim()) e.address = t("validation.addressRequired");
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -102,12 +105,13 @@ export default function EditProfileModal({
   // Validate password form
   const validatePassword = (): boolean => {
     const e: FormErrors = {};
-    if (!oldPassword.trim()) e.oldPassword = "Current password is required";
-    if (!password.trim()) e.password = "New password is required";
+    if (!oldPassword.trim())
+      e.oldPassword = t("validation.oldPasswordRequired");
+    if (!password.trim()) e.password = t("validation.newPasswordRequired");
     else if (password.length < 8)
-      e.password = "Password must be at least 8 characters";
+      e.password = t("validation.passwordMinLength");
     if (password !== confirmPassword)
-      e.confirmPassword = "Passwords do not match";
+      e.confirmPassword = t("validation.passwordsMismatch");
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -118,25 +122,32 @@ export default function EditProfileModal({
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
+  // Handle file changes
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setAvatarFile(file);
+  };
+
   // Handle profile submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateProfile()) return;
     const data = new FormData();
-    data.append("fullName", formData.fullName);
+    data.append("FullName", formData.fullName);
     data.append("email", formData.email);
-    data.append("phoneNumber", formData.phoneNumber);
-    data.append("avatar", formData.avatar ?? "");
-    data.append("identityCard", formData.identityCard ?? "");
-    data.append("address", formData.address ?? "");
-    data.append("dateOfBirth", formData.dateOfBirth);
-    data.append("gender", formData.gender.toString());
-    // KHÔNG gửi password ở đây!
+    data.append("PhoneNumber", formData.phoneNumber);
+    data.append("Address", formData.address ?? "");
+    data.append("DateOfBirth", formData.dateOfBirth);
+    data.append("Gender", formData.gender.toString());
+    // Add avatar file if selected
+    if (avatarFile) {
+      data.append("avatarFile", avatarFile);
+    }
 
     updateProfile(data, {
       onSuccess: (resp: ProfileUpdateResponse) => {
         if (resp.code === 200 && resp.statusCode === "Success") {
-          toast.success("Cập nhật thông tin thành công!");
+          toast.success(t("toast.updateSuccess"));
           setShowSuccess(true);
           onSave?.(formData);
           setTimeout(() => {
@@ -145,25 +156,24 @@ export default function EditProfileModal({
             window.location.reload();
           }, 1200);
         } else {
-          toast.error("Cập nhật thất bại!");
+          toast.error(t("toast.updateFailed"));
           setErrors((e) => ({
             ...e,
-            general: "Cập nhật thất bại. Vui lòng thử lại!",
+            general: t("validation.updateFailed"),
           }));
         }
       },
       onError: (err: any) => {
-        toast.error(err?.message || "Cập nhật thất bại. Vui lòng thử lại!");
+        toast.error(t("toast.updateFailed"));
         setErrors((e) => ({
           ...e,
-          general:
-            err?.message || "Failed to update profile. Please try again.",
+          general: t("validation.updateFailed") || err?.message,
         }));
       },
     });
   };
 
-  // Handle password submit (tách khỏi form profile, chỉ là hàm gọi khi bấm nút)
+  // Handle password submit
   const handleChangePassword = () => {
     if (!validatePassword()) return;
 
@@ -177,8 +187,8 @@ export default function EditProfileModal({
         onSuccess: (resp: ChangePasswordResponse) => {
           console.log("Change password success:", resp);
           if (resp.code === 200 && resp.statusCode === "Success") {
-            toast.success("Đổi mật khẩu thành công!");
-            setShowPasswordSuccess(true); // Thêm thông báo thành công
+            toast.success(t("toast.passwordChangeSuccess"));
+            setShowPasswordSuccess(true);
             setShowPasswordForm(false);
             setOldPassword("");
             setPassword("");
@@ -186,28 +196,28 @@ export default function EditProfileModal({
             setErrors({});
             setTimeout(() => {
               setShowPasswordSuccess(false);
-            }, 1500); // Thông báo tự ẩn sau 1.5s
+            }, 1500);
           } else {
-            toast.error(resp.message || "Đổi mật khẩu thất bại!");
+            toast.error(t("toast.passwordChangeFailed") || resp.message);
             setErrors((e) => ({
               ...e,
-              general: resp.message || "Đổi mật khẩu thất bại!",
+              general: t("toast.passwordChangeFailed") || resp.message,
             }));
           }
         },
         onError: (err: any) => {
           console.log("Change password error:", err);
           toast.error(
-            err?.response?.data?.message ||
-              err?.message ||
-              "Đổi mật khẩu thất bại!"
+            t("toast.passwordChangeFailed") ||
+              err?.response?.data?.message ||
+              err?.message
           );
           setErrors((e) => ({
             ...e,
             general:
+              t("toast.passwordChangeFailed") ||
               err?.response?.data?.message ||
-              err?.message ||
-              "Đổi mật khẩu thất bại!",
+              err?.message,
           }));
         },
       }
@@ -221,17 +231,16 @@ export default function EditProfileModal({
           <div className="flex flex-col items-center justify-center py-8">
             <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
             <h3 className="text-lg font-semibold text-green-700 mb-2">
-              Success!
+              {t("modal.success")}
             </h3>
             <p className="text-center text-gray-600">
-              Update information successfully
+              {t("modal.updateSuccessMessage")}
             </p>
           </div>
         </DialogContent>
       </Dialog>
     );
 
-  // Thông báo đổi mật khẩu thành công
   if (showPasswordSuccess)
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -239,10 +248,10 @@ export default function EditProfileModal({
           <div className="flex flex-col items-center justify-center py-8">
             <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
             <h3 className="text-lg font-semibold text-green-700 mb-2">
-              Password Changed!
+              {t("modal.passwordChanged")}
             </h3>
             <p className="text-center text-gray-600">
-              You have successfully changed your password.
+              {t("modal.passwordChangeSuccessMessage")}
             </p>
           </div>
         </DialogContent>
@@ -253,10 +262,9 @@ export default function EditProfileModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
+          <DialogTitle>{t("modal.editProfile")}</DialogTitle>
           <DialogDescription>
-            Update your personal information. All fields marked with * are
-            required.
+            {t("modal.editProfileDescription")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -269,9 +277,11 @@ export default function EditProfileModal({
 
           {/* Account Information */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-gray-900">Account Information</h4>
+            <h4 className="font-semibold text-gray-900">
+              {t("modal.accountInformation")}
+            </h4>
             <div>
-              <Label htmlFor="fullName">Full Name *</Label>
+              <Label htmlFor="fullName">{t("modal.fullName")} *</Label>
               <Input
                 id="fullName"
                 value={formData.fullName}
@@ -283,7 +293,7 @@ export default function EditProfileModal({
               )}
             </div>
             <div>
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="email">{t("modal.email")} *</Label>
               <Input
                 id="email"
                 type="email"
@@ -296,129 +306,24 @@ export default function EditProfileModal({
               )}
             </div>
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label>Password</Label>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowPasswordForm((v) => !v)}
-                >
-                  {showPasswordForm ? "Cancel" : "Change Password"}
-                </Button>
-              </div>
-              {showPasswordForm && (
-                <div className="space-y-3">
-                  <div className="relative">
-                    <Input
-                      type={showOldPassword ? "text" : "password"}
-                      placeholder="Current Password *"
-                      value={oldPassword}
-                      onChange={(e) => setOldPassword(e.target.value)}
-                      className={
-                        errors.oldPassword ? "border-red-500 pr-10" : "pr-10"
-                      }
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      onClick={() => setShowOldPassword((v) => !v)}
-                      tabIndex={-1}
-                    >
-                      {showOldPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
-                    {errors.oldPassword && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.oldPassword}
-                      </p>
-                    )}
-                  </div>
-                  <div className="relative">
-                    <Input
-                      type={showNewPassword ? "text" : "password"}
-                      placeholder="New Password *"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className={
-                        errors.password ? "border-red-500 pr-10" : "pr-10"
-                      }
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      onClick={() => setShowNewPassword((v) => !v)}
-                      tabIndex={-1}
-                    >
-                      {showNewPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
-                    {errors.password && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.password}
-                      </p>
-                    )}
-                  </div>
-                  <div className="relative">
-                    <Input
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm New Password *"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className={
-                        errors.confirmPassword
-                          ? "border-red-500 pr-10"
-                          : "pr-10"
-                      }
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      onClick={() => setShowConfirmPassword((v) => !v)}
-                      tabIndex={-1}
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
-                    {errors.confirmPassword && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.confirmPassword}
-                      </p>
-                    )}
-                  </div>
-                  <Button
-                    type="button"
-                    disabled={isChangingPassword}
-                    className="w-full"
-                    onClick={handleChangePassword}
-                  >
-                    {isChangingPassword && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    Đổi mật khẩu
-                  </Button>
-                </div>
-              )}
+              <Label htmlFor="avatarFile">{t("modal.avatar")}</Label>
+              <Input
+                id="avatarFile"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+              />
             </div>
           </div>
 
           {/* Personal Information */}
           <div className="space-y-4">
             <h4 className="font-semibold text-gray-900">
-              Personal Information
+              {t("modal.personalInformation")}
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="dateOfBirth">Date of Birth *</Label>
+                <Label htmlFor="dateOfBirth">{t("modal.dateOfBirth")} *</Label>
                 <Input
                   id="dateOfBirth"
                   type="date"
@@ -433,7 +338,7 @@ export default function EditProfileModal({
                 )}
               </div>
               <div>
-                <Label htmlFor="gender">Gender *</Label>
+                <Label htmlFor="gender">{t("modal.gender")} *</Label>
                 <Select
                   value={formData.gender?.toString() || ""}
                   onValueChange={(v) => handleChange("gender", parseInt(v))}
@@ -441,12 +346,18 @@ export default function EditProfileModal({
                   <SelectTrigger
                     className={errors.gender ? "border-red-500" : ""}
                   >
-                    <SelectValue placeholder="Select gender" />
+                    <SelectValue placeholder={t("modal.selectGender")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="0">Male</SelectItem>
-                    <SelectItem value="1">Female</SelectItem>
-                    <SelectItem value="2">Other</SelectItem>
+                    <SelectItem value="0">
+                      {t("personalInfo.fields.male")}
+                    </SelectItem>
+                    <SelectItem value="1">
+                      {t("personalInfo.fields.female")}
+                    </SelectItem>
+                    <SelectItem value="2">
+                      {t("personalInfo.fields.unspecified")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.gender && (
@@ -456,21 +367,7 @@ export default function EditProfileModal({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="identityCard">Identity Card *</Label>
-                <Input
-                  id="identityCard"
-                  value={formData.identityCard || ""}
-                  onChange={(e) => handleChange("identityCard", e.target.value)}
-                  className={errors.identityCard ? "border-red-500" : ""}
-                />
-                {errors.identityCard && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.identityCard}
-                  </p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="phoneNumber">Phone Number *</Label>
+                <Label htmlFor="phoneNumber">{t("modal.phoneNumber")} *</Label>
                 <Input
                   id="phoneNumber"
                   value={formData.phoneNumber}
@@ -488,9 +385,11 @@ export default function EditProfileModal({
 
           {/* Address Information */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-gray-900">Address Information</h4>
+            <h4 className="font-semibold text-gray-900">
+              {t("modal.addressInformation")}
+            </h4>
             <div>
-              <Label htmlFor="address">Address *</Label>
+              <Label htmlFor="address">{t("modal.address")} *</Label>
               <Input
                 id="address"
                 value={formData.address || ""}
@@ -505,11 +404,11 @@ export default function EditProfileModal({
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+              {t("modal.cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
+              {t("modal.saveChanges")}
             </Button>
           </DialogFooter>
         </form>

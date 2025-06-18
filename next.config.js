@@ -36,7 +36,9 @@ const nextConfig = {
       'i.imgur.com',
 
       'vb.1cdn.vn',
-      'images.unsplash.com'
+      'images.unsplash.com',
+      'storage.googleapis.com',
+      'www.googleapis.com',
     ]
   }
 }

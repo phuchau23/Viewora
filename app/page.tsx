@@ -5,9 +5,9 @@ import ScrollTrigger from "gsap/ScrollTrigger";
 
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { movies } from "@/lib/data";
 import MovieSearch from "./movies/components/MovieSearch";
 import CinemaCard from "@/components/common/cinemaCard";
+import { useMovies } from "@/hooks/useMovie";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,6 +20,7 @@ export default function Home() {
   const searchBoxRef = useRef(null);
   const comingRef = useRef(null);
   const showingRef = useRef(null);
+  const { movies } = useMovies();
 
   useLayoutEffect(() => {
     if (!isLoaded) return;
