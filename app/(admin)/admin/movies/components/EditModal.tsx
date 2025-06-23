@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { FormEvent, useState, useEffect } from "react";
 import { useUpdateMovie, useGetMovieById } from "@/hooks/useMovie";
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { formatDate } from "@/utils/dates/formatDate";
 
 interface EditMovieModalProps {
   movieId: string;
@@ -22,23 +23,30 @@ interface EditMovieModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalProps) => {
+export const EditMovieModal = ({
+  movieId,
+  open,
+  onOpenChange,
+}: EditMovieModalProps) => {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const [posterPreview, setPosterPreview] = useState<string | null>(null);
-  const [existingBanners, setExistingBanners] = useState<{ id: string, url: string }[]>([]);
+  const [existingBanners, setExistingBanners] = useState<
+    { id: string; url: string }[]
+  >([]);
   const [bannersToRemove, setBannersToRemove] = useState<string[]>([]);
   const [newBannerFiles, setNewBannerFiles] = useState<File[]>([]);
   const [newBannerPreviews, setNewBannerPreviews] = useState<string[]>([]);
 
   // Fetch dữ liệu
   const { data: movie, isLoading: isMovieLoading } = useGetMovieById(movieId);
-  const { 
-    mutate: updateMovie, 
+  console.log(formatDate(movie?.data.releaseDate));
+  const {
+    mutate: updateMovie,
     isPending: isUpdating, // Thêm isPending để theo dõi trạng thái mutation
-    isError: isUpdateError, 
-    isSuccess: isUpdateSuccess, 
-    data: updateData 
+    isError: isUpdateError,
+    isSuccess: isUpdateSuccess,
+    data: updateData,
   } = useUpdateMovie();
   const { types, isLoading: isTypesLoading } = useGetTypes();
 
@@ -49,7 +57,10 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
       setPosterPreview(movie.data.poster);
       setExistingBanners(
         Array.isArray(movie.data.banner)
-          ? movie.data.banner.map((banner: any) => ({ id: banner.id, url: banner.url }))
+          ? movie.data.banner.map((banner: any) => ({
+              id: banner.id,
+              url: banner.url,
+            }))
           : []
       );
       setBannersToRemove([]);
@@ -165,7 +176,11 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
               </div>
               <div>
                 <Label htmlFor="Director">Đạo diễn</Label>
-                <Input name="Director" defaultValue={movie?.data.director} required />
+                <Input
+                  name="Director"
+                  defaultValue={movie?.data.director}
+                  required
+                />
               </div>
               <div>
                 <Label htmlFor="Actor">Diễn viên</Label>
@@ -195,8 +210,7 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
                 <Input
                   name="ReleaseDate"
                   type="date"
-                  defaultValue={movie?.data.releaseDate?.split("T")[0]}
-                  required
+                  defaultValue={formatDate(movie?.data.releaseDate)}
                 />
               </div>
               <div>
@@ -204,7 +218,7 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
                 <Input
                   name="StartShow"
                   type="date"
-                  defaultValue={movie?.data.startShow?.split("T")[0]}
+                  defaultValue={formatDate(movie?.data.startShow)}
                   required
                 />
               </div>
@@ -235,7 +249,11 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
               </div>
               <div className="col-span-2">
                 <Label htmlFor="TrailerUrl">URL trailer</Label>
-                <Input name="TrailerUrl" defaultValue={movie?.data.trailerUrl} required />
+                <Input
+                  name="TrailerUrl"
+                  defaultValue={movie?.data.trailerUrl}
+                  required
+                />
               </div>
               <div className="col-span-2">
                 <Label>Thể loại (chọn nhiều)</Label>
@@ -244,7 +262,10 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
                     <p>Đang tải...</p>
                   ) : (
                     types?.data?.map((type: any) => (
-                      <div key={type.id} className="flex items-center gap-2 py-1">
+                      <div
+                        key={type.id}
+                        className="flex items-center gap-2 py-1"
+                      >
                         <input
                           type="checkbox"
                           checked={selectedTypes.includes(type.name)}
@@ -289,7 +310,10 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
                   {existingBanners
                     .filter((banner) => !bannersToRemove.includes(banner.id))
                     .map((banner) => (
-                      <div key={banner.id} className="relative w-fit inline-block mr-2 mb-2">
+                      <div
+                        key={banner.id}
+                        className="relative w-fit inline-block mr-2 mb-2"
+                      >
                         <img
                           src={banner.url}
                           alt="Existing Banner"
@@ -305,7 +329,10 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
                       </div>
                     ))}
                   {newBannerPreviews.map((url, index) => (
-                    <div key={index} className="relative w-fit inline-block mr-2 mb-2">
+                    <div
+                      key={index}
+                      className="relative w-fit inline-block mr-2 mb-2"
+                    >
                       <img
                         src={url}
                         alt={`New Banner Preview ${index + 1}`}

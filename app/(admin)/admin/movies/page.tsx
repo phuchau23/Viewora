@@ -3,18 +3,13 @@
 import MoviesTables from "./components/MoviesTables";
 import { TypeMovies } from "./components/TypeMovies";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutGrid } from "lucide-react";
 import { List } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
 export default function Movies() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <Tabs defaultValue="movies">
         <div className="flex justify-between px-4 py-2">
           <TabsList>

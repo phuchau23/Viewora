@@ -131,26 +131,6 @@ export default function Header() {
 
         {/* Right section */}
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center border rounded-full px-3 py-1 text-sm text-muted-foreground">
-            <MapPin className="mr-1 h-3 w-3" />
-            <span>{t("header.location")}</span>
-          </div>
-
-          <div className="relative hidden sm:block">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder={t("header.searchPlaceholder")}
-              className="w-[200px] lg:w-[280px] pl-9 rounded-full bg-secondary"
-            />
-          </div>
-
-          {/* Mobile search */}
-          <Button variant="ghost" size="icon" className="md:hidden">
-            <Search className="h-5 w-5" />
-            <span className="sr-only">{t("header.search")}</span>
-          </Button>
-
           {/* Nút Profile - chỉ hiển thị nếu có token */}
           {token && (
             <Button

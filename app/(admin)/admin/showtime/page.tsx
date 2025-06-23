@@ -1,209 +1,388 @@
 "use client";
-
 import React, { useState } from "react";
-import { useDeleteShowTime, useShowTime } from "@/hooks/useShowTime";
-import { Calendar, Clock, Trash2, X } from "lucide-react";
+import {
+  Plus,
+  Calendar,
+  Clock,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useShowTime } from "@/hooks/useShowTime";
 import { Button } from "@/components/ui/button";
 import CreateShowtimeForm from "./components/CreateShowtimeForm";
-import { toast } from "@/hooks/use-toast";
-import ConfirmDialog from "@/components/ui/confirmDialog";
+import { ShowtimeDetailModal } from "./components/ShowtimeDetail";
 
-export default function ShowTimeDashboard() {
-  const { showTime, isLoading, error } = useShowTime();
-  const [isOpen, setIsOpen] = useState(false);
-  const { mutateAsync: deleteMutation } = useDeleteShowTime();
-  const [selectedToDelete, setSelectedToDelete] = useState<string | null>(null);
+// Responsive time slot generator
+const generateTimeSlots = () => {
+  const slots = [];
+  for (let hour = 0; hour <= 23; hour++) {
+    slots.push(`${hour.toString().padStart(2, "0")}:00`);
+  }
+  return slots;
+};
 
-  if (isLoading) return <p className="text-center py-10">Loading...</p>;
-  if (error)
-    return (
-      <p className="text-center text-red-500 py-10">
-        ❌ Failed to load showtimes.
-      </p>
+const timeSlots = generateTimeSlots();
+
+const AdminShowtimePage: React.FC = () => {
+  const { showTime } = useShowTime();
+  console.log(showTime);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => {
+    // Find the earliest movie start date
+    const earliestDate = showTime.reduce((earliest, showtime) => {
+      const showtimeDate = new Date(showtime.startTime);
+      return showtimeDate < earliest ? showtimeDate : earliest;
+    }, new Date(showTime[0]?.startTime || new Date()));
+
+    // Set to start of week (Sunday)
+    const startOfWeek = new Date(earliestDate);
+    startOfWeek.setDate(earliestDate.getDate() - earliestDate.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+    return startOfWeek;
+  });
+
+  const [selectedShowtime, setSelectedShowtime] = useState(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  const getRoomTypeColor = (roomType?: { name?: string }) => {
+    switch (roomType?.name) {
+      case "IMAX":
+        return "bg-purple-500";
+      case "2D":
+        return "bg-red-500";
+      case "3D":
+        return "bg-green-500";
+      default:
+        return "bg-blue-500";
+    }
+  };
+
+  // Generate week dates starting from currentWeekStart
+  const getWeekDates = () => {
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(currentWeekStart);
+      date.setDate(currentWeekStart.getDate() + i);
+      dates.push(date);
+    }
+    return dates;
+  };
+
+  const weekDates = getWeekDates();
+
+  const navigateWeek = (direction: "prev" | "next") => {
+    const newWeekStart = new Date(currentWeekStart);
+    newWeekStart.setDate(
+      currentWeekStart.getDate() + (direction === "next" ? 1 : -1)
     );
+    setCurrentWeekStart(newWeekStart);
+  };
+
+  const formatTime = (timeString: string) => {
+    const date = new Date(timeString);
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "short",
+    });
+  };
+
+  const getDayName = (date: Date) => {
+    return date.toLocaleDateString("en-US", { weekday: "short" });
+  };
+
+  const getShowtimesForDate = (date: Date) => {
+    const targetDate = date.toISOString().split("T")[0];
+
+    return showTime.filter((showtime) => {
+      const showtimeDate = new Date(showtime.startTime);
+      const showtimeDateStr = showtimeDate.toISOString().split("T")[0];
+
+      return showtimeDateStr === targetDate;
+    });
+  };
+
+  const calculatePosition = (startTime: string, endTime: string) => {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+
+    const startHour = start.getHours();
+    const startMinute = start.getMinutes();
+    const endHour = end.getHours();
+    const endMinute = end.getMinutes();
+
+    // Each hour is 48px (h-12 in Tailwind), so 1 minute = 48/60 = 0.8px
+    const startOffset = startHour * 60 + startMinute; // Total minutes from 00:00
+    const endOffset = endHour * 60 + endMinute; // Total minutes from 00:00
+
+    const top = (startOffset / 60) * 48; // Position from top
+    const height = Math.max(((endOffset - startOffset) / 60) * 48, 30); // Minimum height 30px
+
+    return { top, height };
+  };
+
+  const handleShowtimeClick = (showtime: any) => {
+    setSelectedShowtime(showtime);
+    setIsDetailModalOpen(true);
+  };
+
+  const isToday = (date: Date) => {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };
+
+  const isPast = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
+  };
 
   return (
-    <div className="relative flex min-h-screen bg-gray-50 dark:bg-background transition-colors">
-      {/* Main content */}
-      <div
-        className={`flex-1 px-4 sm:px-6 py-8 transition-all duration-300 ${
-          isOpen ? "md:w-3/4" : "w-full"
-        }`}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-            🎬 Showtime Dashboard
-          </h1>
-          <Button onClick={() => setIsOpen(true)}>+ Add Showtime</Button>
-        </div>
-
-        {/* 👨‍💻 TABLE - Desktop only */}
-        <div className="hidden md:block">
-          <div className="w-full rounded-xl border dark:border-gray-700 shadow-md bg-white dark:bg-background">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-100 dark:bg-[#112]">
-                <tr>
-                  {[
-                    "Movie",
-                    "Branch",
-                    "Room",
-                    "Start",
-                    "End",
-                    "Duration",
-                    "Action",
-                  ].map((header) => (
-                    <th
-                      key={header}
-                      className="px-6 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                    >
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                {showTime.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                  >
-                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                      {item.movie?.name}
-                      <div className="text-xs text-gray-500">
-                        {item.movie?.movieType?.name}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-800 dark:text-gray-200">
-                      {item.room?.branch?.name}
-                      <div className="text-xs text-gray-500">
-                        {item.room?.branch?.address}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
-                      Room {item.room?.roomNumber} • {item.room?.roomType?.name}
-                    </td>
-                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
-                      <div className="flex items-center gap-1">
-                        <Calendar size={14} />
-                        {new Date(item.startTime).toLocaleDateString()}
-                      </div>
-                      <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                        <Clock size={14} />
-                        {new Date(item.startTime).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
-                      {new Date(item.endTime).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </td>
-                    <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
-                      {item.movie?.duration} phút
-                    </td>
-                    <td className="px-6 py-4">
-                      <Button
-                        variant="destructive"
-                        onClick={() => setSelectedToDelete(item.id)}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+    <div className="min-h-screen bg-background p-2 sm:p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-4 sm:mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">
+                Movie Showtime Management
+              </h1>
+              <p className="text-gray-600 text-sm sm:text-base">
+                Manage cinema showtimes and schedules
+              </p>
+            </div>
+            <Button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="bg-orange-600 hover:bg-orange-700 text-foreground px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium flex items-center gap-2 transition-colors"
+            >
+              <Plus className="text-white" size={20} />
+              <span className="hidden sm:inline text-white">Add Showtime</span>
+              <span className="sm:hidden text-white">Add</span>
+            </Button>
           </div>
         </div>
 
-        {/* 📱 CARD LIST - Mobile only */}
-        <div className="block md:hidden space-y-4">
-          {showTime.map((item) => (
-            <div
-              key={item.id}
-              className="rounded-lg border dark:border-gray-700 shadow bg-white dark:bg-gray-900 p-4 space-y-2"
-            >
-              <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                {item.movie?.name}
+        {/* Calendar Header */}
+        <div className="bg-background rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 overflow-hidden">
+          <div className="bg-background px-2 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-600">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
+              <div className="flex items-center gap-2 sm:gap-4 mb-2 sm:mb-0">
+                <Calendar className="text-foreground" size={24} />
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground">
+                  Weekly Schedule
+                </h2>
               </div>
-              <div className="text-sm text-gray-500">
-                {item.movie?.movieType?.name}
+              <div className="flex items-center">
+                <p className="text-xs sm:text-sm font-medium text-foreground">
+                  Total Showtimes :{" "}
+                  <strong className="text-foreground font-bold">
+                    {showTime.length}
+                  </strong>
+                </p>
               </div>
-              <div className="text-sm text-gray-700 dark:text-gray-300">
-                📍 {item.room?.branch?.name} - {item.room?.branch?.address}
+              <div className="flex items-center gap-1 sm:gap-4">
+                <button
+                  onClick={() => navigateWeek("prev")}
+                  className="p-2 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1"
+                >
+                  <ChevronLeft size={20} />
+                  <span className="text-sm font-medium hidden sm:inline">
+                    Previous
+                  </span>
+                </button>
+                <div className="text-center px-1">
+                  <div className="text-base sm:text-lg font-semibold text-foreground">
+                    {currentWeekStart.toLocaleDateString("en-US", {
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </div>
+                  <div className="text-xs sm:text-sm text-foreground">
+                    {formatDate(weekDates[0])} - {formatDate(weekDates[6])}
+                  </div>
+                </div>
+                <button
+                  onClick={() => navigateWeek("next")}
+                  className="p-2 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1"
+                >
+                  <span className="text-sm font-medium hidden sm:inline">
+                    Next
+                  </span>
+                  <ChevronRight size={20} />
+                </button>
               </div>
-              <div className="text-sm text-gray-700 dark:text-gray-300">
-                🏠 Room {item.room?.roomNumber} • {item.room?.roomType?.name}
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-700 dark:text-gray-300">
-                  🕒{" "}
-                  {new Date(item.startTime).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-                <span className="text-gray-700 dark:text-gray-300">
-                  ⏱ {item.movie?.duration} phút
-                </span>
-              </div>
-              <Button
-                variant="destructive"
-                onClick={() => setSelectedToDelete(item.id)}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete
-              </Button>
             </div>
-          ))}
+          </div>
+
+          {/* Calendar Grid */}
+          <div className="overflow-x-auto">
+            <div className="min-w-[auto] sm:min-w-full">
+              {/* Days Header */}
+              <div className="grid grid-cols-8 border-b border-gray-200 dark:border-gray-600 text-xs sm:text-base">
+                <div className="p-1 sm:p-3 bg-background font-medium text-foreground text-center border-r border-gray-200 dark:border-gray-600">
+                  Time
+                </div>
+                {weekDates.map((date, index) => (
+                  <div
+                    key={index}
+                    className={`p-1 sm:p-3 text-center border-r border-gray-200 dark:border-gray-600 last:border-r-0 ${
+                      isToday(date)
+                        ? "bg-blue-50"
+                        : isPast(date)
+                        ? "bg-background"
+                        : "bg-background"
+                    }`}
+                  >
+                    <div
+                      className={`font-semibold ${
+                        isToday(date) ? "text-blue-900" : "text-foreground"
+                      }`}
+                    >
+                      {formatDate(date)}
+                    </div>
+                    <div
+                      className={`text-xs sm:text-sm ${
+                        isToday(date) ? "text-blue-600" : "text-foreground"
+                      }`}
+                    >
+                      {getDayName(date)}
+                      {isToday(date) && (
+                        <span className="ml-1 text-xs bg-blue-600 text-white px-1 rounded">
+                          Today
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Time Grid Container */}
+              <div className="relative">
+                <div className="grid w-full grid-cols-8">
+                  {/* Time Column */}
+                  <div className="border-r border-gray-200 dark:border-gray-600">
+                    {timeSlots.map((timeSlot) => (
+                      <div
+                        key={timeSlot}
+                        className="h-8 sm:h-12 border-b border-gray-200 dark:border-gray-600 bg-background flex items-center justify-center"
+                      >
+                        <div className="text-xs font-medium text-foreground flex items-center justify-center gap-1 w-full">
+                          <Clock size={12} />
+                          {timeSlot}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Day Columns */}
+                  {weekDates.map((date, dateIndex) => {
+                    const dayShowtimes = getShowtimesForDate(date);
+
+                    return (
+                      <div
+                        key={dateIndex}
+                        className={`relative border-r border-gray-200 dark:border-gray-600 last:border-r-0
+                          ${
+                            isPast(date)
+                              ? "bg-background/30 dark:bg-background/30"
+                              : ""
+                          }
+                        `}
+                      >
+                        {/* Time slot backgrounds */}
+                        {timeSlots.map((timeSlot) => (
+                          <div
+                            key={timeSlot}
+                            className="h-8 sm:h-12 border-b border-gray-200 dark:border-gray-600 hover:bg-background transition-colors"
+                          ></div>
+                        ))}
+
+                        {/* Showtime blocks */}
+                        {dayShowtimes.map((showtime) => {
+                          const { top, height } = calculatePosition(
+                            showtime.startTime,
+                            showtime.endTime
+                          );
+
+                          return (
+                            <div
+                              key={showtime.id}
+                              className={`absolute left-1 right-1 ${getRoomTypeColor(
+                                showtime.room.roomType
+                              )} text-white rounded-md shadow-sm cursor-pointer hover:shadow-md transition-all transform hover:scale-[1.02] z-10 ${
+                                isPast(date) ? "opacity-20" : ""
+                              }`}
+                              style={{
+                                top: `${top}px`,
+                                height: `${height}px`,
+                              }}
+                              onClick={() => handleShowtimeClick(showtime)}
+                            >
+                              <div className="p-1 sm:p-2 h-full flex flex-col justify-between">
+                                <div>
+                                  <div className="font-semibold text-xs truncate mb-1">
+                                    {showtime.movie.name}
+                                  </div>
+                                  <div className="text-xs opacity-90">
+                                    Room {showtime.room.roomNumber}
+                                  </div>
+                                </div>
+                                <div className="text-xs opacity-90">
+                                  {formatTime(showtime.startTime)} -{" "}
+                                  {formatTime(showtime.endTime)}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Slide-over panel */}
-      {isOpen && (
+      {/* Showtime Detail Modal */}
+      <ShowtimeDetailModal
+        showtime={selectedShowtime}
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false);
+          setSelectedShowtime(null);
+        }}
+      />
+
+      {isCreateModalOpen && (
         <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white dark:bg-gray-900 shadow-xl z-50 transform transition-transform duration-300 border-l border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               Add Showtime
             </h2>
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={() => setIsCreateModalOpen(false)}
               className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
           <div className="p-4 overflow-y-auto max-h-[calc(100vh-64px)]">
-            <CreateShowtimeForm onSuccess={() => setIsOpen(false)} />
+            <CreateShowtimeForm onSuccess={() => setIsCreateModalOpen(false)} />
           </div>
         </div>
       )}
-
-      {/* Confirm Delete Dialog */}
-      <ConfirmDialog
-        open={!!selectedToDelete}
-        onCancel={() => setSelectedToDelete(null)}
-        onConfirm={async () => {
-          if (!selectedToDelete) return;
-          try {
-            await deleteMutation(selectedToDelete);
-            toast({
-              title: "🗑️ Xoá suất chiếu thành công",
-            });
-          } catch (error) {
-            toast({
-              title: "❌ Xoá thất bại",
-              description: "Vui lòng thử lại.",
-            });
-          } finally {
-            setSelectedToDelete(null);
-          }
-        }}
-      />
     </div>
   );
-}
+};
+
+export default AdminShowtimePage;
