@@ -16,7 +16,7 @@ export interface ShowTime {
   room: Room;
   startTime: string;
   endTime: string;
-  basePrice: number;
+  isExpired: boolean;
 }
 
 export interface Movie {
@@ -77,7 +77,6 @@ export interface CreateShowtimeDto {
   movieId: string;
   roomId: string;
   startTime: string; // ISO 8601 format (e.g. "2025-06-17T13:16:14.009Z")
-  endTime: string;   // ISO 8601 format
 }
 
 export const ShowTimeService = {
@@ -93,9 +92,9 @@ export const ShowTimeService = {
         }
       },
 
-      createShowtime: async (showtime: CreateShowtimeDto): Promise<ShowTime> => {
+      createShowtime: async (showtime: CreateShowtimeDto): Promise<ShowTimeResponse> => {
         try {
-          const res = await apiService.post<ShowTime>(`/showtimes`, showtime);
+          const res = await apiService.post<ShowTimeResponse>(`/showtimes`, showtime);
           console.log(" API result:", res);
           return res.data; // hoặc return res nếu không phải Axios
         } catch (error) {
