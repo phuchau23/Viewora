@@ -1,4 +1,3 @@
-"use client";
 import apiService from "../core";
 // register
 export interface RegisterRequest {
@@ -38,7 +37,7 @@ export interface Token {
 
 // verify email
 export interface VerifyEmailRequest {
-  optCode: number;
+  otpCode: number;
   Email: string;
 }
 
@@ -78,7 +77,7 @@ export interface ForgotPasswordResponse {
 
 // verify reset password
 export interface VerifyResetPasswordRequest {
-  optCode: number;
+  otpCode: number;
   Email: string;
 }
 

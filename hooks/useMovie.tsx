@@ -1,7 +1,10 @@
-'use client';
+"use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { MovieCreateRequest, MovieService } from "@/lib/api/service/fetchMovies";
+import {
+  MovieCreateRequest,
+  MovieService,
+} from "@/lib/api/service/fetchMovies";
 import { MovieResponse } from "@/lib/api/service/fetchMovies";
 import { useMutation } from "@tanstack/react-query";
 
@@ -9,7 +12,7 @@ export const useMovies = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["movies"],
     queryFn: () => MovieService.getAllMovies(),
-    select: (data: MovieResponse) => data.data, 
+    select: (data: MovieResponse) => data.data,
   });
 
   return {
