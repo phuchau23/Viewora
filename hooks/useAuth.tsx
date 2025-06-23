@@ -23,10 +23,12 @@ import {
 } from "@/lib/api/service/fetchAuth";
 import { saveTokenToCookie } from "@/lib/ultils/cookies";
 import { useToast } from "@/hooks/use-toast";
-import { handleGoogleRedirectResult, signInWithGoogle } from "@/lib/firebase/auth";
+import {
+  handleGoogleRedirectResult,
+  signInWithGoogle,
+} from "@/lib/firebase/auth";
 import { logEvent } from "firebase/analytics";
 import { getAnalytics } from "firebase/analytics";
-
 
 // Hook: useRegister
 export function useRegister() {
@@ -39,12 +41,13 @@ export function useRegister() {
     isPending: isLoading,
     error: registerError,
   } = useMutation({
-    mutationFn:fetchAuth.register,
+    mutationFn: fetchAuth.register,
     onSuccess: (response: RegisterResponse) => {
       if (response.code === 200) {
         toast({
           title: "Thành công",
-          description: "Bạn đã đăng ký thành công, hãy kiểm tra email để xác minh tài khoản",
+          description:
+            "Bạn đã đăng ký thành công, hãy kiểm tra email để xác minh tài khoản",
         });
         setError(null);
       } else {
@@ -84,7 +87,9 @@ export function useVerifyEmail() {
   const [error, setError] = useState<string | null>(null);
 
   const { mutate: verifyEmail, isPending: isLoading } = useMutation({
-    mutationFn: async (data: VerifyEmailRequest): Promise<VerifyEmailResponse> => {
+    mutationFn: async (
+      data: VerifyEmailRequest
+    ): Promise<VerifyEmailResponse> => {
       const response = await fetchAuth.verifyEmail(data);
 
       if (!response?.code || response.code !== 200) {
@@ -93,9 +98,9 @@ export function useVerifyEmail() {
 
       return response;
     },
-    onSuccess: () => {  
+    onSuccess: () => {
       toast({ title: "Thành công", description: "Bạn đã xác minh OTP" });
-      router.push("/auth/login");
+      router.push(" /login");
       setError(null);
     },
     onError: (err: any) => {
@@ -124,7 +129,9 @@ export function useResendVerifyEmail() {
   const [error, setError] = useState<string | null>(null);
 
   const { mutate: resendVerifyEmail, isPending: isLoading } = useMutation({
-    mutationFn: async (data: ResendVerifyEmailRequest): Promise<VerifyEmailResponse> => {
+    mutationFn: async (
+      data: ResendVerifyEmailRequest
+    ): Promise<VerifyEmailResponse> => {
       const response = await fetchAuth.resendVerifyEmail(data);
 
       if (!response?.code || response.code !== 200) {
@@ -133,7 +140,7 @@ export function useResendVerifyEmail() {
 
       return response;
     },
-    onSuccess: () => {  
+    onSuccess: () => {
       toast({ title: "Thành công", description: "Bạn đã xác minh OTP" });
       setError(null);
     },
@@ -215,7 +222,9 @@ export function useForgotPassword() {
   const [error, setError] = useState<string | null>(null);
 
   const { mutate: forgotPassword, isPending: isLoading } = useMutation({
-    mutationFn: async (data: ForgotPasswordRequest): Promise<ForgotPasswordResponse> => {
+    mutationFn: async (
+      data: ForgotPasswordRequest
+    ): Promise<ForgotPasswordResponse> => {
       const response = await fetchAuth.forgotPassword(data);
 
       if (!response?.code || response.code !== 200) {
@@ -224,7 +233,7 @@ export function useForgotPassword() {
 
       return response;
     },
-    onSuccess: () => {  
+    onSuccess: () => {
       toast({ title: "Thành công", description: "Bạn đã xác minh OTP" });
       setError(null);
     },
@@ -250,12 +259,13 @@ export function useForgotPassword() {
 
 //Hook: useVerifyResetPassword
 export function useVerifyResetPassword() {
-  const router = useRouter();
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
 
   const { mutate: verifyResetPassword, isPending: isLoading } = useMutation({
-    mutationFn: async (data: VerifyResetPasswordRequest): Promise<VerifyResetPasswordResponse> => {
+    mutationFn: async (
+      data: VerifyResetPasswordRequest
+    ): Promise<VerifyResetPasswordResponse> => {
       const response = await fetchAuth.verifyResetPassword(data);
 
       if (!response?.code || response.code !== 200) {
@@ -264,9 +274,8 @@ export function useVerifyResetPassword() {
 
       return response;
     },
-    onSuccess: () => {  
+    onSuccess: () => {
       toast({ title: "Thành công", description: "Bạn đã xác minh OTP" });
-      router.push("/auth/login");
       setError(null);
     },
     onError: (err: any) => {
@@ -291,11 +300,14 @@ export function useVerifyResetPassword() {
 
 // Hook: useResetPassword
 export function useResetPassword() {
+  const router = useRouter();
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
 
   const { mutate: resetPassword, isPending: isLoading } = useMutation({
-    mutationFn: async (data: ResetPasswordRequest): Promise<ResetPasswordResponse> => {
+    mutationFn: async (
+      data: ResetPasswordRequest
+    ): Promise<ResetPasswordResponse> => {
       const response = await fetchAuth.resetPassword(data);
 
       if (!response?.code || response.code !== 200) {
@@ -304,13 +316,16 @@ export function useResetPassword() {
 
       return response;
     },
-    onSuccess: () => {  
+    onSuccess: () => {
       toast({ title: "Thành công", description: "Bạn đã đặt lại mật khẩu" });
+      router.push("/login");
       setError(null);
     },
     onError: (err: any) => {
       const errorMessage =
-        err.response?.data?.message || err.message || "Đặt lại mật khẩu thất bại.";
+        err.response?.data?.message ||
+        err.message ||
+        "Đặt lại mật khẩu thất bại.";
       setError(errorMessage);
       toast({
         title: "Thất bại",
@@ -345,7 +360,7 @@ export function useGoogleLogin() {
         if (result && result.idToken) {
           const response = await fetchAuth.loginWithGoogle(result.idToken);
           if (response.code !== 200) {
-            throw new Error(response.message || 'Đăng nhập Google thất bại.');
+            throw new Error(response.message || "Đăng nhập Google thất bại.");
           }
           handleSuccess(response);
         }
@@ -361,7 +376,7 @@ export function useGoogleLogin() {
   const { mutate: googleLogin, isPending: isLoading } = useMutation({
     mutationFn: async () => {
       const googleResult = await signInWithGoogle();
-      
+
       if (!googleResult) {
         setIsRedirecting(true);
         return null;
@@ -369,12 +384,12 @@ export function useGoogleLogin() {
 
       const { idToken } = googleResult;
       if (!idToken) {
-        throw new Error('Không lấy được Google ID token.');
+        throw new Error("Không lấy được Google ID token.");
       }
 
       const response = await fetchAuth.loginWithGoogle(idToken);
       if (response.code !== 200) {
-        throw new Error(response.message || 'Đăng nhập Google thất bại.');
+        throw new Error(response.message || "Đăng nhập Google thất bại.");
       }
 
       return response;
@@ -391,35 +406,37 @@ export function useGoogleLogin() {
   const handleSuccess = (response: LoginWithGoogleResponse) => {
     const token = response.data?.token;
     if (!token) {
-      const errorMessage = 'Không lấy được token từ phản hồi.';
+      const errorMessage = "Không lấy được token từ phản hồi.";
       setError(errorMessage);
       toast({
-        title: 'Thất bại',
+        title: "Thất bại",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
       return;
     }
 
     saveTokenToCookie(token);
-    toast({ title: 'Thành công', description: 'Bạn đã đăng nhập bằng Google' });
-    logEvent(getAnalytics(), 'login', { method: 'google' });
-    router.push('/');
-    queryClient.invalidateQueries({ queryKey: ['auth-token-2'] });
+    toast({ title: "Thành công", description: "Bạn đã đăng nhập bằng Google" });
+    logEvent(getAnalytics(), "login", { method: "google" });
+    router.push("/");
+    queryClient.invalidateQueries({ queryKey: ["auth-token-2"] });
     setError(null);
   };
 
   const handleError = (err: any, isRedirect: boolean) => {
     const errorMessage =
-      err.response?.data?.message || err.message || 'Đăng nhập Google thất bại.';
+      err.response?.data?.message ||
+      err.message ||
+      "Đăng nhập Google thất bại.";
     setError(errorMessage);
     toast({
-      title: 'Thất bại',
+      title: "Thất bại",
       description: errorMessage,
-      variant: 'destructive',
+      variant: "destructive",
     });
     if (isRedirect) {
-      router.push('/login');
+      router.push("/login");
     }
   };
 

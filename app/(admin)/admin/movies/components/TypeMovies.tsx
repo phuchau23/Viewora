@@ -55,7 +55,6 @@ export function TypeMovies() {
   } = useDeleteType();
   const sortedTypes = sortedData(types?.data || []);
 
-
   const handleAdd = () => {
     if (newType.trim()) {
       createType(
@@ -82,7 +81,7 @@ export function TypeMovies() {
   }
 
   return (
-    <div className="container py-6">
+    <div className="py-6">
       {/* Header Actions */}
       <div className="flex justify-between items-center mb-6 py-2">
         <div className="relative w-72 px-2">
@@ -99,7 +98,7 @@ export function TypeMovies() {
         </Button>
       </div>
       {/* Scrollable Table */}
-      <div className="max-h-[700px] overflow-y-auto">
+      <div className="h-[calc(100vh-200px)] overflow-y-auto">
         <Table>
           <TableHeader className="text-center">
             <TableRow>
@@ -132,7 +131,9 @@ export function TypeMovies() {
                         </AlertDialogTitle>
                         <AlertDialogDescription className="text-sm text-muted-foreground mt-2">
                           Are you sure you want to delete the type{" "}
-                          <strong className="text-black">"{type.name}"</strong>
+                          <strong className="text-black">
+                            &quot;{type.name}&quot;
+                          </strong>
                           ? <br />
                           This action cannot be undone.
                         </AlertDialogDescription>

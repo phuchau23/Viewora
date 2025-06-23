@@ -55,7 +55,7 @@ export default function AddSnackForm({ onCancel }: AddSnackFormProps) {
       data.append("Name", formData.name);
       data.append("Price", formData.price);
       if (imageFile) {
-        data.append("imageFile", imageFile);
+        data.append("file", imageFile);
       }
 
       create(data, {
@@ -122,12 +122,7 @@ export default function AddSnackForm({ onCancel }: AddSnackFormProps) {
         </div>
         <div>
           <Label>Image</Label>
-          <Input
-            type="file"
-            name="imageFile"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
+          <Input name="file" type="file" onChange={handleFileChange} />
           {imagePreview && (
             <img
               src={imagePreview}
