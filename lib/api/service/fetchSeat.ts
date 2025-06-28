@@ -14,9 +14,16 @@ export interface Seat{
     seatType :{
         id: string
         name: seatType
+        prices : Prices[]
     } 
     room: Room
 }
+
+export interface Prices {
+    id: string;
+    timeInDay: "Morning" | "Night"; 
+    amount: number;
+  }
 
 export enum seatType {
     standard = "Standard Seat",

@@ -5,8 +5,10 @@ export interface Snack {
   id: string;
   name: string;
   price: number;
-  image: string;
-  isAvailable: boolean;
+  image?: string;
+  isAvailable?: boolean;
+  quantity?: number;
+  originalPrice?: number;
 }
 
 export interface SnackListResponse {
