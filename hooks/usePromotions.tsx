@@ -28,12 +28,11 @@ export function usePromotion(id: string) {
     error,
   };
 }
+
 export function usePromotions(pageIndex = 1, pageSize = 10) {
   const token = getCookie("auth-token");
   const isAuthenticated = !!token;
-  const queryClient = useQueryClient();
 
-  // ✅ Get all promotions
   const {
     data,
     isLoading,
@@ -52,9 +51,19 @@ export function usePromotions(pageIndex = 1, pageSize = 10) {
     }),
   });
 
-  // ✅ Create promotion with FormData
+  return {
+    data,
+    isLoading,
+    isError: !!queryError,
+    error: queryError,
+  };
+}
+
+export function useCreatePromotion() {
+  const queryClient = useQueryClient();
+
   const {
-    mutate: create,
+    mutate: createPromotion,
     isPending: isCreating,
     error: createError,
   } = useMutation({
@@ -65,7 +74,16 @@ export function usePromotions(pageIndex = 1, pageSize = 10) {
     },
   });
 
-  // ✅ Delete promotion
+  return {
+    createPromotion,
+    isCreating,
+    createError,
+  };
+}
+
+export function useDeletePromotion() {
+  const queryClient = useQueryClient();
+
   const {
     mutate: deletePromotion,
     isPending: isDeleting,
@@ -78,16 +96,7 @@ export function usePromotions(pageIndex = 1, pageSize = 10) {
   });
 
   return {
-    data,
-    isLoading,
-    isError: !!queryError,
-    error: queryError,
-
-    create,
-    isCreating,
-    createError,
-
-    delete: deletePromotion,
+    deletePromotion,
     isDeleting,
     deleteError,
   };

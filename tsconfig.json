@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",                      // ✅ đổi từ "es5"
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -13,6 +13,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "downlevelIteration": true,              // ✅ thêm dòng này để hỗ trợ Set, Map
     "plugins": [
       {
         "name": "next"
@@ -20,8 +21,7 @@
     ],
     "paths": {
       "@/*": ["./*"]
-    },
-    
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

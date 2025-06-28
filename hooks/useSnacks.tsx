@@ -1,4 +1,3 @@
-// hooks/useSnacks.ts
 import SnackService, {
   SnackListResponse,
   SnackResponse,
@@ -32,9 +31,7 @@ export function useSnack(id: string) {
 export function useSnacks(pageIndex = 1, pageSize = 10) {
   const token = getCookie("auth-token");
   const isAuthenticated = !!token;
-  const queryClient = useQueryClient();
 
-  // Get all snacks
   const {
     data,
     isLoading,
@@ -53,7 +50,17 @@ export function useSnacks(pageIndex = 1, pageSize = 10) {
     }),
   });
 
-  // Create snack with FormData
+  return {
+    data,
+    isLoading,
+    isError: !!queryError,
+    error: queryError,
+  };
+}
+
+export function useCreateSnack() {
+  const queryClient = useQueryClient();
+
   const {
     mutate: create,
     isPending: isCreating,
@@ -65,7 +72,16 @@ export function useSnacks(pageIndex = 1, pageSize = 10) {
     },
   });
 
-  // Update snack
+  return {
+    createSnack: create,
+    isCreating: isCreating,
+    createError: createError,
+  };
+}
+
+export function useUpdateSnack() {
+  const queryClient = useQueryClient();
+
   const {
     mutate: update,
     isPending: isUpdating,
@@ -74,10 +90,8 @@ export function useSnacks(pageIndex = 1, pageSize = 10) {
     mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
       SnackService.updateSnack(id, formData),
     onSuccess: (_, variables) => {
-      // Invalidate both snacks list and specific snack
       queryClient.invalidateQueries({ queryKey: ["snacks"] });
       queryClient.invalidateQueries({ queryKey: ["snack", variables.id] });
-      // Optionally, refetch to ensure immediate update
       queryClient.refetchQueries({ queryKey: ["snacks"] });
       queryClient.refetchQueries({ queryKey: ["snack", variables.id] });
     },
@@ -86,7 +100,16 @@ export function useSnacks(pageIndex = 1, pageSize = 10) {
     },
   });
 
-  // Delete snack
+  return {
+    updateSnack: update,
+    isUpdating: isUpdating,
+    updateError: updateError,
+  };
+}
+
+export function useDeleteSnack() {
+  const queryClient = useQueryClient();
+
   const {
     mutate: deleteSnack,
     isPending: isDeleting,
@@ -99,17 +122,7 @@ export function useSnacks(pageIndex = 1, pageSize = 10) {
   });
 
   return {
-    data,
-    isLoading,
-    isError: !!queryError,
-    error: queryError,
-    create,
-    isCreating,
-    createError,
-    update,
-    isUpdating,
-    updateError,
-    delete: deleteSnack,
+    deleteSnack,
     isDeleting,
     deleteError,
   };

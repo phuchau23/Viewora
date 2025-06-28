@@ -259,7 +259,7 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
                     <div key={show.id} className="mt-4 border-t pt-4">
                       <RoomSeatingChart
                         roomId={show.room.id}
-                        movieTitle={show.movie.name}
+                        movie={show.movie}
                         showtime={formatTime(show.startTime)}
                         roomNumber={show.room.roomNumber}
                         branchName={show.room.branch.name}
