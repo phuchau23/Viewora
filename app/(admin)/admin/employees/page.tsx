@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -9,11 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Plus,
-  Download,
-  Shield,
-} from "lucide-react";
+import { Plus, Download, Shield } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,30 +25,48 @@ import { currentUser, hasEmployeeAccess } from "@/utils/data";
 import { EmployeesTable } from "./components/employees-table";
 import { EmployeeFormModal } from "./components/employee-form-modal";
 import { EmployeeDetailsModal } from "./components/employee-details-modal";
-import { useGetEmployees, useCreateEmployee, useUpdateEmployee, useDeleteEmployee } from "@/hooks/useEmployees";
+import {
+  useGetEmployees,
+  useCreateEmployee,
+  useUpdateEmployee,
+  useDeleteEmployee,
+} from "@/hooks/useEmployees";
 import { Employee } from "@/lib/api/service/fetchEmployees";
 import { CreateEmployeeModal } from "./components/createEmployee";
 import { EditEmployeeModal } from "./components/editEmployee";
+import { exportToCSV } from "@/utils/export/exportToCSV";
 
 export default function EmployeesPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null
+  );
   const [pagination, setPagination] = useState({
     pageIndex: 0, // Bắt đầu từ trang 1 (0-based index)
     pageSize: 10,
   });
 
-  const { data: employees, isLoading, isError, error } = useGetEmployees(
-    pagination.pageIndex + 1,
-    pagination.pageSize
-  );
+  const {
+    data: employees,
+    isLoading,
+    isError,
+    error,
+  } = useGetEmployees(pagination.pageIndex + 1, pagination.pageSize);
 
   useEffect(() => {
-    console.log("Pagination changed:", pagination.pageIndex + 1, "Total Pages:", employees?.data?.totalPages);
-    if (employees?.data?.totalPages && pagination.pageIndex >= employees.data.totalPages) {
+    console.log(
+      "Pagination changed:",
+      pagination.pageIndex + 1,
+      "Total Pages:",
+      employees?.data?.totalPages
+    );
+    if (
+      employees?.data?.totalPages &&
+      pagination.pageIndex >= employees.data.totalPages
+    ) {
       setPagination((prev) => ({ ...prev, pageIndex: 0 }));
     }
   }, [employees?.data?.totalPages, pagination.pageIndex, setPagination]);
@@ -171,10 +185,29 @@ export default function EmployeesPage() {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button variant="outline">
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (!employees?.data?.items?.length) return;
+
+              // Export CSV
+              exportToCSV(
+                "employees.csv",
+                ["Full Name", "Email", "Role", "Status"],
+                employees.data.items,
+                (emp) => [
+                  emp.account.fullName,
+                  emp.account.email,
+                  emp.account.role,
+                  emp.isActive ? "Active" : "Inactive",
+                ]
+              );
+            }}
+          >
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
+
           <Button onClick={() => setIsAddModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Add Employee

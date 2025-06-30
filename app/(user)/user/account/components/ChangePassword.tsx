@@ -20,7 +20,7 @@ interface FormErrors {
 }
 
 export default function ChangePassword() {
-  const { t } = useTranslation(); // Sử dụng namespace profilePage
+  const { t } = useTranslation();
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -65,9 +65,7 @@ export default function ChangePassword() {
             setPassword("");
             setConfirmPassword("");
             setErrors({});
-            setTimeout(() => {
-              setShowPasswordSuccess(false);
-            }, 1500);
+            setTimeout(() => setShowPasswordSuccess(false), 1500);
           } else {
             toast.error(t("toast.passwordChangeFailed") || resp.message);
             setErrors((e) => ({
@@ -98,21 +96,21 @@ export default function ChangePassword() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] py-8">
         <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
-        <h3 className="text-lg font-semibold text-green-700 mb-2">
+        <h3 className="text-lg font-semibold text-green-700 dark:text-green-400 mb-2">
           {t("modal.passwordChanged")}
         </h3>
-        <p className="text-center text-gray-600">
+        <p className="text-center text-gray-600 dark:text-gray-300">
           {t("modal.passwordChangeSuccessMessage")}
         </p>
       </div>
     );
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white rounded-lg shadow p-8">
-      <h2 className="text-xl font-semibold text-gray-900 mb-2">
+    <div className="max-w-md mx-auto mt-10 bg-white dark:bg-gray-900 rounded-lg shadow p-8">
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         {t("modal.changePassword")}
       </h2>
-      <p className="text-gray-600 mb-6">
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
         {t("modal.changePasswordDescription")}
       </p>
 
@@ -133,11 +131,11 @@ export default function ChangePassword() {
               placeholder={t("modal.currentPasswordPlaceholder")}
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
-              className={errors.oldPassword ? "border-red-500 pr-10" : "pr-10"}
+              className={`${errors.oldPassword ? "border-red-500" : ""} pr-10`}
             />
             <button
               type="button"
-              className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
               onClick={() => setShowOldPassword((v) => !v)}
               tabIndex={-1}
             >
@@ -151,6 +149,7 @@ export default function ChangePassword() {
               <p className="text-sm text-red-500 mt-1">{errors.oldPassword}</p>
             )}
           </div>
+
           <div className="relative">
             <Label htmlFor="newPassword">{t("modal.newPassword")} *</Label>
             <Input
@@ -159,11 +158,11 @@ export default function ChangePassword() {
               placeholder={t("modal.newPasswordPlaceholder")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={errors.password ? "border-red-500 pr-10" : "pr-10"}
+              className={`${errors.password ? "border-red-500" : ""} pr-10`}
             />
             <button
               type="button"
-              className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
               onClick={() => setShowNewPassword((v) => !v)}
               tabIndex={-1}
             >
@@ -177,6 +176,7 @@ export default function ChangePassword() {
               <p className="text-sm text-red-500 mt-1">{errors.password}</p>
             )}
           </div>
+
           <div className="relative">
             <Label htmlFor="confirmPassword">
               {t("modal.confirmNewPassword")} *
@@ -187,13 +187,13 @@ export default function ChangePassword() {
               placeholder={t("modal.confirmNewPasswordPlaceholder")}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className={
-                errors.confirmPassword ? "border-red-500 pr-10" : "pr-10"
-              }
+              className={`${
+                errors.confirmPassword ? "border-red-500" : ""
+              } pr-10`}
             />
             <button
               type="button"
-              className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
               onClick={() => setShowConfirmPassword((v) => !v)}
               tabIndex={-1}
             >

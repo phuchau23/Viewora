@@ -4,9 +4,9 @@
     "edit": "Edit",
     "tabs": {
       "personal": "My Profile",
-      "points": "View Requests",
+      "points": "View Points",
       "preferences": "Track Request",
-      "booking": "History",
+      "booking": "Your Booked Tickets",
       "changePassword": "Change Password"
     },
     "avatarAlt": "User Avatar",
@@ -54,11 +54,11 @@
       "passwordChangeSuccessMessage": "You have successfully changed your password.",
       "changePassword": "Change Password",
       "changePasswordDescription": "Enter your current password and your new password below.",
-      "currentPassword": "Current Password *",
+      "currentPassword": "Current Password ",
       "currentPasswordPlaceholder": "Current Password",
-      "newPassword": "New Password *",
+      "newPassword": "New Password ",
       "newPasswordPlaceholder": "New Password",
-      "confirmNewPassword": "Confirm New Password *",
+      "confirmNewPassword": "Confirm New Password ",
       "confirmNewPasswordPlaceholder": "Confirm New Password",
       "changePasswordButton": "Change Password"
     },

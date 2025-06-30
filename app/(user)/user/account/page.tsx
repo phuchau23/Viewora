@@ -8,20 +8,13 @@ import { Edit3 } from "lucide-react";
 import EditProfileModal from "./components/Editprofile";
 import PersonalInfo from "./components/PersonalInfoPage";
 import Points from "./components/Points";
-import Preferences from "./components/Preferences";
 import BookingHistory from "./components/BookingHistory";
 import { useUserProfile } from "@/hooks/useUsers";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import ChangePassword from "./components/ChangePassword";
 
-interface ProfilePageProps {
-  userId?: string;
-}
-
-export default function ProfilePage({
-  userId = "default-id",
-}: ProfilePageProps) {
+export default function ProfilePage() {
   const { t } = useTranslation();
   const { data: profileData, isLoading, error } = useUserProfile();
   const user = profileData?.data;
@@ -36,10 +29,8 @@ export default function ProfilePage({
         return <PersonalInfo />;
       case "points":
         return <Points user={user!} />;
-      case "preferences":
-        return <Preferences user={user!} />;
       case "booking":
-        return <BookingHistory user={user!} />;
+        return <BookingHistory />;
       case "changePassword":
         return <ChangePassword />;
       default:
@@ -98,7 +89,7 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  🧑 {t("tabs.personal")}
+                  {t("tabs.personal")}
                 </button>
                 <button
                   onClick={() => setActiveTab("points")}
@@ -108,17 +99,7 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  📋 {t("tabs.points")}
-                </button>
-                <button
-                  onClick={() => setActiveTab("preferences")}
-                  className={`flex items-center gap-2 px-4 py-2 w-full text-sm font-medium rounded ${
-                    activeTab === "preferences"
-                      ? "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-white"
-                      : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
-                >
-                  📍 {t("tabs.preferences")}
+                  {t("tabs.points")}
                 </button>
                 <button
                   onClick={() => setActiveTab("booking")}
@@ -128,7 +109,7 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  🕓 {t("tabs.booking")}
+                  {t("tabs.booking")}
                 </button>
                 <button
                   onClick={() => setActiveTab("changePassword")}
@@ -138,7 +119,7 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  🔒 {t("tabs.changePassword")}
+                  {t("tabs.changePassword")}
                 </button>
               </nav>
             </aside>

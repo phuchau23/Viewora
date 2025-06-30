@@ -9,6 +9,7 @@ import SnackService, {
   Snack,
   SnackListResponse,
 } from "@/lib/api/service/fetchSnack";
+import { formatVND } from "@/utils/price/formatPrice";
 
 export default function SnacksPage() {
   const [snacks, setSnacks] = useState<Snack[]>([]);
@@ -61,23 +62,30 @@ export default function SnacksPage() {
               }}
             >
               <div className="relative w-full h-full">
-                <Image
-                  src={snack.image}
-                  alt={snack.name}
-                  fill
-                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                  priority={false}
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  style={{
-                    borderRadius: "16px",
-                  }}
-                />
+                {snack.image ? (
+                  <Image
+                    src={snack.image}
+                    alt={snack.name ?? "Snack"}
+                    fill
+                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                    priority={false}
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    style={{ borderRadius: "16px" }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 rounded-xl">
+                    Không có ảnh
+                  </div>
+                )}
+
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 rounded-2xl">
                   <div>
                     <h3 className="text-xl font-semibold mb-2 text-white">
                       {snack.name}
                     </h3>
-                    <p className="text-white mb-2">Price: {snack.price} VND</p>
+                    <p className="text-white mb-2">
+                      Price: {formatVND(snack.price)}
+                    </p>
                     <p className="text-white mb-4">
                       Status: {snack.isAvailable ? "Available" : "Unavailable"}
                     </p>
@@ -101,7 +109,7 @@ export default function SnacksPage() {
               <CardContent className="p-6 block md:hidden">
                 <h3 className="text-xl font-semibold mb-2">{snack.name}</h3>
                 <p className="text-muted-foreground mb-2">
-                  Price: {snack.price} VND
+                  Price: {formatVND(snack.price)}
                 </p>
                 <p className="text-muted-foreground mb-4">
                   Status: {snack.isAvailable ? "Available" : "Unavailable"}
