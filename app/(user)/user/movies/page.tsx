@@ -23,15 +23,6 @@ import {
 import { useMovies } from "@/hooks/useMovie";
 import { useRouter } from "next/navigation";
 
-// Format VND function (optional, include if price is added later)
-export function formatVND(amount: number): string {
-  return new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
 // Format duration function (replacing formatDuration from @/lib/data)
 function formatDuration(minutes: number): string {
   const hours = Math.floor(minutes / 60);

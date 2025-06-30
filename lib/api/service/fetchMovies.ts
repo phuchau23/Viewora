@@ -8,7 +8,7 @@ export interface MovieTypes {
 export interface Movie {
     id: string;
     name: string;
-    banner: string[];
+    banner: string;
     poster: string;
     description: string;
     director: string;

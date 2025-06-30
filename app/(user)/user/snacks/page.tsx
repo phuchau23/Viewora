@@ -62,17 +62,22 @@ export default function SnacksPage() {
               }}
             >
               <div className="relative w-full h-full">
-                <Image
-                  src={snack.image}
-                  alt={snack.name}
-                  fill
-                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                  priority={false}
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  style={{
-                    borderRadius: "16px",
-                  }}
-                />
+                {snack.image ? (
+                  <Image
+                    src={snack.image}
+                    alt={snack.name ?? "Snack"}
+                    fill
+                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                    priority={false}
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    style={{ borderRadius: "16px" }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 rounded-xl">
+                    Không có ảnh
+                  </div>
+                )}
+
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 rounded-2xl">
                   <div>
                     <h3 className="text-xl font-semibold mb-2 text-white">

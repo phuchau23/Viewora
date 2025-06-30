@@ -8,21 +8,13 @@ import { Edit3 } from "lucide-react";
 import EditProfileModal from "./components/Editprofile";
 import PersonalInfo from "./components/PersonalInfoPage";
 import Points from "./components/Points";
-import Preferences from "./components/Preferences";
 import BookingHistory from "./components/BookingHistory";
 import { useUserProfile } from "@/hooks/useUsers";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import ChangePassword from "./components/ChangePassword";
-import BookedTicketsPage from "./components/BookingHistory";
 
-interface ProfilePageProps {
-  userId?: string;
-}
-
-export default function ProfilePage({
-  userId = "default-id",
-}: ProfilePageProps) {
+export default function ProfilePage() {
   const { t } = useTranslation();
   const { data: profileData, isLoading, error } = useUserProfile();
   const user = profileData?.data;
@@ -37,10 +29,8 @@ export default function ProfilePage({
         return <PersonalInfo />;
       case "points":
         return <Points user={user!} />;
-      // case "preferences":
-      //   return <Preferences user={user!} />;
       case "booking":
-        return <BookedTicketsPage />;
+        return <BookingHistory />;
       case "changePassword":
         return <ChangePassword />;
       default:
@@ -111,16 +101,6 @@ export default function ProfilePage({
                 >
                   {t("tabs.points")}
                 </button>
-                {/* <button
-                  onClick={() => setActiveTab("preferences")}
-                  className={`flex items-center gap-2 px-4 py-2 w-full text-sm font-medium rounded ${
-                    activeTab === "preferences"
-                      ? "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-white"
-                      : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
-                >
-                   {t("tabs.preferences")}
-                </button> */}
                 <button
                   onClick={() => setActiveTab("booking")}
                   className={`flex items-center gap-2 px-4 py-2 w-full text-sm font-medium rounded ${
@@ -148,15 +128,13 @@ export default function ProfilePage({
             <div className="w-full md:w-2/3 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
               <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold">{t("accountSettings")}</h1>
-                {activeTab === "personal" && (
-                  <Button
-                    variant="outline"
-                    className="border-gray-300 dark:border-gray-700 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                    onClick={() => setIsEditModalOpen(true)}
-                  >
-                    <Edit3 className="w-4 h-4 mr-2" /> {t("edit")}
-                  </Button>
-                )}
+                <Button
+                  variant="outline"
+                  className="border-gray-300 dark:border-gray-700 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={() => setIsEditModalOpen(true)}
+                >
+                  <Edit3 className="w-4 h-4 mr-2" /> {t("edit")}
+                </Button>
               </div>
               <h2 className="text-xl font-semibold mb-4">
                 {t(`tabs.${activeTab}`)}
