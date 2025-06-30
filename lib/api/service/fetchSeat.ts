@@ -14,9 +14,16 @@ export interface Seat{
     seatType :{
         id: string
         name: seatType
+        prices : Prices[]
     } 
     room: Room
 }
+
+export interface Prices {
+    id: string;
+    timeInDay: "Morning" | "Night"; 
+    amount: number;
+  }
 
 export enum seatType {
     standard = "Standard Seat",
@@ -49,6 +56,6 @@ export interface Branch{
 export const SeatService = {
     getSeatOfRoomByRoomId: async (roomId: string) => {
       const response = await apiService.get<SeatApiResponse>(`/seats/room/${roomId}/row`);
-      return response.data.data;
+      return response.data.data; // 👈 lấy đúng mảng ghế
     }
   };

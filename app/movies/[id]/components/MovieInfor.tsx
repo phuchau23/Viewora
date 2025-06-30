@@ -187,6 +187,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
 
                 <div className="relative">
                   <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden group cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={movie.banner}
                       alt={`${movie.name} trailer`}
