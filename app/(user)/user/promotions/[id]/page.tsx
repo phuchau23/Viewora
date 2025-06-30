@@ -12,6 +12,7 @@ import { usePromotion } from "@/hooks/usePromotions";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { formatVND } from "@/utils/price/formatPrice";
 
 export default function PromotionDetailPage({
   params,
@@ -219,16 +220,21 @@ export default function PromotionDetailPage({
               </div>
               {/* Discount & basic info */}
               <div className="flex items-center gap-4 mb-3">
-                {renderDiscount()}
                 <span
                   className={cn(
-                    "uppercase font-bold tracking-widest ml-2 text-lg",
+                    "text-4xl md:text-5xl font-extrabold tracking-tight",
                     orangeText
                   )}
                 >
-                  {promotion.discountTypeEnum === "PERCENT"
-                    ? "OFF"
-                    : "Discount"}
+                  {formatVND(promotion.discountPrice)}
+                </span>
+                <span
+                  className={cn(
+                    "font-bold tracking-widest ml-2 text-lg",
+                    orangeText
+                  )}
+                >
+                  Discount
                 </span>
               </div>
               {/* Meta grid */}
@@ -238,7 +244,7 @@ export default function PromotionDetailPage({
                     Min. Order
                   </span>
                   <span className="font-semibold">
-                    ${promotion.minOrderValue}
+                    {formatVND(promotion.minOrderValue)}{" "}
                   </span>
                 </div>
                 <div>
@@ -246,7 +252,7 @@ export default function PromotionDetailPage({
                     Max. Discount
                   </span>
                   <span className="font-semibold">
-                    ${promotion.maxDiscountValue}
+                    {formatVND(promotion.maxDiscountValue)}{" "}
                   </span>
                 </div>
                 <div>
@@ -343,7 +349,7 @@ export default function PromotionDetailPage({
                 className="absolute top-2 right-2 bg-white rounded-full p-2 shadow hover:bg-gray-200 z-10"
                 onClick={() => setPreviewModal(false)}
               >
-                <span className="text-xl font-bold text-gray-700">&times;</span>
+                <span className="text-xl font-bold text-gray-700">×</span>
               </button>
               <Image
                 src={promotion.image}

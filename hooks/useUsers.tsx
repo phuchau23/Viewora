@@ -1,9 +1,14 @@
 import UserService, {
+  BookingHistoryResponse,
+  BookingHistorySelectedData,
   ChangePasswordRequest,
   ChangePasswordResponse,
   ProfileResponse,
   ProfileUpdateDataResponse,
   ProfileUpdateResponse,
+  ScoreHistoryResponse,
+  ScoreHistorySelectedData,
+  ScoreRecord,
 } from "@/lib/api/service/fetchUser";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -73,14 +78,56 @@ export function useUpdateProfile() {
     mutationFn: (profileData: Partial<ProfileUpdateDataResponse> | FormData) =>
       UserService.updateUserProfile(profileData),
     onSuccess: (data: ProfileUpdateResponse) => {
-      // Không check data.status nữa!
       queryClient.invalidateQueries({ queryKey: ["users", "profile"] });
-      // Có thể show toast thành công, đóng modal, v.v...
     },
   });
 }
 export function useChangePassword() {
   return useMutation<ChangePasswordResponse, any, ChangePasswordRequest>({
     mutationFn: (payload) => UserService.changePassword(payload),
+  });
+}
+
+export function useScoreHistory(filters?: {
+  FromDate?: string;
+  ToDate?: string;
+  ActionType?: string;
+}) {
+  const token = getCookie("auth-token");
+  const isAuthenticated = !!token;
+
+  return useQuery<ScoreHistoryResponse, Error, ScoreHistorySelectedData>({
+    queryKey: ["scoreHistory", filters],
+    queryFn: () => UserService.getScoreHistory(filters),
+    enabled: isAuthenticated,
+    select: (data: ScoreHistoryResponse) => ({
+      records: data.data,
+      status: data.statusCode,
+      message: data.message,
+    }),
+  });
+}
+export function useBookingHistory(params?: {
+  pageIndex?: number;
+  pageSize?: number;
+}) {
+  const token = getCookie("auth-token");
+  const isAuthenticated = !!token;
+
+  return useQuery<BookingHistoryResponse, Error, BookingHistorySelectedData>({
+    queryKey: ["bookingHistory", params],
+    queryFn: () => UserService.getBookingHistory(params),
+    enabled: isAuthenticated,
+    select: (data: BookingHistoryResponse) => ({
+      bookings: data.data.items,
+      status: data.statusCode,
+      message: data.message,
+      totalItems: data.data.totalItems,
+      currentPage: data.data.currentPage,
+      totalPages: data.data.totalPages,
+      pageSize: data.data.pageSize,
+      hasPreviousPage: data.data.hasPreviousPage,
+      hasNextPage: data.data.hasNextPage,
+    }),
   });
 }

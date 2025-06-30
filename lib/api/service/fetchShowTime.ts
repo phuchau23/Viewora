@@ -7,7 +7,7 @@ export interface ShowTimeResponse {
   code: number;
   statusCode: string;
   message: string;
-  data: ShowTime[]; // 👈 Là mảng
+  data: ShowTime[]; 
 }
 
 export interface ShowTime {
@@ -76,19 +76,24 @@ export interface PaginatedShowTimeResponse {
 export interface CreateShowtimeDto {
   movieId: string;
   roomId: string;
-  startTime: string; // ISO 8601 format (e.g. "2025-06-17T13:16:14.009Z")
+  startTime: string; 
 }
-
+export interface RoomResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data: Room[];
+}
 export const ShowTimeService = {
 
     getShowTime: async (): Promise<PaginatedShowTimeResponse> => {
         try {
           const res = await apiService.get<PaginatedShowTimeResponse>(`/showtimes`);
           console.log("API result:", res);
-          return res.data; // hoặc return res nếu không phải Axios
+          return res.data; 
         } catch (error) {
           console.error("Failed to fetch showtime:", error);
-          throw error; // đẩy lỗi ra ngoài cho component xử lý
+          throw error; 
         }
       },
 
@@ -96,20 +101,20 @@ export const ShowTimeService = {
         try {
           const res = await apiService.post<ShowTimeResponse>(`/showtimes`, showtime);
           console.log(" API result:", res);
-          return res.data; // hoặc return res nếu không phải Axios
+          return res.data; 
         } catch (error) {
           console.error("Failed to create showtime:", error);
-          throw error; // đẩy lỗi ra ngoài cho component xử lý
+          throw error; 
         }
       },
     getShowTimeByMovieId: async (movieId: string): Promise<ShowTime[]> => {
         try {
           const res = await apiService.get<ShowTimeResponse>(`/showtimes/movie/${movieId}`);
           console.log("API result:", res);
-          return res.data.data; // hoặc return res nếu không phải Axios
+          return res.data.data; 
         } catch (error) {
           console.error("Failed to fetch showtime:", error);
-          throw error; // đẩy lỗi ra ngoài cho component xử lý
+          throw error; 
         }
       },
       deleteShowtime: async (id: string): Promise<ShowTimeResponse> => {
@@ -121,4 +126,37 @@ export const ShowTimeService = {
           console.error("Failed to delete showtime:", error);
           throw error;
         }
-      }};
+      },
+    
+      getShowtimesByBranchId: async (branchId: string): Promise<ShowTime[]> => {
+        try {
+          const roomsResponse = await apiService.get<RoomResponse>(`/rooms/branch/${branchId}`);
+          const rooms = roomsResponse.data.data;
+      
+          const showtimeResults = await Promise.all(
+            rooms.map(async (room) => {
+              try {
+                const res = await apiService.get<ShowTimeResponse>(`/showtimes/room/${room.id}`);
+                return res.data.data || [];
+              } catch {
+                return [];
+              }
+            })
+          );
+      
+          const allShowtimes = showtimeResults.flat();
+      
+          const validShowtimes = allShowtimes.filter(
+            (s) =>
+              !s.isExpired &&
+              s.movie.isAvailable &&
+              new Date(s.startTime) >= new Date()
+          );
+      
+          return validShowtimes;
+        } catch (error) {
+          console.error("Error fetching showtimes by branch:", error);
+          return [];
+        }
+      },
+};

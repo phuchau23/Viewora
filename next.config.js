@@ -39,6 +39,11 @@ const nextConfig = {
       'images.unsplash.com',
       'storage.googleapis.com',
       'www.googleapis.com',
+      'images.pexels.com',
+
+     'firebasestorage.googleapis.com', 
+     'storage.googleapis.com'
+
     ]
   }
 }

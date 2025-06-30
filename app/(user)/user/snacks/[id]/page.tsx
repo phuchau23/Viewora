@@ -11,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useSnack } from "@/hooks/useSnacks";
+import { formatVND } from "@/utils/price/formatPrice";
 
 export default function SnackDetailPage({
   params,
@@ -78,7 +79,7 @@ export default function SnackDetailPage({
     <Badge
       className={cn(
         "text-xs font-semibold rounded-full px-4 py-1 shadow",
-        statusColors[snack.isAvailable.toString()] || orangeBadge
+        statusColors[snack.isAvailable?.toString() ?? "false"] || orangeBadge
       )}
     >
       {snack.isAvailable ? "Available" : "Unavailable"}
@@ -100,14 +101,21 @@ export default function SnackDetailPage({
             title="Click to view full image"
             style={{ height: 490, width: 380, maxWidth: "100%" }}
           >
-            <Image
-              src={snack.image}
-              alt={snack.name}
-              width={380}
-              height={520}
-              className="object-cover w-[380px] h-[520px] transition-transform duration-300 group-hover:scale-105"
-              priority
-            />
+            {snack.image ? (
+              <Image
+                src={snack.image}
+                alt={snack.name}
+                width={380}
+                height={520}
+                className="object-cover w-[380px] h-[520px] transition-transform duration-300 group-hover:scale-105"
+                priority
+              />
+            ) : (
+              <div className="w-[380px] h-[520px] flex items-center justify-center bg-gray-100 text-gray-500">
+                Không có ảnh
+              </div>
+            )}
+
             <div className="absolute top-5 left-5 z-10">{renderStatus()}</div>
             <div className="absolute bottom-2 right-2 z-10 bg-black/60 px-2 py-1 rounded text-xs text-white opacity-0 group-hover:opacity-100 transition">
               View full image
@@ -149,7 +157,7 @@ export default function SnackDetailPage({
                     orangeText
                   )}
                 >
-                  {snack.price} VND
+                  {formatVND(snack.price)}
                 </span>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
@@ -228,14 +236,20 @@ export default function SnackDetailPage({
               >
                 <span className="text-xl font-bold text-gray-700">×</span>
               </button>
-              <Image
-                src={snack.image}
-                alt="Snack preview"
-                width={900}
-                height={700}
-                className="rounded-xl object-contain max-h-[80vh] w-auto"
-                priority
-              />
+              {snack.image ? (
+                <Image
+                  src={snack.image}
+                  alt="Snack preview"
+                  width={900}
+                  height={700}
+                  className="rounded-xl object-contain max-h-[80vh] w-auto"
+                  priority
+                />
+              ) : (
+                <div className="w-[900px] h-[700px] flex items-center justify-center bg-gray-100 text-gray-500 rounded-xl">
+                  Không có ảnh
+                </div>
+              )}
             </div>
           </div>
         )}

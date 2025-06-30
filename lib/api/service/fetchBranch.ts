@@ -6,8 +6,9 @@ export interface Branch {
     totalRoom: number;
     address: string;
     phoneNumber: string;
-    status: "Active" | "Inactive"; // Nếu chỉ có "Active" thì có thể đơn giản là string
-    createdAt: string; // ISO date string, có thể dùng Date nếu bạn parse
+    imageUrl: string;
+    status: "Active" | "Inactive"; 
+    createdAt: string; 
   }
   
   export interface BranchResponse {
