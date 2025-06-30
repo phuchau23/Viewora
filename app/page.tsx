@@ -110,7 +110,7 @@ export default function Home() {
           Coming Soon
         </h2>
         <CinemaCard
-          movies={movies.filter((movie) => movie.status === "inComing")}
+          movies={movies?.filter((movie) => movie.status === "inComing")}
         />
       </div>
 
@@ -119,7 +119,7 @@ export default function Home() {
           Now Showing
         </h2>
         <CinemaCard
-          movies={movies.filter((movie) => movie.status === "nowShowing")}
+          movies={movies?.filter((movie) => movie.status === "nowShowing")}
         />
       </div>
 

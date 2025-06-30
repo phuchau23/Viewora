@@ -6,7 +6,7 @@ import {
   useSeatSignalR,
   HeldSeat,
   getUserIdFromToken,
-} from "@/lib/ultils/signalr";
+} from "@/utils/signalr";
 
 interface Props {
   seats: Seat[];

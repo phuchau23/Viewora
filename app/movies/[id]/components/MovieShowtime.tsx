@@ -187,7 +187,7 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
         {Object.entries(
           filteredShowTimes.reduce<Record<string, typeof filteredShowTimes>>(
             (acc, show) => {
-              const groupKey = `${show.movie.movieType.name}-${show.room.id}`;
+              const groupKey = `${show.movie.movieType?.name}-${show.room.id}`;
               if (!acc[groupKey]) acc[groupKey] = [];
               acc[groupKey].push(show);
               return acc;
@@ -222,7 +222,7 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
                   {firstShow.movie.age}
                 </span>
                 <span className="px-2 py-0.5 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
-                  {firstShow.movie.movieType.name}
+                  {firstShow.movie.movieType?.name}
                 </span>
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2 mb-3">

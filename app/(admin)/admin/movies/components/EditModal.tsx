@@ -87,10 +87,10 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
 
   const onSubmit = (data: FormValues) => {
     const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-    selectedTypes.forEach((type) => formData.append("MovieTypeNames", type));
+    // Object.entries(data).forEach(([key, value]) => {
+    //   formData.append(key, value);
+    // });
+    // selectedTypes.forEach((type) => formData.append("MovieTypeNames", type));
     updateMovie(
       { id: movieId, data: formData },
       { onSuccess: () => onOpenChange(false) }

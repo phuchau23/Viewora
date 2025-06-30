@@ -77,7 +77,7 @@ export default function CreateShowtimeForm({
           className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
         >
           <option value="">-- Chọn phim --</option>
-          {movies.map((movie) => (
+          {movies?.map((movie) => (
             <option key={movie.id} value={movie.id}>
               {movie.name}
             </option>
@@ -100,7 +100,7 @@ export default function CreateShowtimeForm({
           className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
         >
           <option value="">-- Chọn chi nhánh --</option>
-          {branches.map((branch) => (
+          {branches?.map((branch) => (
             <option key={branch.id} value={branch.id}>
               {branch.name}
             </option>
@@ -117,7 +117,7 @@ export default function CreateShowtimeForm({
           className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white disabled:opacity-50"
         >
           <option value="">-- Chọn phòng --</option>
-          {rooms.map((room) => (
+          {rooms?.map((room) => (
             <option key={room.id} value={room.id}>
               Phòng {room.roomNumber} • {room.roomType?.name}
             </option>

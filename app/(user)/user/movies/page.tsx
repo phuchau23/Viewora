@@ -20,17 +20,19 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useMovies } from "@/hooks/useMovie";
 
 export default function MoviesPage() {
   const [filter, setFilter] = useState<"all" | "nowShowing" | "comingSoon" | "ended">("all");
   const [sortBy, setSortBy] = useState<"latest" | "title" | "popularity">("latest");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  
+  const { movies } = useMovies();
+
   // Get all unique genres
   const allGenres = Array.from(
-    new Set(movies.flatMap((movie) => movie.types.map((type) => type.name)))
+    new Set(movies?.flatMap((movie) => movie.movieTypes.map((type) => type.name)))
   ).sort();
-  
+
   const toggleGenre = (genre: string) => {
     setSelectedGenres((prev) =>
       prev.includes(genre)
@@ -38,34 +40,33 @@ export default function MoviesPage() {
         : [...prev, genre]
     );
   };
-  
+
   // Filter movies
-  let filteredMovies = [...movies];
-  
+  let filteredMovies = [...movies || []];
+
   if (filter !== "all") {
     filteredMovies = filteredMovies.filter((movie) => movie.status === filter);
   }
-  
+
   if (selectedGenres.length > 0) {
     filteredMovies = filteredMovies.filter((movie) =>
-      movie..some((type) => selectedGenres.includes(type.name))
+      movie.movieTypes.some((type) => selectedGenres.includes(type.name))
     );
   }
-  
+
   // Sort movies
   if (sortBy === "title") {
-    filteredMovies.sort((a, b) => a.title.localeCompare(b.title));
+    filteredMovies.sort((a, b) => a.name.localeCompare(b.name));
   } else if (sortBy === "latest") {
     filteredMovies.sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
   }
-  // For "popularity" we would need a popularity field, using random for demo
 
   return (
     <div className="container px-4 py-8 md:py-12">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <h1 className="text-3xl font-bold">Movies</h1>
-          
+
           <div className="flex flex-wrap gap-3">
             <Button
               variant={filter === "all" ? "default" : "outline"}
@@ -113,7 +114,7 @@ export default function MoviesPage() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             {selectedGenres.length > 0 && (
               <Button
                 variant="ghost"
@@ -124,7 +125,7 @@ export default function MoviesPage() {
               </Button>
             )}
           </div>
-          
+
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Sort by:</span>
             <Select
@@ -149,8 +150,8 @@ export default function MoviesPage() {
             <Card key={movie.id} className="overflow-hidden group">
               <div className="relative aspect-[2/3] overflow-hidden">
                 <Image
-                  src={movie.image}
-                  alt={movie.title}
+                  src={movie.poster}
+                  alt={movie.name}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
@@ -183,18 +184,18 @@ export default function MoviesPage() {
               <CardContent className="p-4">
                 <h3 className="font-semibold truncate mb-1">
                   <Link href={`/movies/${movie.id}`} className="hover:text-primary">
-                    {movie.title}
+                    {movie.name}
                   </Link>
                 </h3>
                 <div className="flex flex-wrap gap-2 mb-2">
-                  {movie.genre.map((genre) => (
-                    <Badge key={genre} variant="secondary" className="text-xs">
-                      {genre}
+                  {movie.movieTypes.map((genre) => (
+                    <Badge key={genre.name} variant="secondary" className="text-xs">
+                      {genre.name}
                     </Badge>
                   ))}
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>{formatDuration(movie.duration)}</span>
+                  <span>{movie.duration}</span>
                   <span>•</span>
                   <span>{new Date(movie.releaseDate).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span>
                 </div>
@@ -202,7 +203,7 @@ export default function MoviesPage() {
             </Card>
           ))}
         </div>
-        
+
         {filteredMovies.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-muted-foreground mb-4">No movies found matching your filters.</p>
