@@ -1,6 +1,9 @@
-"use client";
+'use client';
 
-import { FormEvent, useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useUpdateMovie, useGetMovieById } from "@/hooks/useMovie";
 import { useGetTypes } from "@/hooks/useTypes";
 import {
@@ -15,7 +18,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { formatDate } from "@/utils/dates/formatDate";
 
 interface EditMovieModalProps {
   movieId: string;
@@ -23,141 +25,88 @@ interface EditMovieModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const EditMovieModal = ({
-  movieId,
-  open,
-  onOpenChange,
-}: EditMovieModalProps) => {
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [posterFile, setPosterFile] = useState<File | null>(null);
-  const [posterPreview, setPosterPreview] = useState<string | null>(null);
-  const [existingBanners, setExistingBanners] = useState<
-    { id: string; url: string }[]
-  >([]);
-  const [bannersToRemove, setBannersToRemove] = useState<string[]>([]);
-  const [newBannerFiles, setNewBannerFiles] = useState<File[]>([]);
-  const [newBannerPreviews, setNewBannerPreviews] = useState<string[]>([]);
+const schema = z.object({
+  Name: z.string().min(1),
+  Director: z.string().min(1),
+  Actor: z.string().min(1),
+  Duration: z.coerce.number().min(1),
+  Rate: z.coerce.number().min(0).max(10),
+  ReleaseDate: z.string().min(1),
+  StartShow: z.string().min(1),
+  Age: z.string().min(1),
+  Description: z.string().min(1),
+  TrailerUrl: z.string().url(),
+});
 
-  // Fetch dữ liệu
-  const { data: movie, isLoading: isMovieLoading } = useGetMovieById(movieId);
-  console.log(formatDate(movie?.data.releaseDate));
+type FormValues = z.infer<typeof schema>;
+
+export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalProps) => {
   const {
-    mutate: updateMovie,
-    isPending: isUpdating, // Thêm isPending để theo dõi trạng thái mutation
-    isError: isUpdateError,
-    isSuccess: isUpdateSuccess,
-    data: updateData,
-  } = useUpdateMovie();
+    movie,
+    isLoading: isMovieLoading,
+    refetch: refetchMovie,
+  } = useGetMovieById(movieId);
+  const { updateMovie, isPending: isUpdating } = useUpdateMovie();
   const { types, isLoading: isTypesLoading } = useGetTypes();
 
-  // Khởi tạo form khi modal mở hoặc movie thay đổi
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+  });
+
   useEffect(() => {
-    if (open && movie) {
-      setSelectedTypes(movie.data.movieTypes.map((type: any) => type.name));
-      setPosterPreview(movie.data.poster);
-      setExistingBanners(
-        Array.isArray(movie.data.banner)
-          ? movie.data.banner.map((banner: any) => ({
-              id: banner.id,
-              url: banner.url,
-            }))
-          : []
-      );
-      setBannersToRemove([]);
-      setNewBannerFiles([]);
-      setNewBannerPreviews([]);
+    if (open) {
+      refetchMovie();
     }
-  }, [open, movie]);
+  }, [open, refetchMovie]);
 
-  // Xử lý chọn thể loại
-  const handleSelectType = (typeName: string) => {
-    setSelectedTypes((prev) =>
-      prev.includes(typeName)
-        ? prev.filter((t) => t !== typeName)
-        : [...prev, typeName]
-    );
-  };
-
-  // Xử lý thay đổi poster
-  const handlePosterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (posterPreview && posterFile) URL.revokeObjectURL(posterPreview);
-      setPosterFile(file);
-      setPosterPreview(URL.createObjectURL(file));
+  useEffect(() => {
+    if (movie) {
+      const data = movie;
+      reset({
+        Name: data.name,
+        Director: data.director,
+        Actor: data.actor,
+        Duration: data.duration,
+        Rate: data.rate,
+        ReleaseDate: data.releaseDate.split("T")[0],
+        StartShow: data.startShow.split("T")[0],
+        Age: data.age,
+        Description: data.description,
+        TrailerUrl: data.trailerUrl,
+      });
+      setSelectedTypes(data.movieTypes.map((type: any) => type.name));
     }
-  };
+  }, [movie, reset]);
 
-  // Xử lý thay đổi banners mới
-  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
-    setNewBannerFiles((prev) => [...prev, ...files]);
-    setNewBannerPreviews((prev) => [
-      ...prev,
-      ...files.map((file) => URL.createObjectURL(file)),
-    ]);
-  };
-
-  // Xóa poster mới (quay lại poster cũ)
-  const removePoster = () => {
-    if (posterFile) {
-      URL.revokeObjectURL(posterPreview!);
-      setPosterFile(null);
-      setPosterPreview(movie?.data.poster || null);
-    }
-  };
-
-  // Xóa banner hiện có
-  const removeExistingBanner = (id: string) => {
-    setBannersToRemove((prev) => [...prev, id]);
-  };
-
-  // Xóa banner mới
-  const removeNewBanner = (index: number) => {
-    setNewBannerFiles((prev) => prev.filter((_, i) => i !== index));
-    setNewBannerPreviews((prev) => {
-      URL.revokeObjectURL(prev[index]);
-      return prev.filter((_, i) => i !== index);
+  const onSubmit = (data: FormValues) => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value);
     });
-  };
-
-  // Xử lý submit form
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
     selectedTypes.forEach((type) => formData.append("MovieTypeNames", type));
-    if (posterFile) formData.append("Poster", posterFile);
-    newBannerFiles.forEach((file) => formData.append("Banner", file));
-    if (bannersToRemove.length > 0) {
-      formData.append("removeBanners", JSON.stringify(bannersToRemove));
-    }
-
     updateMovie(
       { id: movieId, data: formData },
-      {
-        onSuccess: () => {
-          onOpenChange(false);
-          // Cleanup
-          if (posterFile) URL.revokeObjectURL(posterPreview!);
-          newBannerPreviews.forEach((url) => URL.revokeObjectURL(url));
-        },
-      }
+      { onSuccess: () => onOpenChange(false) }
     );
   };
 
-  // Cleanup URLs khi modal đóng hoặc unmount
-  useEffect(() => {
-    return () => {
-      if (posterPreview && posterFile) URL.revokeObjectURL(posterPreview);
-      newBannerPreviews.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, [posterPreview, newBannerPreviews, posterFile]);
+  const toggleType = (type: string) => {
+    setSelectedTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold text-center mb-4">
               Chỉnh sửa phim
@@ -170,106 +119,59 @@ export const EditMovieModal = ({
             <p>Đang tải thông tin phim...</p>
           ) : (
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="Name">Tên phim</Label>
-                <Input name="Name" defaultValue={movie?.data.name} required />
-              </div>
-              <div>
-                <Label htmlFor="Director">Đạo diễn</Label>
-                <Input
-                  name="Director"
-                  defaultValue={movie?.data.director}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="Actor">Diễn viên</Label>
-                <Input name="Actor" defaultValue={movie?.data.actor} required />
-              </div>
-              <div>
-                <Label htmlFor="Duration">Thời lượng (phút)</Label>
-                <Input
-                  name="Duration"
-                  type="number"
-                  defaultValue={movie?.data.duration}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="Rate">Đánh giá</Label>
-                <Input
-                  name="Rate"
-                  type="number"
-                  step="0.1"
-                  defaultValue={movie?.data.rate}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="ReleaseDate">Ngày phát hành</Label>
-                <Input
-                  name="ReleaseDate"
-                  type="date"
-                  defaultValue={formatDate(movie?.data.releaseDate)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="StartShow">Ngày chiếu</Label>
-                <Input
-                  name="StartShow"
-                  type="date"
-                  defaultValue={formatDate(movie?.data.startShow)}
-                  required
-                />
-              </div>
+              {[
+                { label: "Tên phim", name: "Name" },
+                { label: "Đạo diễn", name: "Director" },
+                { label: "Diễn viên", name: "Actor" },
+                { label: "Thời lượng (phút)", name: "Duration", type: "number" },
+                { label: "Đánh giá", name: "Rate", type: "number", step: 0.1 },
+                { label: "Ngày phát hành", name: "ReleaseDate", type: "date" },
+                { label: "Ngày chiếu", name: "StartShow", type: "date" },
+              ].map(({ label, name, ...rest }) => (
+                <div key={name}>
+                  <Label htmlFor={name}>{label}</Label>
+                  <Input id={name} {...register(name as keyof FormValues)} {...rest} />
+                  {errors[name as keyof FormValues] && (
+                    <p className="text-red-500 text-sm">{errors[name as keyof FormValues]?.message as string}</p>
+                  )}
+                </div>
+              ))}
+
               <div>
                 <Label htmlFor="Age">Độ tuổi</Label>
-                <select
-                  name="Age"
-                  defaultValue={movie?.data.age}
-                  required
-                  className="w-full p-2 border rounded-md"
-                >
+                <select {...register("Age")} className="w-full p-2 border rounded-md">
                   <option value="">Chọn độ tuổi</option>
-                  <option value="P">P</option>
-                  <option value="K">K</option>
-                  <option value="T13">T13</option>
-                  <option value="T16">T16</option>
-                  <option value="T18">T18</option>
+                  {["P", "K", "T13", "T16", "T18"].map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
                 </select>
+                {errors.Age && <p className="text-red-500 text-sm">{errors.Age.message}</p>}
               </div>
+
               <div className="col-span-2">
                 <Label htmlFor="Description">Mô tả</Label>
-                <Textarea
-                  name="Description"
-                  defaultValue={movie?.data.description}
-                  rows={4}
-                  required
-                />
+                <Textarea {...register("Description")} rows={4} />
+                {errors.Description && <p className="text-red-500 text-sm">{errors.Description.message}</p>}
               </div>
+
               <div className="col-span-2">
                 <Label htmlFor="TrailerUrl">URL trailer</Label>
-                <Input
-                  name="TrailerUrl"
-                  defaultValue={movie?.data.trailerUrl}
-                  required
-                />
+                <Input {...register("TrailerUrl")} />
+                {errors.TrailerUrl && <p className="text-red-500 text-sm">{errors.TrailerUrl.message}</p>}
               </div>
+
               <div className="col-span-2">
-                <Label>Thể loại (chọn nhiều)</Label>
+                <Label>Thể loại</Label>
                 <div className="border rounded-md p-2 max-h-[150px] overflow-y-auto">
                   {isTypesLoading ? (
                     <p>Đang tải...</p>
                   ) : (
                     types?.data?.map((type: any) => (
-                      <div
-                        key={type.id}
-                        className="flex items-center gap-2 py-1"
-                      >
+                      <div key={type.id} className="flex items-center gap-2 py-1">
                         <input
                           type="checkbox"
                           checked={selectedTypes.includes(type.name)}
-                          onChange={() => handleSelectType(type.name)}
+                          onChange={() => toggleType(type.name)}
                         />
                         <span>{type.name}</span>
                       </div>
@@ -277,91 +179,10 @@ export const EditMovieModal = ({
                   )}
                 </div>
               </div>
-              <div>
-                <Label htmlFor="Poster">Poster</Label>
-                <Input
-                  name="Poster"
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePosterChange}
-                />
-                {posterPreview && (
-                  <div className="mt-2 relative w-fit">
-                    <img
-                      src={posterPreview}
-                      alt="Poster Preview"
-                      className="w-32 h-32 object-cover"
-                    />
-                    {posterFile && (
-                      <button
-                        type="button"
-                        onClick={removePoster}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs"
-                      >
-                        X
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-2">
-                <Label>Banners</Label>
-                <div className="mt-2">
-                  {existingBanners
-                    .filter((banner) => !bannersToRemove.includes(banner.id))
-                    .map((banner) => (
-                      <div
-                        key={banner.id}
-                        className="relative w-fit inline-block mr-2 mb-2"
-                      >
-                        <img
-                          src={banner.url}
-                          alt="Existing Banner"
-                          className="w-32 h-32 object-cover"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeExistingBanner(banner.id)}
-                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs"
-                        >
-                          X
-                        </button>
-                      </div>
-                    ))}
-                  {newBannerPreviews.map((url, index) => (
-                    <div
-                      key={index}
-                      className="relative w-fit inline-block mr-2 mb-2"
-                    >
-                      <img
-                        src={url}
-                        alt={`New Banner Preview ${index + 1}`}
-                        className="w-32 h-32 object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeNewBanner(index)}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs"
-                      >
-                        X
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <Input
-                  name="Banner"
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleBannerChange}
-                />
-              </div>
             </div>
           )}
           <DialogFooter className="mt-6 flex justify-end gap-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Hủy
-            </Button>
+            <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
             <Button type="submit" disabled={isUpdating || isMovieLoading}>
               {isUpdating ? "Đang lưu..." : "Lưu thay đổi"}
             </Button>

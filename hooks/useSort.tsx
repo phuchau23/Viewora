@@ -6,7 +6,7 @@ interface SortConfig {
   direction: 'ascending' | 'descending';
 }
 
-export const useSort = (keys: string[]) => {
+export const useSort = (sortableFields: string[]) => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: null,
     direction: 'ascending',
@@ -21,7 +21,6 @@ export const useSort = (keys: string[]) => {
   };
 
   const sortedData = (data: any[]) => {
-    
     if (!sortConfig.key) return data;
     const key = sortConfig.key as string;
     return [...data].sort((a, b) => {
@@ -35,5 +34,5 @@ export const useSort = (keys: string[]) => {
     });
   };
 
-  return { sortConfig, handleSort, sortedData };
+  return { sortConfig, handleSort, sortedData, sortableFields };
 };
