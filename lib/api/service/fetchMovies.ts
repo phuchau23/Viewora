@@ -1,4 +1,3 @@
-import path from "path";
 import apiService from "../core";
 
 export interface Types {
@@ -6,28 +5,7 @@ export interface Types {
   name: string;
 }
 
-<<<<<<< 3cfffc032b9bc9dba5f509d0e500e2ef1591f548
 export interface Movies {
-  id: string;
-  name: string;
-  banner: string[]; // hoặc string nếu backend trả dạng chuỗi
-  poster: string;
-  description: string;
-  director: string;
-  actor: string;
-  duration: number;
-  rate: number;
-  releaseDate: string;
-  trailerUrl: string;
-  startShow: string;
-  createdAt: string;
-  updatedAt: string;
-  age: string;
-  status: string;
-  isAvailable: boolean;
-  movieTypes: Types[];
-=======
-export interface Movie {
     id: string;
     name: string;
     banner: string;
@@ -45,8 +23,7 @@ export interface Movie {
     age: string;
     status: string;
     isAvailable: boolean;
-    movieTypes: MovieTypes[];
->>>>>>> 237e06b1371acf01156ad83f9c1114e948aeea1d
+    movieTypes: Types[];
 }
 
 export interface MovieResponse {
