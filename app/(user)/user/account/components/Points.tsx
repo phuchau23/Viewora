@@ -1,7 +1,7 @@
 "use client";
 
 import { ProfileDataResponse } from "@/lib/api/service/fetchUser";
-import { User } from "@/lib/data";
+import { User } from "@/utils/data";
 
 interface PointsProps {
   user: ProfileDataResponse;

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 import { useMemo } from "react";
 import {
   calculatePasswordStrength,
   getPasswordStrengthColor,
   getPasswordStrengthText,
-} from "@/lib/ultils/passwordStrength";
+} from "@/utils/passwordStrength";
 
 export const usePasswordStrength = (password: string) => {
   const strength = useMemo(() => calculatePasswordStrength(password), [password]);

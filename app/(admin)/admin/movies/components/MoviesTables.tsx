@@ -10,7 +10,12 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo } from "react";
-import { useMovies } from "@/hooks/useMovie";
+import {
+  useMovies,
+  useDeleteMovie,
+  usePlayMovie,
+  useStopMovie,
+} from "@/hooks/useMovie";
 import { Pencil, Play, Search, StopCircle, Trash2 } from "lucide-react";
 import {
   Card,
@@ -23,23 +28,28 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSort } from "@/hooks/useSort";
 import { CreateModal } from "./CreateModal";
-import { useDeleteMovie } from "@/hooks/useMovie";
 import { EditMovieModal } from "./EditModal";
-import { usePlayMovie } from "@/hooks/useMovie";
-import { useStopMovie } from "@/hooks/useMovie";
+import PaginationControls from "@/components/shared/PaginationControl";
+import type { Movies } from "@/lib/api/service/fetchMovies";
+import type { Type } from "@/lib/api/service/fetchTypes";
 
 export default function MoviesTables() {
-  const { movies, isLoading, error } = useMovies();
   const [searchTerm, setSearchTerm] = useState("");
-  const { mutate: deleteMovie } = useDeleteMovie();
-  const { mutate: playMovie } = usePlayMovie();
-  const { mutate: stopMovie } = useStopMovie();
+  const [pageSize, setPageSize] = useState(10);
+  const [pageIndex, setPageIndex] = useState(1);
 
-  // State để quản lý modal chỉnh sửa
+  const { movies, isLoading, isError, error, totalPages } = useMovies(
+    pageIndex,
+    pageSize
+  );
+
+  const { deleteMovie } = useDeleteMovie();
+  const { playMovie } = usePlayMovie();
+  const { stopMovie } = useStopMovie();
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
 
-  // Sử dụng useSort với các trường có thể sắp xếp
   const { sortConfig, handleSort, sortedData } = useSort([
     "name",
     "director",
@@ -48,18 +58,15 @@ export default function MoviesTables() {
     "isAvailable",
   ]);
 
-  // Logic lọc dựa trên searchTerm
   const searchedMovies = useMemo(() => {
-    if (!searchTerm) return movies;
-    return movies.filter((movie) =>
+    const safeMovies = movies ?? [];
+    if (!searchTerm) return safeMovies;
+
+    return safeMovies.filter((movie) =>
       movie.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [movies, searchTerm]);
 
-  // Sắp xếp danh sách đã lọc
-  const sortedMovies = sortedData(searchedMovies);
-
-  // Xử lý trạng thái loading và lỗi
   if (isLoading) {
     return (
       <div className="container mx-auto p-6 space-y-6">
@@ -68,26 +75,28 @@ export default function MoviesTables() {
       </div>
     );
   }
-  if (error) {
+
+  if (isError) {
     return (
       <div className="container mx-auto p-6">
-        <p>Lỗi: {error.message}</p>
+        <p>Lỗi: {error?.message || "Đã xảy ra lỗi khi tải phim."}</p>
       </div>
     );
   }
 
   const handleDelete = (id: string) => {
-    deleteMovie(id);
+    if (confirm("Bạn có chắc chắn muốn xoá phim này không?")) {
+      deleteMovie(id);
+    }
   };
 
-  // Hàm xử lý khi nhấn nút chỉnh sửa
-  const handleEdit = (movie: any) => {
-    setSelectedMovieId(movie.id); // Lưu ID của phim được chọn
-    setIsEditModalOpen(true); // Mở modal
+  const handleEdit = (movie: Movies) => {
+    setSelectedMovieId(movie.id);
+    setIsEditModalOpen(true);
   };
 
   const handlePlay = (id: string, currentStatus: string) => {
-    if (currentStatus === "inComing" || currentStatus === "ended") {
+    if (["inComing", "ended"].includes(currentStatus)) {
       playMovie(id);
     }
   };
@@ -100,7 +109,7 @@ export default function MoviesTables() {
 
   return (
     <div className="mx-2 space-y-6">
-      {/* Phần lọc */}
+      {/* Filter and Create */}
       <Card>
         <CardHeader>
           <CardTitle>Movies Management</CardTitle>
@@ -122,11 +131,11 @@ export default function MoviesTables() {
         </CardContent>
       </Card>
 
-      {/* Bảng dữ liệu */}
+      {/* Table */}
       <Card>
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="text-center">
               <TableHead>Poster</TableHead>
               <TableHead onClick={() => handleSort("name")}>
                 Tên phim{" "}
@@ -158,8 +167,8 @@ export default function MoviesTables() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedMovies.map((movie) => (
-              <TableRow key={movie.id}>
+            {movies?.map((movie) => (
+              <TableRow key={movie.id} className="hover:bg-secondary">
                 <TableCell>
                   <img
                     src={movie.poster}
@@ -171,45 +180,56 @@ export default function MoviesTables() {
                 </TableCell>
                 <TableCell className="font-bold">{movie.name}</TableCell>
                 <TableCell>
-                  {movie.movieTypes.map((type: any) => type.name).join(", ")}
+                  {movie.movieTypes.map((t) => t.name).join(", ")}
                 </TableCell>
                 <TableCell>{movie.director}</TableCell>
-                <TableCell>{movie.duration} minutes</TableCell>
+                <TableCell>{movie.duration} phút</TableCell>
                 <TableCell>{movie.isAvailable ? "Có" : "Không"}</TableCell>
                 <TableCell>{movie.status}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleEdit(movie)}
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(movie.id)}
-                  >
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </Button>
-                  {movie.status === "inComing" || movie.status === "ended" ? (
+                <TableCell className="px-0">
+                  <div className="w-fit mx-auto flex gap-2">
+                    {/* Edit: chỉ hiển thị nếu không phải ended */}
+                    {movie.status !== "Ended" && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(movie)}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                    )}
+
+                    {/* Delete: luôn hiển thị */}
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handlePlay(movie.id, movie.status)}
+                      onClick={() => handleDelete(movie.id)}
                     >
-                      <Play className="w-4 h-4 text-green-500" />
+                      <Trash2 className="w-4 h-4 text-red-500" />
                     </Button>
-                  ) : null}
-                  {movie.status === "nowShowing" ? (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleStop(movie.id, movie.status)}
-                    >
-                      <StopCircle className="w-4 h-4 text-red-500" />
-                    </Button>
-                  ) : null}
+
+                    {/* Play: chỉ hiển thị nếu là inComing */}
+                    {movie.status === "inComing" && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handlePlay(movie.id, movie.status)}
+                      >
+                        <Play className="w-4 h-4 text-green-500" />
+                      </Button>
+                    )}
+
+                    {/* Stop: chỉ hiển thị nếu là nowShowing */}
+                    {movie.status === "nowShowing" && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleStop(movie.id, movie.status)}
+                      >
+                        <StopCircle className="w-4 h-4 text-red-500" />
+                      </Button>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -217,7 +237,19 @@ export default function MoviesTables() {
         </Table>
       </Card>
 
-      {/* Render EditMovieModal */}
+      {/* Pagination */}
+      <PaginationControls
+        currentPage={pageIndex}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        onPageChange={(page) => setPageIndex(page)}
+        onPageSizeChange={(size) => {
+          setPageSize(size);
+          setPageIndex(1);
+        }}
+      />
+
+      {/* Modal */}
       {selectedMovieId && (
         <EditMovieModal
           movieId={selectedMovieId}

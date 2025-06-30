@@ -7,7 +7,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 import Image from "next/image";
-import { Movie } from "@/lib/data";
+import { Movie } from "@/utils/data";
 
 interface Props {
   movies: Movie[];

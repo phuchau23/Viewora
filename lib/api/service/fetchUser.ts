@@ -147,7 +147,6 @@ export const UserService = {
   },
 
     updateUserProfile: async (profileData: Partial<ProfileUpdateDataResponse> | FormData): Promise<ProfileUpdateResponse> => {
-        // The API service already handles FormData appropriately in its interceptors
         const response = await apiService.put<ProfileUpdateResponse, Partial<ProfileUpdateDataResponse> | FormData>(
           '/users/update-profile',
           profileData

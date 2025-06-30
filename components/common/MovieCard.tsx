@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Star, Clock, Calendar, Users, PlayCircle, Info } from "lucide-react";
-import { formatDuration, Movie } from "@/lib/data";
+import { formatDuration, Movie } from "@/utils/data";
 import Image from "next/image";
 import Link from "next/link";
 

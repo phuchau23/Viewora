@@ -9,7 +9,7 @@ import {
   type Showtime,
   Movie,
   Cinema,
-} from "@/lib/data";
+} from "@/utils/data";
 import { Badge } from "@/components/ui/badge";
 import { ProfileDataResponse } from "@/lib/api/service/fetchUser";
 

@@ -1,3 +1,4 @@
+"use client";
 import RoleManagement from "./components/role-management";
 
 export default function Home() {

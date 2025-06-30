@@ -9,7 +9,7 @@ import { User, Menu, MapPin, Search, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/utils";
 import { ThemeToggle } from "./common/ThemeToggle";
 import Image from "next/image";
 import { LanguageSelector } from "./language-selector";

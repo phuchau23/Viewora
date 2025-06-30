@@ -20,16 +20,15 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { movies, formatDuration } from "@/lib/data";
 
 export default function MoviesPage() {
-  const [filter, setFilter] = useState<"all" | "now-showing" | "coming-soon">("all");
+  const [filter, setFilter] = useState<"all" | "nowShowing" | "comingSoon" | "ended">("all");
   const [sortBy, setSortBy] = useState<"latest" | "title" | "popularity">("latest");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   
   // Get all unique genres
   const allGenres = Array.from(
-    new Set(movies.flatMap((movie) => movie.genre))
+    new Set(movies.flatMap((movie) => movie.types.map((type) => type.name)))
   ).sort();
   
   const toggleGenre = (genre: string) => {
@@ -49,7 +48,7 @@ export default function MoviesPage() {
   
   if (selectedGenres.length > 0) {
     filteredMovies = filteredMovies.filter((movie) =>
-      movie.genre.some((genre) => selectedGenres.includes(genre))
+      movie..some((type) => selectedGenres.includes(type.name))
     );
   }
   
@@ -76,16 +75,16 @@ export default function MoviesPage() {
               All Movies
             </Button>
             <Button
-              variant={filter === "now-showing" ? "default" : "outline"}
+              variant={filter === "nowShowing" ? "default" : "outline"}
               size="sm"
-              onClick={() => setFilter("now-showing")}
+              onClick={() => setFilter("nowShowing")}
             >
               Now Showing
             </Button>
             <Button
-              variant={filter === "coming-soon" ? "default" : "outline"}
+              variant={filter === "comingSoon" ? "default" : "outline"}
               size="sm"
-              onClick={() => setFilter("coming-soon")}
+              onClick={() => setFilter("comingSoon")}
             >
               Coming Soon
             </Button>

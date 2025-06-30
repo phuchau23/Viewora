@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cinemas } from "@/lib/data";
+import { cinemas } from "@/utils/data";
 
 export default function CinemasPage() {
   const [searchQuery, setSearchQuery] = useState("");

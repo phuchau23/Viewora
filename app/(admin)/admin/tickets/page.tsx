@@ -33,7 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { sampleTickets, Ticket as TicketType } from "@/lib/data";
+import { sampleTickets, Ticket as TicketType } from "@/utils/data";
 
 export default function TicketsPage() {
   const [tickets] = useState<TicketType[]>(sampleTickets);

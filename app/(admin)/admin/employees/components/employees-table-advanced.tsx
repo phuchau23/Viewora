@@ -58,7 +58,7 @@ import {
   UserX,
   UserCheck,
 } from "lucide-react";
-import { Employee } from "@/lib/data";
+import { Employee } from "@/utils/data";
 
 const columnHelper = createColumnHelper<Employee>();
 
