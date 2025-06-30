@@ -4,6 +4,9 @@ import UserService, {
   ProfileResponse,
   ProfileUpdateDataResponse,
   ProfileUpdateResponse,
+  ScoreHistoryResponse,
+  ScoreHistorySelectedData,
+  ScoreRecord,
 } from "@/lib/api/service/fetchUser";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -82,5 +85,25 @@ export function useUpdateProfile() {
 export function useChangePassword() {
   return useMutation<ChangePasswordResponse, any, ChangePasswordRequest>({
     mutationFn: (payload) => UserService.changePassword(payload),
+  });
+}
+
+export function useScoreHistory(filters?: {
+  FromDate?: string;
+  ToDate?: string;
+  ActionType?: string;
+}) {
+  const token = getCookie("auth-token");
+  const isAuthenticated = !!token;
+
+  return useQuery<ScoreHistoryResponse, Error, ScoreHistorySelectedData>({
+    queryKey: ["scoreHistory", filters],
+    queryFn: () => UserService.getScoreHistory(filters),
+    enabled: isAuthenticated,
+    select: (data: ScoreHistoryResponse) => ({
+      records: data.data,
+      status: data.statusCode,
+      message: data.message,
+    }),
   });
 }

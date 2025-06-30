@@ -16,7 +16,7 @@ export interface Promotion {
   code: string;
   discountPrice: number;
   discountTypeEnum: string;
-  discountTypeId: { id: string; name: string } | null; // Cập nhật type
+  discountTypeId: { id: string; name: string } | null; 
   maxDiscountValue: number;
   minOrderValue: number;
   discountUserNum: number;

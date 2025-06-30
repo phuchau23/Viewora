@@ -11,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useSnack } from "@/hooks/useSnacks";
+import { formatVND } from "@/utils/price/formatPrice";
 
 export default function SnackDetailPage({
   params,
@@ -149,7 +150,7 @@ export default function SnackDetailPage({
                     orangeText
                   )}
                 >
-                  {snack.price} VND
+                  {formatVND(snack.price)}
                 </span>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">

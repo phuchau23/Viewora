@@ -108,6 +108,28 @@ export interface ProfileUpdateResponse {
   }
   
 
+  // Add to fetchUser.ts
+export interface ScoreRecord {
+  dateCreated: string;
+  movieName: string;
+  score: number;
+  type: "added" | "used";
+}
+
+export interface ScoreHistoryResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data: ScoreRecord[];
+}
+
+export interface ScoreHistorySelectedData {
+  records: ScoreRecord[];
+  status: string;
+  message: string;
+}
+
+
   const convertUserFilters = (filters?: UserSearchParams): Record<string, any> => {
     if (!filters) return {};
   
@@ -161,6 +183,19 @@ export const UserService = {
         );
         return response.data;
       },
+
+      // Add to UserService in fetchUser.ts
+    getScoreHistory: async (params?: {
+      FromDate?: string;
+      ToDate?: string;
+      ActionType?: string;
+  }): Promise<ScoreHistoryResponse> => {
+     const response = await apiService.get<ScoreHistoryResponse>(
+          "/users/view-score-history",
+          params
+        );
+        return response.data;
+        },
 }
 
 export default UserService;

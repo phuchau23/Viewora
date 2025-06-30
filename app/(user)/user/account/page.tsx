@@ -14,6 +14,7 @@ import { useUserProfile } from "@/hooks/useUsers";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import ChangePassword from "./components/ChangePassword";
+import BookedTicketsPage from "./components/BookingHistory";
 
 interface ProfilePageProps {
   userId?: string;
@@ -36,10 +37,10 @@ export default function ProfilePage({
         return <PersonalInfo />;
       case "points":
         return <Points user={user!} />;
-      case "preferences":
-        return <Preferences user={user!} />;
+      // case "preferences":
+      //   return <Preferences user={user!} />;
       case "booking":
-        return <BookingHistory user={user!} />;
+        return <BookedTicketsPage />;
       case "changePassword":
         return <ChangePassword />;
       default:
@@ -110,7 +111,7 @@ export default function ProfilePage({
                 >
                   📋 {t("tabs.points")}
                 </button>
-                <button
+                {/* <button
                   onClick={() => setActiveTab("preferences")}
                   className={`flex items-center gap-2 px-4 py-2 w-full text-sm font-medium rounded ${
                     activeTab === "preferences"
@@ -119,7 +120,7 @@ export default function ProfilePage({
                   }`}
                 >
                   📍 {t("tabs.preferences")}
-                </button>
+                </button> */}
                 <button
                   onClick={() => setActiveTab("booking")}
                   className={`flex items-center gap-2 px-4 py-2 w-full text-sm font-medium rounded ${
@@ -147,13 +148,15 @@ export default function ProfilePage({
             <div className="w-full md:w-2/3 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
               <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold">{t("accountSettings")}</h1>
-                <Button
-                  variant="outline"
-                  className="border-gray-300 dark:border-gray-700 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                  onClick={() => setIsEditModalOpen(true)}
-                >
-                  <Edit3 className="w-4 h-4 mr-2" /> {t("edit")}
-                </Button>
+                {activeTab === "personal" && (
+                  <Button
+                    variant="outline"
+                    className="border-gray-300 dark:border-gray-700 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
+                    <Edit3 className="w-4 h-4 mr-2" /> {t("edit")}
+                  </Button>
+                )}
               </div>
               <h2 className="text-xl font-semibold mb-4">
                 {t(`tabs.${activeTab}`)}

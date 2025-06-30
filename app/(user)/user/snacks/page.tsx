@@ -9,6 +9,7 @@ import SnackService, {
   Snack,
   SnackListResponse,
 } from "@/lib/api/service/fetchSnack";
+import { formatVND } from "@/utils/price/formatPrice";
 
 export default function SnacksPage() {
   const [snacks, setSnacks] = useState<Snack[]>([]);
@@ -77,7 +78,9 @@ export default function SnacksPage() {
                     <h3 className="text-xl font-semibold mb-2 text-white">
                       {snack.name}
                     </h3>
-                    <p className="text-white mb-2">Price: {snack.price} VND</p>
+                    <p className="text-white mb-2">
+                      Price: {formatVND(snack.price)}
+                    </p>
                     <p className="text-white mb-4">
                       Status: {snack.isAvailable ? "Available" : "Unavailable"}
                     </p>
@@ -101,7 +104,7 @@ export default function SnacksPage() {
               <CardContent className="p-6 block md:hidden">
                 <h3 className="text-xl font-semibold mb-2">{snack.name}</h3>
                 <p className="text-muted-foreground mb-2">
-                  Price: {snack.price} VND
+                  Price: {formatVND(snack.price)}
                 </p>
                 <p className="text-muted-foreground mb-4">
                   Status: {snack.isAvailable ? "Available" : "Unavailable"}

@@ -59,6 +59,7 @@ import { UserDetailsModal } from "./components/user-detail-modal";
 import { useDeleteUser, useUsers } from "@/hooks/useUsers";
 import { User, UserSearchParams } from "@/lib/api/service/fetchUser";
 import { formatDate } from "@/utils/dates/formatDate";
+import { exportToCSV } from "@/utils/export/exportToCSV";
 
 export default function UserManagerPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -172,7 +173,35 @@ export default function UserManagerPage() {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button variant="outline">
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (!filteredUsers.length) return;
+
+              exportToCSV(
+                "users.csv",
+                [
+                  "Full Name",
+                  "Email",
+                  "Phone",
+                  "Address",
+                  "Role",
+                  "Status",
+                  "Joined Date",
+                ],
+                filteredUsers,
+                (user) => [
+                  user.fullName,
+                  user.email,
+                  user.phoneNumber,
+                  user.address,
+                  user.role?.name ?? "N/A",
+                  user.isActive ? "Active" : "Inactive",
+                  formatDate(user.createdAt?.toString() || ""),
+                ]
+              );
+            }}
+          >
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>

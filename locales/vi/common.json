@@ -4,9 +4,9 @@
     "edit": "Chỉnh sửa",
     "tabs": {
       "personal": "Hồ sơ của tôi",
-      "points": "Xem yêu cầu",
+      "points": "Xem điểm thưởng",
       "preferences": "Theo dõi yêu cầu",
-      "booking": "Lịch sử",
+      "booking": "Lịch sử đặt vé",
       "changePassword": "Đổi mật khẩu"
     },
     "avatarAlt": "Ảnh đại diện người dùng",
@@ -54,11 +54,11 @@
       "passwordChangeSuccessMessage": "Bạn đã đổi mật khẩu thành công.",
       "changePassword": "Đổi mật khẩu",
       "changePasswordDescription": "Nhập mật khẩu hiện tại và mật khẩu mới của bạn bên dưới.",
-      "currentPassword": "Mật khẩu hiện tại *",
+      "currentPassword": "Mật khẩu hiện tại ",
       "currentPasswordPlaceholder": "Mật khẩu hiện tại",
-      "newPassword": "Mật khẩu mới *",
+      "newPassword": "Mật khẩu mới ",
       "newPasswordPlaceholder": "Mật khẩu mới",
-      "confirmNewPassword": "Xác nhận mật khẩu mới *",
+      "confirmNewPassword": "Xác nhận mật khẩu mới ",
       "confirmNewPasswordPlaceholder": "Xác nhận mật khẩu mới",
       "changePasswordButton": "Đổi mật khẩu"
     },

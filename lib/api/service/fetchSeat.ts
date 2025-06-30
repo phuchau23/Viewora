@@ -49,6 +49,6 @@ export interface Branch{
 export const SeatService = {
     getSeatOfRoomByRoomId: async (roomId: string) => {
       const response = await apiService.get<SeatApiResponse>(`/seats/room/${roomId}/row`);
-      return response.data.data; // 👈 lấy đúng mảng ghế
+      return response.data.data;
     }
   };
