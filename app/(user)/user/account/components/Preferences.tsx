@@ -1,6 +1,6 @@
 "use client";
 
-import { type User, cinemas } from "@/lib/data";
+import { type User, cinemas } from "@/utils/data";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Building, Bell, BellOff } from "lucide-react";
 import {

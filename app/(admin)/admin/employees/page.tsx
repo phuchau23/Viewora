@@ -21,7 +21,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { currentUser, hasEmployeeAccess } from "@/lib/data";
+import { currentUser, hasEmployeeAccess } from "@/utils/data";
 import { EmployeesTable } from "./components/employees-table";
 import { EmployeeFormModal } from "./components/employee-form-modal";
 import { EmployeeDetailsModal } from "./components/employee-details-modal";

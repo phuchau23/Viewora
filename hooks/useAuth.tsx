@@ -21,7 +21,7 @@ import {
   VerifyResetPasswordRequest,
   VerifyResetPasswordResponse,
 } from "@/lib/api/service/fetchAuth";
-import { saveTokenToCookie } from "@/lib/ultils/cookies";
+import { saveTokenToCookie } from "@/utils/cookies";
 import { useToast } from "@/hooks/use-toast";
 import {
   handleGoogleRedirectResult,

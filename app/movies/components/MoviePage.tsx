@@ -3,7 +3,7 @@
 import { Film, MapPin, Sparkles, TrendingUp } from "lucide-react";
 import MovieSearch from "./MovieSearch";
 import MovieFilter, { MovieStatus, MovieGenre } from "./MovieFilter";
-import { movies } from "@/lib/data";
+import { movies } from "@/utils/data";
 import MovieFilters from "./MovieFilter";
 import MovieCard from "@/components/common/MovieCard";
 import { useMemo, useState } from "react";

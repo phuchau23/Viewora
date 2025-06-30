@@ -4,16 +4,16 @@ import React, { useState } from "react";
 import { useSeatOfRoomByRoomId } from "@/hooks/useSeat";
 import { Seat } from "@/lib/api/service/fetchSeat";
 import { useRouter } from "next/navigation";
-import SeatSelector from "./SeatSelector";
+import SeatSelector from "./SeatSelector";  
 import ComboSelector from "./ComboSelector";
 import TicketBill from "./TicketBill";
-import { Movie } from "@/lib/api/service/fetchMovies";
+import { Movies } from "@/lib/api/service/fetchMovies";
 import { Snack } from "@/lib/api/service/fetchSnack";
 import { useSnacks } from "@/hooks/useSnacks";
 
 interface Props {
   roomId: string;
-  movie: Partial<Movie>;
+  movie: Partial<Movies>;
   showtime: string; // ISO string datetime
   roomNumber: number;
   branchName: string;
@@ -41,6 +41,8 @@ export default function RoomSeatingChart({
   branchName,
   onSeatClick,
 }: Props) {
+  const router = useRouter();
+
   const { data: seatsData, isLoading, error } = useSeatOfRoomByRoomId(roomId);
   const { data: snackRawData } = useSnacks();
 
@@ -58,7 +60,6 @@ export default function RoomSeatingChart({
   if (error || !seatsData) return <div>Lỗi khi tải ghế.</div>;
 
   const seats: Seat[] = Array.isArray(seatsData) ? seatsData : [];
-
   const selectedSeatObjects = seats.filter((s) => selectedSeats.includes(s.id));
 
   // ✅ Tổng tiền ghế được tính đúng theo giờ chiếu
@@ -89,6 +90,7 @@ export default function RoomSeatingChart({
       setStep("combo");
     } else {
       alert("Đặt vé thành công!");
+      router.push("/payment");
       // TODO: Gửi dữ liệu thanh toán nếu cần
     }
   };
