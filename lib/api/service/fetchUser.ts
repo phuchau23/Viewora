@@ -109,13 +109,13 @@ export interface ProfileUpdateResponse {
   
 
   // Add to fetchUser.ts
-export interface ScoreRecord {
-  dateCreated: string;
-  movieName: string;
-  score: number;
-  type: "added" | "used";
-}
-
+  export interface ScoreRecord {
+    id: string; 
+    createdAt: string;
+    movieName: string;
+    scoreChanged: number; 
+    actionType: "Added" | "Used"; 
+  }
 export interface ScoreHistoryResponse {
   code: number;
   statusCode: string;
@@ -128,7 +128,93 @@ export interface ScoreHistorySelectedData {
   status: string;
   message: string;
 }
+// Interface for the seat
+export interface Seat {
+  id: string;
+  row: string;
+  number: number;
+  seatType: {
+    id: string;
+    name: string;
+    price: {
+      id: string;
+      timeInDay: string;
+      amount: number;
+    };
+  };
+}
 
+// Interface for the showtime
+export interface ShowTime {
+  id: string;
+  movie: {
+    id: string;
+    name: string;
+    duration: string;
+  };
+  branch: {
+    id: string;
+    name: string;
+  };
+  startTime: string;
+  endTime: string;
+}
+
+// Interface for the promotion (if applicable)
+export interface Promotion {
+  id: string;
+  title: string;
+  code: string;
+  discountPrice: number;
+  discountTypeEnum: string;
+  discountType: {
+    id: string;
+    name: string;
+  };
+  maxDiscountValue: number;
+  minOrderValue: number;
+}
+
+// Interface for a single booking item
+export interface Booking {
+  bookingId: string;
+  bookingDate: string;
+  showTime: ShowTime;
+  seats: Seat[];
+  snacks: any[];
+  promotion: Promotion | null;
+  totalPrice: number;
+  createdAt: string;
+}
+
+// Interface for the booking history response
+export interface BookingHistoryResponse {
+  code: number;
+  statusCode: string;
+  message: string;
+  data: {
+    items: Booking[];
+    totalItems: number;
+    currentPage: number;
+    totalPages: number;
+    pageSize: number;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+  };
+}
+
+// Interface for selected data after transformation
+export interface BookingHistorySelectedData {
+  bookings: Booking[];
+  status: string;
+  message: string;
+  totalItems: number;
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
 
   const convertUserFilters = (filters?: UserSearchParams): Record<string, any> => {
     if (!filters) return {};
@@ -195,6 +281,20 @@ export const UserService = {
           params
         );
         return response.data;
+        },
+
+        getBookingHistory: async (params: {
+          pageIndex?: number;
+          pageSize?: number;
+        } = {}): Promise<BookingHistoryResponse> => {
+          const response = await apiService.get<BookingHistoryResponse>(
+            "/users/view-booking-history",
+            {
+              pageIndex: params.pageIndex ?? 1,
+              pageSize: params.pageSize ?? 10,
+            }
+          );
+          return response.data;
         },
 }
 

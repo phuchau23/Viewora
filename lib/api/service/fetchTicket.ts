@@ -1,20 +1,20 @@
 // lib/api/service/fetchTicket.ts
-import apiService from "../core"; // Giả sử bạn có một apiService để xử lý HTTP requests
+import apiService from "../core"; 
 
 // Interface cho vé
-export interface Ticket {
+// BookedTicketsPage.tsx
+interface Ticket {
   id: string;
-  movieName: string;
-  bookingDate: string;
-  theater: string;
-  showTime: string;
-  userName: string;
-  userEmail: string;
-  seatNumber: string;
-  ticketPrice: number;
-  screen?: string;
-  dressCircle?: string;
-  bookingId?: string;
+  movieName: string; 
+  bookingDate: string; 
+  theater: string; 
+  showTime: string; 
+  userName: string; 
+  userEmail: string; 
+  seatNumber: string; 
+  ticketPrice: number; 
+  screen?: string; 
+  bookingId?: string; 
 }
 
 // Interface cho response từ API

@@ -99,7 +99,7 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  🧑 {t("tabs.personal")}
+                  {t("tabs.personal")}
                 </button>
                 <button
                   onClick={() => setActiveTab("points")}
@@ -109,7 +109,7 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  📋 {t("tabs.points")}
+                  {t("tabs.points")}
                 </button>
                 {/* <button
                   onClick={() => setActiveTab("preferences")}
@@ -119,7 +119,7 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  📍 {t("tabs.preferences")}
+                   {t("tabs.preferences")}
                 </button> */}
                 <button
                   onClick={() => setActiveTab("booking")}
@@ -129,7 +129,7 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  🕓 {t("tabs.booking")}
+                  {t("tabs.booking")}
                 </button>
                 <button
                   onClick={() => setActiveTab("changePassword")}
@@ -139,7 +139,7 @@ export default function ProfilePage({
                       : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
-                  🔒 {t("tabs.changePassword")}
+                  {t("tabs.changePassword")}
                 </button>
               </nav>
             </aside>

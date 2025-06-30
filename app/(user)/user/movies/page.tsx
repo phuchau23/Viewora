@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useMovies } from "@/hooks/useMovie";
+import { useRouter } from "next/navigation";
 
 // Format VND function (optional, include if price is added later)
 export function formatVND(amount: number): string {
@@ -62,6 +63,8 @@ export default function MoviesPage() {
       prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
     );
   };
+
+  const router = useRouter();
 
   // Filter movies
   let filteredMovies = [...movies];
@@ -198,7 +201,11 @@ export default function MoviesPage() {
         {!isLoading && !isError && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredMovies.map((movie) => (
-              <Card key={movie.id} className="overflow-hidden group">
+              <Card
+                onClick={() => router.push(`/movies/${movie.id}`)}
+                key={movie.id}
+                className="overflow-hidden group"
+              >
                 <div className="relative aspect-[2/3] overflow-hidden">
                   <Image
                     src={movie.poster || "/fallback-poster.jpg"}

@@ -1,4 +1,6 @@
 import UserService, {
+  BookingHistoryResponse,
+  BookingHistorySelectedData,
   ChangePasswordRequest,
   ChangePasswordResponse,
   ProfileResponse,
@@ -76,9 +78,7 @@ export function useUpdateProfile() {
     mutationFn: (profileData: Partial<ProfileUpdateDataResponse> | FormData) =>
       UserService.updateUserProfile(profileData),
     onSuccess: (data: ProfileUpdateResponse) => {
-      // Không check data.status nữa!
       queryClient.invalidateQueries({ queryKey: ["users", "profile"] });
-      // Có thể show toast thành công, đóng modal, v.v...
     },
   });
 }
@@ -104,6 +104,30 @@ export function useScoreHistory(filters?: {
       records: data.data,
       status: data.statusCode,
       message: data.message,
+    }),
+  });
+}
+export function useBookingHistory(params?: {
+  pageIndex?: number;
+  pageSize?: number;
+}) {
+  const token = getCookie("auth-token");
+  const isAuthenticated = !!token;
+
+  return useQuery<BookingHistoryResponse, Error, BookingHistorySelectedData>({
+    queryKey: ["bookingHistory", params],
+    queryFn: () => UserService.getBookingHistory(params),
+    enabled: isAuthenticated,
+    select: (data: BookingHistoryResponse) => ({
+      bookings: data.data.items,
+      status: data.statusCode,
+      message: data.message,
+      totalItems: data.data.totalItems,
+      currentPage: data.data.currentPage,
+      totalPages: data.data.totalPages,
+      pageSize: data.data.pageSize,
+      hasPreviousPage: data.data.hasPreviousPage,
+      hasNextPage: data.data.hasNextPage,
     }),
   });
 }
