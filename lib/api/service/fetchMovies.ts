@@ -1,8 +1,8 @@
   import apiService from "../core";
 
-export interface MovieTypes {
-    id: string;
-    name: string;
+export interface Types {
+  id: string;
+  name: string;
 }
 
 export interface Movies {
@@ -25,29 +25,25 @@ export interface Movies {
   isAvailable: boolean;
   movieTypes: Types[];
 }
+
 export interface MovieResponse {
-    code: number;
-    statusCode: string;
-    message: string;
-    data: {
-        items: Movie[];
-        totalItems: number;
-        currentPage: number;
-        totalPages: number;
-        pageSize: number;
-        hasPreviousPage: boolean;
-        hasNextPage: boolean;
-    };
+  items: Movies[];
+  totalItems: number;
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
 }
 
-export interface MovieByIdResponse {
-    code: number;
-    statusCode: string;
-    message: string;
-    data:Movie;
+export interface APIResponse<T> {
+  code: number;
+  statusCode: string;
+  message: string;
+  data: T;
 }
 
-export interface MovieCreateRequest {
+export interface MovieRequest {
   Name: string;
   Description: string;
   Director: string;
@@ -55,95 +51,72 @@ export interface MovieCreateRequest {
   Duration: number;
   Rate: number;
   ReleaseDate: string;
-  TrailerUrl: string;
+  Trailer: string;
   StartShow: string;
   Age: string;
-  Status: string;
-  IsAvailable: boolean;
-  MovieTypeNames: Array<string>;
-  Banner: File;
+  MovieTypeNames: string[];
   Poster: File;
+  Banner: File[];
 }
 
-
-export interface MovieDeleteResponse {
-  code: number;
-  statusCode: string;
-  message: string;
-  data: Movie;
-}
-
-export interface MovieUpdateRequest {
-  Name: string;
-  Description: string;
-  Director: string;
-  Actor: string;
-  Duration: number;
-  Rate: number;
-  ReleaseDate: string;
-  TrailerUrl: string;
-  StartShow: string;
-  Age: string;
-  Status: string;
-  IsAvailable: boolean;
-  MovieTypeNames: Array<string>;
-  banner: File;
-  poster: File;
-}
-
-export interface MovieUpdateResponse {
-  code: number;
-  statusCode: string;
-  message: string;
-  data: Movie;
-}
-export interface MoviePlayResponse {
-  code: number;
-  statusCode: string;
-  message: string;
-  data: Movie;
-}
-
-export interface MovieStopResponse {
-  code: number;
-  statusCode: string;
-  message: string;
-  data: Movie;
-}
 
 export const MovieService = {
-  getAllMovies: async (pageIndex = 1, pageSize = 20) => {
-    const response = await apiService.get<MovieResponse>(
-      `/movies?pageIndex=${pageIndex}&pageSize=${pageSize}`
+  // Lấy danh sách phim
+  getAllMovies: async (pageIndex = 1, pageSize = 10) => {
+    const response = await apiService.get<APIResponse<MovieResponse>>(`/movies`, {
+      pageIndex,
+      pageSize,
+    });
+    return response.data.data;
+  },
+
+  // Lấy chi tiết phim
+  getMovieById: async (id: string) => {
+    const response = await apiService.get<APIResponse<Movies>>(`/movies/`, {
+      id,
+    });
+    return response.data.data;
+  },
+
+  // Tạo mới phim
+  createMovie: async (data: FormData) => {
+    const response = await apiService.post<APIResponse<Movies>>(
+      "/movies",
+      data
     );
     return response.data;
   },
 
-  createMovie: async (formData: FormData) => {
-    const response = await apiService.post<MovieCreateResponse>('/movies', formData);
-    return response.data;
-  },
-  deleteMovie: async (id: string) => {
-    const response = await apiService.delete<MovieResponse>(`/movies/${id}`);
-    return response.data;
-  },
-  updateMovie: async (id: string, formData: FormData) => {
-    const response = await apiService.put<MovieResponse>(
+  // Cập nhật phim
+  updateMovie: async (id: string, data: FormData) => {
+    const response = await apiService.put<APIResponse<Movies>>(
       `/movies/${id}`,
-      formData
+      data
     );
     return response.data;
   },
-  getMovieById: async (id: string) => {
-    const response = await apiService.get<MovieByIdResponse>(`/movies/${id}`);
+
+  // Xóa phim
+  deleteMovie: async (id: string) => {
+    const response = await apiService.delete<APIResponse<Movies>>(
+      `/movies/${id}`
+    );
     return response.data;
   },
+
+  // Chuyển sang trạng thái đang chiếu
   playMovie: async (id: string) => {
-    const response = await apiService.patch<MoviePlayResponse>(`/movies/${id}/nowShowing`);
+    const response = await apiService.patch<APIResponse<Movies>>(
+      `/movies/${id}/nowShowing`
+    );
     return response.data;
   },
+
+  // Chuyển sang trạng thái đã kết thúc
   stopMovie: async (id: string) => {
-    const response = await apiService.patch<MovieStopResponse>(`/movies/${id}/ended`);
+    const response = await apiService.patch<APIResponse<Movies>>(
+      `/movies/${id}/ended`
+    );
     return response.data;
   },
 };

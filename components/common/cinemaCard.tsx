@@ -10,7 +10,7 @@ import "swiper/css/effect-coverflow";
 import "swiper/css/autoplay";
 import { Users } from "lucide-react";
 import Link from "next/link";
-import { MovieTypes } from "@/lib/api/service/fetchMovies";
+import { Types } from "@/lib/api/service/fetchMovies";
 
 type Movie = {
   id: string;
@@ -19,7 +19,7 @@ type Movie = {
   description: string;
   director: string;
   actor: string;
-  movieTypes: MovieTypes[];
+  movieTypes: Types[];
 };
 
 export default function CinemaCard({ movies }: { movies: Movie[] }) {

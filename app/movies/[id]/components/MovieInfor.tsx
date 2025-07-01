@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import { User, Calendar, Clock, Film, Play, X } from "lucide-react";
 import Image from "next/image";
-import { Movie } from "@/lib/api/service/fetchMovies";
+import { Movies } from "@/lib/api/service/fetchMovies";
 
 interface MovieTabsProps {
-  movie: Movie;
+  movie: Movies;
 }
 
 export default function MovieTabs({ movie }: MovieTabsProps) {
@@ -188,11 +188,10 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                 <div className="relative">
                   <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden group cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <Image
-                      src={movie.banner?.[0] || "/fallback.jpg"} // fallback ảnh mặc định
-                      alt="Banner"
-                      fill
-                      className="object-cover"
+                    <img
+                      src={movie.banner}
+                      alt={`${movie.name} trailer`}
+                      className="w-full h-full object-cover opacity-75 group-hover:opacity-60 transition-opacity duration-300"
                     />
 
                     <div className="absolute inset-0 flex items-center justify-center">

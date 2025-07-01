@@ -21,7 +21,6 @@ export default function Home() {
   const comingRef = useRef(null);
   const showingRef = useRef(null);
   const { movies } = useMovies();
-
   useLayoutEffect(() => {
     if (!isLoaded) return;
 
@@ -110,7 +109,7 @@ export default function Home() {
           Coming Soon
         </h2>
         <CinemaCard
-          movies={movies.filter((movie) => movie.status === "inComing")}
+          movies={movies?.filter((movie) => movie.status === "inComing")}
         />
       </div>
 
@@ -119,7 +118,7 @@ export default function Home() {
           Now Showing
         </h2>
         <CinemaCard
-          movies={movies.filter((movie) => movie.status === "nowShowing")}
+          movies={movies?.filter((movie) => movie.status === "nowShowing")}
         />
       </div>
 

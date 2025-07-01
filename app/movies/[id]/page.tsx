@@ -16,11 +16,11 @@ export default function MovieDetail({ params }: MovieDetailProps) {
   const { movies, isLoading } = useMovies(); // 👈 nếu có trạng thái loading
   const movieId = params.id;
 
-  if (isLoading || movies.length === 0) {
+  if (isLoading || movies?.length === 0) {
     return <div className="text-white p-10">Đang tải dữ liệu phim...</div>;
   }
 
-  const movie = movies.find((m) => m.id.toString() === params.id);
+  const movie = movies?.find((m) => m.id.toString() === params.id);
   // console.log("params.id:", params.id);
   // movies.forEach((m) => {
   //   const rawId = m.id;
@@ -37,7 +37,7 @@ export default function MovieDetail({ params }: MovieDetailProps) {
     <div className="min-h-screen bg-gray-900">
       <MovieHeader movie={movie} />
       <MovieTabs movie={movie} />
-      <MovieShowtime movieId={movie.id.toString()} />
+      <MovieShowtime movieId={movie?.id.toString()} />
     </div>
   );
 }
