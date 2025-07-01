@@ -34,12 +34,8 @@ export function useCreateRole() {
   };
 }
 export function useDeleteRole() {
-  const queryClient = useQueryClient();
   const { mutate, isError, isSuccess, data } = useMutation({
     mutationFn: (roleId: number) => RoleService.deleteRole(roleId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
-    },
   });
   
   return {

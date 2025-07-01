@@ -22,7 +22,7 @@ type Movie = {
   movieTypes: Types[];
 };
 
-export default function CinemaCard({ movies }: { movies: Movie[] }) {
+export default function CinemaCard({ movies }: { movies: Movie[] | undefined }) {
   const swiperRef = useRef<SwiperClass>();
 
   return (
@@ -63,7 +63,7 @@ export default function CinemaCard({ movies }: { movies: Movie[] }) {
         }}
         className="w-full h-[500px] !overflow-visible"
       >
-        {movies.map((movie) => (
+        {movies?.map((movie) => (
           <SwiperSlide
             style={{ width: "400px" }}
             key={movie.id}
