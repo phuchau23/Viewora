@@ -187,10 +187,12 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
 
                 <div className="relative">
                   <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden group cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <img
-                      src={movie.banner}
-                      alt={`${movie.name} trailer`}
-                      className="w-full h-full object-cover opacity-75 group-hover:opacity-60 transition-opacity duration-300"
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <Image
+                      src={movie.banner?.[0] || "/fallback.jpg"} // fallback ảnh mặc định
+                      alt="Banner"
+                      fill
+                      className="object-cover"
                     />
 
                     <div className="absolute inset-0 flex items-center justify-center">

@@ -30,44 +30,21 @@ export const useMovies = () => {
 };
 
 export function useCreateMovie() {
-    const queryClient = useQueryClient();
-    const { mutate, isError, isSuccess, data } = useMutation({
-      mutationFn: MovieService.createMovie,
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["movies"] });
-      },
-    });
-  
-    return {
-      mutate,
-      isError,
-      isSuccess,
-      data,
-    };
-  }
-  
-  export function useDeleteMovie() {
-    const queryClient = useQueryClient();
-    const { mutate, isError, isSuccess, data } = useMutation({
-      mutationFn: (id: string) => MovieService.deleteMovie(id),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["movies"] });
-      },
-    });
-    
-    return {
-      mutate,
-      isError,
-      isSuccess,
-      data,
-    };
-  }
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: MovieService.createMovie,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["movies"] });
+    },
+  });
 
-export function useUpdateMovie() {
+  return mutation; // return toàn bộ object
+}
+
+export function useDeleteMovie() {
   const queryClient = useQueryClient();
   const { mutate, isError, isSuccess, data } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: FormData }) =>
-      MovieService.updateMovie(id, data),
+    mutationFn: (id: string) => MovieService.deleteMovie(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["movies"] });
     },
@@ -79,6 +56,19 @@ export function useUpdateMovie() {
     isSuccess,
     data,
   };
+}
+
+export function useUpdateMovie() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: FormData }) =>
+      MovieService.updateMovie(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["movies"] });
+    },
+  });
+
+  return mutation;
 }
 
 export function useGetMovieById(id: string) {

@@ -234,7 +234,7 @@ function App() {
             </div>
             {selectedRoom && selectedBranch && (
               <RoomSeatingChart
-                movieTitle={selectedRoom.roomType?.name || "Không rõ"}
+                movie={{ name: selectedRoom.roomType?.name || "Không rõ" }}
                 showtime={selectedRoom.roomNumber.toString()}
                 roomNumber={selectedRoom.roomNumber}
                 branchName={selectedBranch.name}

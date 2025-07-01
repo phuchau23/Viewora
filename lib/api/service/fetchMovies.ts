@@ -1,29 +1,29 @@
-import apiService from "../core";
+  import apiService from "../core";
 
 export interface MovieTypes {
     id: string;
     name: string;
 }
 
-export interface Movie {
-    id: string;
-    name: string;
-    banner: string[];
-    poster: string;
-    description: string;
-    director: string;
-    actor: string;
-    duration: number;
-    rate: number;
-    releaseDate: string;
-    trailerUrl: string;
-    startShow: string;
-    createdAt: string;
-    updatedAt: string;
-    age: string;
-    status: string;
-    isAvailable: boolean;
-    movieTypes: MovieTypes[];
+export interface Movies {
+  id: string;
+  name: string;
+  banner: string;
+  poster: string;
+  description: string;
+  director: string;
+  actor: string;
+  duration: number;
+  rate: number;
+  releaseDate: string;
+  trailerUrl: string;
+  startShow: string;
+  createdAt: string;
+  updatedAt: string;
+  age: string;
+  status: string;
+  isAvailable: boolean;
+  movieTypes: Types[];
 }
 export interface MovieResponse {
     code: number;
@@ -65,12 +65,6 @@ export interface MovieCreateRequest {
   Poster: File;
 }
 
-export interface MovieCreateResponse {
-  code: number;
-  statusCode: string;
-  message: string;
-  data: Movie;
-}
 
 export interface MovieDeleteResponse {
   code: number;

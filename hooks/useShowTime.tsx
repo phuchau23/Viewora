@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   CreateShowtimeDto,
   ShowTimeService,
+  ShowTime,
 } from "@/lib/api/service/fetchShowTime";
 import { toast } from "sonner";
 
@@ -50,12 +51,10 @@ export const useShowTimeByMovieId = (movieId: string) => {
     enabled: !!movieId,
   });
 
-  const rawData = response;
-
-  const showTimeArray = Array.isArray(rawData)
-    ? rawData
-    : rawData
-    ? [rawData]
+  const showTimeArray = Array.isArray(response)
+    ? response
+    : response
+    ? [response]
     : [];
 
   return {
@@ -64,6 +63,7 @@ export const useShowTimeByMovieId = (movieId: string) => {
     error,
   };
 };
+
 export const useDeleteShowTime = () => {
   const queryClient = useQueryClient();
 
@@ -77,4 +77,27 @@ export const useDeleteShowTime = () => {
       toast.error("❌ Lỗi khi xoá suất chiếu");
     },
   });
+};
+
+export const useShowtimesByBranchId = (branchId: string | null) => {
+  const {
+    data: response,
+    isLoading,
+    error,
+  } = useQuery<ShowTime[]>({
+    queryKey: ["showtimes", branchId],
+    queryFn: () =>
+      branchId
+        ? ShowTimeService.getShowtimesByBranchId(branchId)
+        : Promise.resolve([]),
+    enabled: !!branchId,
+  });
+
+  const showtimesArray = Array.isArray(response) ? response : [];
+
+  return {
+    showtimes: showtimesArray,
+    isLoading,
+    error,
+  };
 };

@@ -10,6 +10,7 @@ import {
   PromotionListResponse,
   PromotionService,
 } from "@/lib/api/service/fetchPromotion";
+import { formatVND } from "@/utils/price/formatPrice";
 
 export default function PromotionsPage() {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
@@ -85,7 +86,7 @@ export default function PromotionsPage() {
                       Discount: {promo.discountPrice} {promo.discountTypeEnum}
                     </p>
                     <p className="text-white mb-4">
-                      Minimum Order: ${promo.minOrderValue}
+                      Minimum Order: {formatVND(promo.minOrderValue)}
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-white">
@@ -109,7 +110,6 @@ export default function PromotionsPage() {
                   </div>
                 </div>
               </div>
-              {/* Hiển thị info trên mobile */}
               <CardContent className="p-6 block md:hidden">
                 <h3 className="text-xl font-semibold mb-2">{promo.title}</h3>
                 <p className="text-muted-foreground mb-2">Code: {promo.code}</p>
@@ -117,7 +117,7 @@ export default function PromotionsPage() {
                   Discount: {promo.discountPrice} {promo.discountTypeEnum}
                 </p>
                 <p className="text-muted-foreground mb-4">
-                  Minimum Order: ${promo.minOrderValue}
+                  Minimum Order: {formatVND(promo.minOrderValue)}
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">

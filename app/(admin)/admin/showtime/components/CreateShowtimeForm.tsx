@@ -41,28 +41,15 @@ export default function CreateShowtimeForm({
   const watchStartTime = watch("startTime");
   const watchMovieId = watch("movieId");
 
-  useEffect(() => {
-    const selectedMovie = movies.find((m) => m.id === watchMovieId);
-    if (watchStartTime && selectedMovie?.duration) {
-      const start = new Date(watchStartTime);
-      const end = new Date(
-        start.getTime() + (selectedMovie.duration + 30) * 60000
-      );
-      setValue("endTime", end.toISOString());
-    }
-  }, [watchStartTime, watchMovieId, movies, setValue]);
-
   const onSubmit = async (data: CreateShowtimeDto) => {
     const formattedStart = format(
       new Date(data.startTime),
       "yyyy-MM-dd HH:mm:ss"
     );
-    const formattedEnd = format(new Date(data.endTime), "yyyy-MM-dd HH:mm:ss");
 
     const payload = {
       ...data,
       startTime: formattedStart,
-      endTime: formattedEnd,
     };
 
     try {
@@ -153,9 +140,6 @@ export default function CreateShowtimeForm({
           <p className="text-sm text-red-500">{errors.startTime.message}</p>
         )}
       </div>
-
-      {/* Hidden field */}
-      <input type="hidden" {...register("endTime", { required: true })} />
 
       {/* Submit */}
       <div className="pt-2">
