@@ -3,7 +3,7 @@ import apiService from "../core";
 
 // Interface cho vé
 // BookedTicketsPage.tsx
-interface Ticket {
+export interface Ticket {
   id: string;
   movieName: string; 
   bookingDate: string; 
