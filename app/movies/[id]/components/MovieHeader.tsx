@@ -1,14 +1,14 @@
 import React from "react";
 import { Star, Clock, Calendar, Users } from "lucide-react";
 import Image from "next/image";
-import { Movie } from "@/lib/api/service/fetchMovies";
+import { Movies } from "@/lib/api/service/fetchMovies";
 
 interface MovieHeaderProps {
-  movie: Movie;
+  movie: Movies;
 }
 
 export default function MovieHeader({ movie }: MovieHeaderProps) {
-  const getStatusBadge = (status: Movie["status"]) => {
+  const getStatusBadge = (status: Movies["status"]) => {
     const styles = {
       nowShowing: "bg-green-500 text-white",
       inComing: "bg-blue-500 text-white",
