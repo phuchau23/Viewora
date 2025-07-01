@@ -58,7 +58,7 @@ import {
   UserX,
   UserCheck,
 } from "lucide-react";
-import { Employee } from "@/utils/data";
+import { Employee } from "@/lib/api/service/fetchEmployees";
 
 const columnHelper = createColumnHelper<Employee>();
 
@@ -186,7 +186,7 @@ export function EmployeesTableAdvanced({
             <div>
               <div className="font-medium">{row.getValue("employeeName")}</div>
               <div className="text-sm text-muted-foreground">
-                {row.original.account}
+                {row.original.account.fullName}
               </div>
             </div>
           </div>

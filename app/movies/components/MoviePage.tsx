@@ -3,21 +3,20 @@
 import { Film, MapPin, Sparkles, TrendingUp } from "lucide-react";
 import MovieSearch from "./MovieSearch";
 import MovieFilter, { MovieStatus, MovieGenre } from "./MovieFilter";
-import { movies } from "@/utils/data";
-import MovieFilters from "./MovieFilter";
 import MovieCard from "@/components/common/MovieCard";
 import { useMemo, useState } from "react";
-
+import { useMovies } from "@/hooks/useMovie";
 export default function MoviesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<MovieStatus>("all");
   const [selectedGenre, setSelectedGenre] = useState<MovieGenre>("all");
+  const { movies } = useMovies();
 
   // Get all unique genres from movies
   const availableGenres = useMemo(() => {
     const genres = new Set<string>();
     movies.forEach((movie) => {
-      movie.movieType.forEach((genre) => genres.add(genre));
+      movie.movieTypes.forEach((genre) => genres.add(genre.name));
     });
     return Array.from(genres).sort();
   }, []);
@@ -26,18 +25,17 @@ export default function MoviesPage() {
   const filteredMovies = useMemo(() => {
     return movies.filter((movie) => {
       const matchesSearch =
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        movie.detail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        movie.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        movie.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         movie.director.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        movie.actor.some((actor) =>
-          actor.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        movie.actor.toLowerCase().includes(searchTerm.toLowerCase())
+ 
 
       const matchesStatus =
         selectedStatus === "all" || movie.status === selectedStatus;
 
       const matchesGenre =
-        selectedGenre === "all" || movie.movieType.includes(selectedGenre);
+        selectedGenre === "all" || movie.movieTypes.some((genre) => genre.name === selectedGenre);
 
       return matchesSearch && matchesStatus && matchesGenre;
     });

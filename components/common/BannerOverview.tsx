@@ -7,10 +7,10 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 import Image from "next/image";
-import { Movie } from "@/utils/data";
+import { Movies } from "@/lib/api/service/fetchMovies";
 
 interface Props {
-  movies: Movie[];
+  movies: Movies[];
 }
 
 export default function BannerSlider({ movies }: Props) {
@@ -29,16 +29,16 @@ export default function BannerSlider({ movies }: Props) {
             <div className="relative w-full h-[500px]">
               <Image
                 src={movie.banner}
-                alt={movie.title}
+                alt={movie.name}
                 fill
                 className="object-cover"
                 priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
               <div className="absolute bottom-8 left-8 text-white">
-                <h2 className="text-4xl font-bold">{movie.title}</h2>
+                <h2 className="text-4xl font-bold">{movie.name}</h2>
                 <p className="mt-2 text-lg max-w-xl line-clamp-3">
-                  {movie.detail || "No description available."}
+                  {movie.description || "No description available."}
                 </p>
               </div>
             </div>

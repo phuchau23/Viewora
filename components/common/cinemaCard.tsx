@@ -10,20 +10,14 @@ import "swiper/css/effect-coverflow";
 import "swiper/css/autoplay";
 import { Users } from "lucide-react";
 import Link from "next/link";
-import { Types } from "@/lib/api/service/fetchMovies";
+import { Movies } from "@/lib/api/service/fetchMovies";
 
-type Movie = {
-  id: string;
-  name: string;
-  poster: string;
-  description: string;
-  director: string;
-  actor: string;
-  movieTypes: Types[];
-};
-
-export default function CinemaCard({ movies }: { movies: Movie[] | undefined }) {
+interface CinemaCardProps {
+  movies: Movies[];
+}
+export default function CinemaCard({ movies }: CinemaCardProps) {
   const swiperRef = useRef<SwiperClass>();
+
 
   return (
     <div className="relative w-[400px] h-[500px] mx-auto mt-8 px-4">

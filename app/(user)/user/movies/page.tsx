@@ -23,7 +23,6 @@ import {
 import { useMovies } from "@/hooks/useMovie";
 import { useRouter } from "next/navigation";
 
-// Format duration function (replacing formatDuration from @/lib/data)
 function formatDuration(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;

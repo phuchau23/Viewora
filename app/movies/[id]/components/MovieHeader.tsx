@@ -32,7 +32,7 @@ export default function MovieHeader({ movie }: MovieHeaderProps) {
     );
   };
 
-  const getAgeBadge = (age: Movie["age"]) => {
+  const getAgeBadge = (age: Movies["age"]) => {
     const colors = {
       T13: "bg-green-600",
       T16: "bg-yellow-600",

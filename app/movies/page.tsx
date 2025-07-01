@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import MoviesPage from "./components/MoviePage";
 import CinemaBanner from "@/components/common/cinemaCard";

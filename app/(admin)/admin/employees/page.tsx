@@ -21,7 +21,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { currentUser, hasEmployeeAccess } from "@/utils/data";
 import { EmployeesTable } from "./components/employees-table";
 import { EmployeeFormModal } from "./components/employee-form-modal";
 import { EmployeeDetailsModal } from "./components/employee-details-modal";
@@ -76,22 +75,22 @@ export default function EmployeesPage() {
   const { mutate: deleteEmployee } = useDeleteEmployee();
   const { toast } = useToast();
 
-  // Role-based access control
-  if (!hasEmployeeAccess(currentUser.role)) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Shield className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Access Denied</h3>
-            <p className="text-muted-foreground text-center">
-              Only Admins and Managers can access employee management.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // // Role-based access control
+  // if (!hasEmployeeAccess(currentUser.role)) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-[400px]">
+  //       <Card className="w-full max-w-md">
+  //         <CardContent className="flex flex-col items-center justify-center py-12">
+  //           <Shield className="h-12 w-12 text-muted-foreground mb-4" />
+  //           <h3 className="text-lg font-semibold mb-2">Access Denied</h3>
+  //           <p className="text-muted-foreground text-center">
+  //             Only Admins and Managers can access employee management.
+  //           </p>
+  //         </CardContent>
+  //       </Card>
+  //     </div>
+  //   );
+  // }
 
   const handleCreateEmployee = (data: any) => {
     createEmployee(data, {
