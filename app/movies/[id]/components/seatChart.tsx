@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useSeatOfRoomByRoomId } from "@/hooks/useSeat";
 import { Seat } from "@/lib/api/service/fetchSeat";
 import { useRouter } from "next/navigation";
-import SeatSelector from "./SeatSelector";  
+import SeatSelector from "./SeatSelector";
 import ComboSelector from "./ComboSelector";
 import TicketBill from "./TicketBill";
 import { Movies } from "@/lib/api/service/fetchMovies";
@@ -20,7 +20,6 @@ interface Props {
   onSeatClick?: (selectedSeats: Seat[]) => void;
 }
 
-// Hàm xác định giá ghế theo thời gian chiếu
 function getSeatPriceByShowtime(seat: Seat, startTime: string): number {
   const date = new Date(startTime);
   const hourVN = date.getUTCHours() + 7;
@@ -47,12 +46,12 @@ export default function RoomSeatingChart({
 
   const availableCombos: Snack[] = snackRawData?.snacks ?? [];
 
-
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [selectedCombos, setSelectedCombos] = useState<Snack[]>([]);
-  const [step, setStep] = useState<"seat" | "combo">("seat");
+  const [step, setStep] = useState<"seat" | "combo" | "payment">("seat");
   const [promotionCode, setPromotionCode] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
 
   if (isLoading) return <div>Đang tải ghế...</div>;
   if (error || !seatsData) return <div>Lỗi khi tải ghế.</div>;
@@ -60,11 +59,17 @@ export default function RoomSeatingChart({
   const seats: Seat[] = Array.isArray(seatsData) ? seatsData : [];
   const selectedSeatObjects = seats.filter((s) => selectedSeats.includes(s.id));
 
-  // ✅ Tổng tiền ghế được tính đúng theo giờ chiếu
   const totalSeatPrice = selectedSeatObjects.reduce(
     (sum, seat) => sum + getSeatPriceByShowtime(seat, showtime),
     0
   );
+
+  const totalComboPrice = selectedCombos.reduce(
+    (sum, c) => sum + c.price * (c.quantity || 0),
+    0
+  );
+
+  const finalPrice = totalSeatPrice + totalComboPrice - discountAmount;
 
   const updateComboQuantity = (combo: Snack, quantity: number) => {
     setSelectedCombos((prev) => {
@@ -81,30 +86,34 @@ export default function RoomSeatingChart({
   const handleNext = () => {
     if (step === "seat") {
       if (selectedSeatObjects.length === 0) {
-        alert("Bạn chưa chọn ghế nào. Vui lòng chọn ghế.");
+        alert("Bạn chưa chọn ghế. Vui lòng chọn ghế.");
         return;
       }
       onSeatClick?.(selectedSeatObjects);
       setStep("combo");
-    } else {
+    } else if (step === "combo") {
+      setStep("payment");
+    } else if (step === "payment") {
+      const bookingPayload = {
+        seatIds: selectedSeatObjects.map((s) => s.id),
+        selectedCombos,
+        promotionCode,
+        paymentMethod,
+        showtimeId: movie.id || "",
+      };
+      console.log("Đặt vé:", bookingPayload);
       alert("Đặt vé thành công!");
-      router.push("/payment");
-      // TODO: Gửi dữ liệu thanh toán nếu cần
+      router.push("/success");
     }
   };
 
   const handleBack = () => {
     if (step === "combo") {
       setStep("seat");
+    } else if (step === "payment") {
+      setStep("combo");
     }
   };
-
-  const totalComboPrice = selectedCombos.reduce(
-    (sum, c) => sum + c.price * (c.quantity || 0),
-    0
-  );
-
-  const finalPrice = totalSeatPrice + totalComboPrice - discountAmount;
 
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -125,12 +134,33 @@ export default function RoomSeatingChart({
             selectedSeats={selectedSeats}
             setSelectedSeats={setSelectedSeats}
           />
-        ) : (
+        ) : step === "combo" ? (
           <ComboSelector
             availableCombos={availableCombos}
             selectedCombos={selectedCombos}
             updateComboQuantity={updateComboQuantity}
           />
+        ) : (
+          <div>
+            <h3 className="text-base font-semibold mb-2 text-gray-800">Chọn phương thức thanh toán:</h3>
+            <div className="space-y-2">
+              {["cash", "vnpay", "momo"].map((method) => (
+                <button
+                  key={method}
+                  onClick={() => setPaymentMethod(method)}
+                  className={`w-full px-4 py-2 border rounded-lg text-left ${
+                    paymentMethod === method ? "bg-orange-100 border-orange-500" : "border-gray-300"
+                  }`}
+                >
+                  {method === "cash"
+                    ? "Tiền mặt"
+                    : method === "vnpay"
+                    ? "Thanh toán VNPAY"
+                    : "Thanh toán MoMo"}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
 

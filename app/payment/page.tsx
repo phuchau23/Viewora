@@ -1,16 +1,11 @@
 "use client";
 import { useState } from "react";
-import { CreditCard, Smartphone, Wallet, CheckCircle } from "lucide-react";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CreditCard, Smartphone, CheckCircle } from "lucide-react";
+import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import React from "react";
 
 const paymentMethods = [
-  {
-    id: "cash",
-    label: "Thanh toán tiền mặt",
-    icon: <Wallet className="w-5 h-5 text-orange-500" />,
-  },
   {
     id: "vnpay",
     label: "Thanh toán qua VNPAY",
@@ -114,7 +109,7 @@ export default function PaymentLayout({
               <span className="font-medium text-right">Chesse Corn x1</span>
             </div>
           </CardDescription>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );

@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Controller } from "react-hook-form";
 
 interface EditMovieModalProps {
   movieId: string;
@@ -141,7 +142,7 @@ export const EditMovieModal = ({
                   type: "number",
                 },
                 { label: "Đánh giá", name: "Rate", type: "number", step: 0.1 },
-                { label: "Ngày phát hành", name: "ReleaseDate", type: "date" },
+                { label: "Ngày phát hành", name: "ReleaseDate", type: "date", },
                 { label: "Ngày chiếu", name: "StartShow", type: "date" },
               ].map(({ label, name, ...rest }) => (
                 <div key={name}>
