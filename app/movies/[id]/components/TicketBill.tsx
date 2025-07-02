@@ -7,6 +7,7 @@ import PromoCodeSelector from "./Promotionbooking";
 import { Snack } from "@/lib/api/service/fetchSnack";
 import { Promotion } from "@/lib/api/service/fetchPromotion";
 import { Movies } from "@/lib/api/service/fetchMovies";
+import PaymentLayout from "@/app/payment/page";
 
 interface Props {
   movie: Partial<Movies>;
@@ -17,7 +18,7 @@ interface Props {
   selectedCombos: Snack[];
   promotionCode: string;
   setPromotionCode: (code: string) => void;
-  step: "seat" | "combo";
+  step: "seat" | "combo" | "payment";
   handleNext: () => void;
   handleBack: () => void;
 }

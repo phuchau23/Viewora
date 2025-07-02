@@ -23,8 +23,18 @@ const paymentMethods = [
   },
 ];
 
-export default function PaymentLayout() {
-  const [selected, setSelected] = useState("cash");
+export default function PaymentLayout({
+  originalTotal,
+  finalPrice,
+  promotionCode,
+  discountAmount,
+}: {
+  originalTotal: number;
+  finalPrice: number;
+  promotionCode: string;
+  discountAmount: number;
+}) {
+  const [selected, setSelected] = useState("vnpay");
 
   return (
     <div className="min-h-screen bg-orange-50 flex items-center justify-center">
@@ -64,15 +74,15 @@ export default function PaymentLayout() {
             </CardTitle>
             <div className="flex justify-between">
               <span>Ghế + Combo</span>
-              <span>210,000₫</span>
+              <span>{originalTotal.toLocaleString()}đ</span>
             </div>
             <div className="flex justify-between text-green-600">
-              <span>Mã MOVIEDAY15</span>
-              <span>- 30,000₫</span>
+              <span>Mã {promotionCode}</span>
+              <span>- {discountAmount.toLocaleString()}đ</span>
             </div>
             <div className="flex justify-between font-bold text-lg mt-2">
               <span>Thành tiền:</span>
-              <span className="text-orange-600">180,000₫</span>
+              <span className="text-orange-600">{finalPrice.toLocaleString()}đ</span>
             </div>
           </div>
 
@@ -82,7 +92,7 @@ export default function PaymentLayout() {
         </Card>
 
         {/* RIGHT CARD: Thông tin đặt vé */}
-        <Card className="bg-white rounded-xl shadow-lg p-6 space-y-4">
+        {/* <Card className="bg-white rounded-xl shadow-lg p-6 space-y-4">
           <CardHeader className="text-lg font-semibold text-orange-600 border-b pb-2 mb-3">
             <CardTitle>Chi tiết đặt vé</CardTitle>
           </CardHeader>

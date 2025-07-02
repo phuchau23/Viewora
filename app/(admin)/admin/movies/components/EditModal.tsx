@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -40,21 +40,26 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalProps) => {
+export const EditMovieModal = ({
+  movieId,
+  open,
+  onOpenChange,
+}: EditMovieModalProps) => {
   const {
     movie,
     isLoading: isMovieLoading,
     refetch: refetchMovie,
   } = useGetMovieById(movieId);
+
   const { updateMovie, isPending: isUpdating } = useUpdateMovie();
   const { types, isLoading: isTypesLoading } = useGetTypes();
-
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
 
   const {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -68,40 +73,46 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
 
   useEffect(() => {
     if (movie) {
-      const data = movie;
       reset({
-        Name: data.name,
-        Director: data.director,
-        Actor: data.actor,
-        Duration: data.duration,
-        Rate: data.rate,
-        ReleaseDate: data.releaseDate.split("T")[0],
-        StartShow: data.startShow.split("T")[0],
-        Age: data.age,
-        Description: data.description,
-        TrailerUrl: data.trailerUrl,
+        Name: movie.name,
+        Director: movie.director,
+        Actor: movie.actor,
+        Duration: movie.duration,
+        Rate: movie.rate,
+        ReleaseDate: movie.releaseDate.split(" ")[0],
+        StartShow: movie.startShow.split(" ")[0],
+        Age: movie.age,
+        Description: movie.description,
+        TrailerUrl: movie.trailerUrl,
       });
-      setSelectedTypes(data.movieTypes.map((type: any) => type.name));
+
+      setSelectedTypes(movie.movieTypes?.map((type: any) => type.name) ?? []);
     }
   }, [movie, reset]);
-
-  const onSubmit = (data: FormValues) => {
-    const formData = new FormData();
-    // Object.entries(data).forEach(([key, value]) => {
-    //   formData.append(key, value);
-    // });
-    // selectedTypes.forEach((type) => formData.append("MovieTypeNames", type));
-    updateMovie(
-      { id: movieId, data: formData },
-      { onSuccess: () => onOpenChange(false) }
-    );
-  };
 
   const toggleType = (type: string) => {
     setSelectedTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
+
+  const onSubmit = (data: FormValues) => {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value.toString());
+    });
+
+    selectedTypes.forEach((type) => {
+      formData.append("MovieTypeNames", type);
+    });
+
+    updateMovie(
+      { id: movieId, data: formData },
+      { onSuccess: () => onOpenChange(false) }
+    );
+  };
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -115,6 +126,7 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
               Cập nhật thông tin chi tiết của phim.
             </DialogDescription>
           </DialogHeader>
+
           {isMovieLoading ? (
             <p>Đang tải thông tin phim...</p>
           ) : (
@@ -123,7 +135,11 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
                 { label: "Tên phim", name: "Name" },
                 { label: "Đạo diễn", name: "Director" },
                 { label: "Diễn viên", name: "Actor" },
-                { label: "Thời lượng (phút)", name: "Duration", type: "number" },
+                {
+                  label: "Thời lượng (phút)",
+                  name: "Duration",
+                  type: "number",
+                },
                 { label: "Đánh giá", name: "Rate", type: "number", step: 0.1 },
                 { label: "Ngày phát hành", name: "ReleaseDate", type: "date" },
                 { label: "Ngày chiếu", name: "StartShow", type: "date" },
@@ -132,32 +148,52 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
                   <Label htmlFor={name}>{label}</Label>
                   <Input id={name} {...register(name as keyof FormValues)} {...rest} />
                   {errors[name as keyof FormValues] && (
-                    <p className="text-red-500 text-sm">{errors[name as keyof FormValues]?.message as string}</p>
+                    <p className="text-red-500 text-sm">
+                      {errors[name as keyof FormValues]?.message as string}
+                    </p>
                   )}
                 </div>
               ))}
 
               <div>
                 <Label htmlFor="Age">Độ tuổi</Label>
-                <select {...register("Age")} className="w-full p-2 border rounded-md">
-                  <option value="">Chọn độ tuổi</option>
-                  {["P", "K", "T13", "T16", "T18"].map((opt) => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-                {errors.Age && <p className="text-red-500 text-sm">{errors.Age.message}</p>}
+                <Controller
+                  name="Age"
+                  control={control}
+                  render={({ field }) => (
+                    <select {...field} className="w-full p-2 border rounded-md">
+                      <option value="">Chọn độ tuổi</option>
+                      {["P", "K", "T13", "T16", "T18"].map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
+                {errors.Age && (
+                  <p className="text-red-500 text-sm">{errors.Age.message}</p>
+                )}
               </div>
 
               <div className="col-span-2">
                 <Label htmlFor="Description">Mô tả</Label>
                 <Textarea {...register("Description")} rows={4} />
-                {errors.Description && <p className="text-red-500 text-sm">{errors.Description.message}</p>}
+                {errors.Description && (
+                  <p className="text-red-500 text-sm">
+                    {errors.Description.message}
+                  </p>
+                )}
               </div>
 
               <div className="col-span-2">
                 <Label htmlFor="TrailerUrl">URL trailer</Label>
                 <Input {...register("TrailerUrl")} />
-                {errors.TrailerUrl && <p className="text-red-500 text-sm">{errors.TrailerUrl.message}</p>}
+                {errors.TrailerUrl && (
+                  <p className="text-red-500 text-sm">
+                    {errors.TrailerUrl.message}
+                  </p>
+                )}
               </div>
 
               <div className="col-span-2">
@@ -167,7 +203,10 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
                     <p>Đang tải...</p>
                   ) : (
                     types?.data?.map((type: any) => (
-                      <div key={type.id} className="flex items-center gap-2 py-1">
+                      <div
+                        key={type.id}
+                        className="flex items-center gap-2 py-1"
+                      >
                         <input
                           type="checkbox"
                           checked={selectedTypes.includes(type.name)}
@@ -181,8 +220,11 @@ export const EditMovieModal = ({ movieId, open, onOpenChange }: EditMovieModalPr
               </div>
             </div>
           )}
+
           <DialogFooter className="mt-6 flex justify-end gap-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Hủy
+            </Button>
             <Button type="submit" disabled={isUpdating || isMovieLoading}>
               {isUpdating ? "Đang lưu..." : "Lưu thay đổi"}
             </Button>
