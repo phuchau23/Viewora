@@ -445,14 +445,14 @@ export default function RegisterPage() {
                       >
                         Tôi đồng ý với{" "}
                         <Link
-                          href="/terms"
+                          href="/policy?policy=terms-and-condítions"
                           className="text-orange-400 hover:text-orange-300 underline"
                         >
                           Điều khoản sử dụng
                         </Link>{" "}
                         và{" "}
                         <Link
-                          href="/privacy"
+                          href="/policy?policy=privacy-policy"
                           className="text-orange-400 hover:text-orange-300 underline"
                         >
                           Chính sách bảo mật
