@@ -100,6 +100,7 @@
   "devDependencies": {
     "@types/firebase": "^2.4.32",
     "@types/js-cookie": "^3.0.6",
-    "@types/jsonwebtoken": "^9.0.9"
+    "@types/jsonwebtoken": "^9.0.9",
+    "next-sitemap": "^4.2.3"
   }
 }
