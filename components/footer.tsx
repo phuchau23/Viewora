@@ -74,17 +74,17 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/policy?policy=terms-and-conditions" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="https://policies.google.com/terms" className="text-sm text-muted-foreground hover:text-primary">
                   Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link href="/policy?policy=privacy-policy" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="https://policies.google.com/privacy" className="text-sm text-muted-foreground hover:text-primary">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/policy?policy=refund-policy" className="text-sm text-muted-foreground hover:text-primary">
+                <Link href="/user/refund" className="text-sm text-muted-foreground hover:text-primary">
                   Refund Policy
                 </Link>
               </li>
