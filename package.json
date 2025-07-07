@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
@@ -102,6 +103,7 @@
   "devDependencies": {
     "@types/firebase": "^2.4.32",
     "@types/js-cookie": "^3.0.6",
-    "@types/jsonwebtoken": "^9.0.9"
+    "@types/jsonwebtoken": "^9.0.9",
+    "next-sitemap": "^4.2.3"
   }
 }
