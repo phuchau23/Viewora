@@ -261,6 +261,7 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
                         roomId={show.room.id}
                         movie={show.movie}
                         showtime={formatTime(show.startTime)}
+                        showtimeId={show.id}
                         roomNumber={show.room.roomNumber}
                         branchName={show.room.branch.name}
                       />

@@ -123,30 +123,29 @@ export default function TicketBill({
           </div>
         </div>
 
-        {/* Danh sách ghế */}
-        {selectedSeats.length === 0 && step === "seat" ? (
-          <div className="my-4 p-3 border-2 border-red-500 rounded-md bg-red-50 text-red-700 text-center text-sm font-medium">
-            Bạn chưa chọn ghế nào. Vui lòng chọn ghế.
-          </div>
-        ) : (
-          <div>
-            <p className="text-base font-semibold mb-2 text-gray-800">
-              Ghế đã chọn:
-            </p>
-            {selectedSeats.map((s) => (
-              <div key={s.id} className="flex justify-between text-sm mb-1">
-                <span className="text-gray-700">
-                  {s.row + s.number} - {s.seatType.name}
-                </span>
-                <span className="font-medium text-gray-800">
-                  {s.seatType.prices
-                    .find((p) => p.timeInDay === "Morning")
-                    ?.amount.toLocaleString()}
-                  đ
-                </span>
+        {/* Step seat */}
+        {step === "seat" && (
+          <>
+            {selectedSeats.length === 0 ? (
+              <div className="my-4 p-3 border-2 border-red-500 rounded-md bg-red-50 text-red-700 text-center text-sm font-medium">
+                Bạn chưa chọn ghế nào. Vui lòng chọn ghế.
               </div>
-            ))}
-          </div>
+            ) : (
+              <>
+                <p className="text-base font-semibold mb-2 text-gray-800">Ghế đã chọn:</p>
+                {selectedSeats.map((s) => (
+                  <div key={s.id} className="flex justify-between text-sm mb-1">
+                    <span className="text-gray-700">
+                      {s.row + s.number} - {s.seatType.name}
+                    </span>
+                    <span className="font-medium text-gray-800">
+                      {s.seatType.prices.find((p) => p.timeInDay === "Morning")?.amount.toLocaleString()}đ
+                    </span>
+                  </div>
+                ))}
+              </>
+            )}
+          </>
         )}
 
         {/* Danh sách combo */}
@@ -169,7 +168,6 @@ export default function TicketBill({
             ) : (
               <p className="text-sm text-gray-500">Chưa chọn combo nào.</p>
             )}
-
             <div className="mt-4 pt-4 border-t border-spacing-1 border-gray-300">
               <label
                 htmlFor="promotionCode"
@@ -198,7 +196,15 @@ export default function TicketBill({
           </div>
         )}
 
-        {/* Tổng tiền + nút tiếp tục */}
+        {/* Step payment */}
+        {step === "payment" && (
+          <div className="text-sm text-gray-700 mb-4">
+            <p className="mb-2">Bạn đã sẵn sàng thanh toán.</p>
+            <p>Phương thức thanh toán được chọn ở bên trái.</p>
+          </div>
+        )}
+
+        {/* Tổng tiền + nút điều hướng */}
         <div className="mt-4 pt-4 border-t border-spacing-1 border-gray-300">
           <div className="flex justify-between items-center mb-4">
             <span className="text-lg md:text-xl font-bold text-gray-800">
@@ -208,6 +214,7 @@ export default function TicketBill({
               {finalPrice?.toLocaleString()}đ
             </span>
           </div>
+
           <button
             onClick={handleNext}
             disabled={selectedSeats.length === 0 && step === "seat"}
@@ -217,7 +224,11 @@ export default function TicketBill({
                 : "bg-orange-600 text-white hover:bg-orange-700 transition-colors duration-200"
             }`}
           >
-            {step === "seat" ? "Tiếp tục chọn combo" : "Xác nhận thanh toán"}
+            {step === "seat"
+              ? "Tiếp tục chọn combo"
+              : step === "combo"
+              ? "Xác nhận thanh toán"
+              : "Đặt vé"}
           </button>
           {step === "combo" && (
             <button

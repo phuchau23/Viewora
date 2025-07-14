@@ -96,14 +96,21 @@ export default function RoomSeatingChart({
     } else if (step === "payment") {
       const bookingPayload = {
         seatIds: selectedSeatObjects.map((s) => s.id),
-        selectedCombos,
+        snackSelection: selectedCombos.map((c) => ({
+          snackId: c.id,
+          quantity: c.quantity || 0,
+        })),
         promotionCode,
         paymentMethod,
-        showtimeId: movie.id || "",
+        showtimeId: showtimeId,
       };
+      const res = await createBooking(bookingPayload);
+      const paymentUrl = res.data.paymentUrl;
+      if (paymentUrl) {
+        window.location.href = paymentUrl;
+      }
       console.log("Đặt vé:", bookingPayload);
       alert("Đặt vé thành công!");
-      router.push("/success");
     }
   };
 
