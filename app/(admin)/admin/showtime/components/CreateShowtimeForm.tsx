@@ -38,8 +38,6 @@ export default function CreateShowtimeForm({
     formState: { errors },
   } = useForm<CreateShowtimeDto>();
 
-  const watchStartTime = watch("startTime");
-  const watchMovieId = watch("movieId");
 
   const onSubmit = async (data: CreateShowtimeDto) => {
     const formattedStart = format(
