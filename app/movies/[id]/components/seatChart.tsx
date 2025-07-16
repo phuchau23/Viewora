@@ -11,6 +11,7 @@ import { Movies } from "@/lib/api/service/fetchMovies";
 import { Snack } from "@/lib/api/service/fetchSnack";
 import { useSnacks } from "@/hooks/useSnacks";
 import { useBooking } from "@/hooks/useBooking";
+import PaymentMethodSelector from "./PaymentMethodSelector";
 interface Props {
   roomId: string;
   movie: Partial<Movies>;
@@ -54,7 +55,7 @@ export default function RoomSeatingChart({
   const [step, setStep] = useState<"seat" | "combo" | "payment">("seat");
   const [promotionCode, setPromotionCode] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"vnpay" | "momo" | null>(null);
 
 
   if (isLoading) return <div>Đang tải ghế...</div>;
@@ -105,7 +106,7 @@ export default function RoomSeatingChart({
           quantity: c.quantity || 0,
         })),
         promotionCode,
-        paymentMethod,
+        paymentMethod: paymentMethod?.toLocaleUpperCase() || "",
         showtimeId: showtimeId,
       };
       const res = await createBooking(bookingPayload);
@@ -149,30 +150,13 @@ export default function RoomSeatingChart({
             selectedCombos={selectedCombos}
             updateComboQuantity={updateComboQuantity}
           />
-        ) : (
-          <div>
-            <h3 className="text-base font-semibold mb-2 text-gray-800">
-              Chọn phương thức thanh toán:
-            </h3>
-            <div className="space-y-2">
-              {["VNPAY", "MOMO"].map((method) => (
-                <button
-                  key={method}
-                  onClick={() => setPaymentMethod(method)}
-                  className={`w-full px-4 py-2 border rounded-lg text-left ${
-                    paymentMethod === method
-                      ? "bg-orange-100 border-orange-500"
-                      : "border-gray-300"
-                  }`}
-                >
-                  {method === "VNPAY" ? "Thanh toán VNPAY" : "Thanh toán MoMo"}
-                </button>
-              ))}
-            </div>
-          </div>
+        ) : step === "payment" && (
+          <PaymentMethodSelector
+            paymentMethod={paymentMethod}
+            setPaymentMethod={setPaymentMethod}
+          />
         )}
       </div>
-
       <TicketBill
         movie={movie}
         showtime={showtime}
