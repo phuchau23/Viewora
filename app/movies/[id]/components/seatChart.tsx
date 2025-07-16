@@ -10,11 +10,12 @@ import TicketBill from "./TicketBill";
 import { Movies } from "@/lib/api/service/fetchMovies";
 import { Snack } from "@/lib/api/service/fetchSnack";
 import { useSnacks } from "@/hooks/useSnacks";
-
+import { useBooking } from "@/hooks/useBooking";
 interface Props {
   roomId: string;
   movie: Partial<Movies>;
   showtime: string; // ISO string datetime
+  showtimeId: string;
   roomNumber: number;
   branchName: string;
   onSeatClick?: (selectedSeats: Seat[]) => void;
@@ -36,6 +37,7 @@ export default function RoomSeatingChart({
   roomId,
   movie,
   showtime,
+  showtimeId,
   roomNumber,
   branchName,
   onSeatClick,
@@ -43,6 +45,7 @@ export default function RoomSeatingChart({
   const router = useRouter();
   const { data: seatsData, isLoading, error } = useSeatOfRoomByRoomId(roomId);
   const { data: snackRawData } = useSnacks();
+  const { createBooking } = useBooking();
 
   const availableCombos: Snack[] = snackRawData?.snacks ?? [];
 
@@ -51,7 +54,8 @@ export default function RoomSeatingChart({
   const [step, setStep] = useState<"seat" | "combo" | "payment">("seat");
   const [promotionCode, setPromotionCode] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [paymentMethod, setPaymentMethod] = useState("");
+
 
   if (isLoading) return <div>Đang tải ghế...</div>;
   if (error || !seatsData) return <div>Lỗi khi tải ghế.</div>;
@@ -83,7 +87,7 @@ export default function RoomSeatingChart({
     });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === "seat") {
       if (selectedSeatObjects.length === 0) {
         alert("Bạn chưa chọn ghế. Vui lòng chọn ghế.");
@@ -109,8 +113,6 @@ export default function RoomSeatingChart({
       if (paymentUrl) {
         window.location.href = paymentUrl;
       }
-      console.log("Đặt vé:", bookingPayload);
-      alert("Đặt vé thành công!");
     }
   };
 
@@ -136,7 +138,7 @@ export default function RoomSeatingChart({
 
         {step === "seat" ? (
           <SeatSelector
-            showTimeId={showtime}
+            showTimeId={showtimeId}
             seats={seats}
             selectedSeats={selectedSeats}
             setSelectedSeats={setSelectedSeats}
@@ -149,21 +151,21 @@ export default function RoomSeatingChart({
           />
         ) : (
           <div>
-            <h3 className="text-base font-semibold mb-2 text-gray-800">Chọn phương thức thanh toán:</h3>
+            <h3 className="text-base font-semibold mb-2 text-gray-800">
+              Chọn phương thức thanh toán:
+            </h3>
             <div className="space-y-2">
-              {["cash", "vnpay", "momo"].map((method) => (
+              {["VNPAY", "MOMO"].map((method) => (
                 <button
                   key={method}
                   onClick={() => setPaymentMethod(method)}
                   className={`w-full px-4 py-2 border rounded-lg text-left ${
-                    paymentMethod === method ? "bg-orange-100 border-orange-500" : "border-gray-300"
+                    paymentMethod === method
+                      ? "bg-orange-100 border-orange-500"
+                      : "border-gray-300"
                   }`}
                 >
-                  {method === "cash"
-                    ? "Tiền mặt"
-                    : method === "vnpay"
-                    ? "Thanh toán VNPAY"
-                    : "Thanh toán MoMo"}
+                  {method === "VNPAY" ? "Thanh toán VNPAY" : "Thanh toán MoMo"}
                 </button>
               ))}
             </div>

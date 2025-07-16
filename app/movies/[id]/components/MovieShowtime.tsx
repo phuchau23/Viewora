@@ -15,6 +15,11 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
   );
   const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
   const [expandedShowId, setExpandedShowId] = useState<string | null>(null);
+ 
+
+
+
+  
 
   const {
     showTime,
@@ -47,7 +52,8 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
     }
     return dates;
   };
-
+console.log("branch:", selectedBranch);
+console.log("date:", selectedDate);
   const formatTime = (dateString: string) =>
     new Date(dateString).toLocaleTimeString("vi-VN", {
       hour: "2-digit",
