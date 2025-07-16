@@ -239,6 +239,7 @@ function App() {
                 roomNumber={selectedRoom.roomNumber}
                 branchName={selectedBranch.name}
                 roomId={selectedRoom.id}
+                showtimeId={selectedRoom.showtimeId}
               />
             )}
           </Dialog.Panel>
