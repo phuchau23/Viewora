@@ -13,11 +13,11 @@ interface Props {
   showtime: string;
   roomNumber: number;
   branchName: string;
-  selectedSeats: Seat[]; // ✅ Đã đảm bảo là Seat[]
+  selectedSeats: Seat[];
   selectedCombos: Snack[];
   promotionCode: string;
   setPromotionCode: (code: string) => void;
-  step: "seat" | "combo";
+  step: "seat" | "combo" | "payment";
   handleNext: () => void;
   handleBack: () => void;
 }
@@ -35,18 +35,14 @@ export default function TicketBill({
   handleNext,
   handleBack,
 }: Props) {
-  const [selectedPromotion, setSelectedPromotion] = useState<Promotion | null>(
-    null
-  );
+  const [selectedPromotion, setSelectedPromotion] = useState<Promotion | null>(null);
   const [finalPrice, setFinalPrice] = useState(0);
   const [promotionError, setPromotionError] = useState("");
 
-  // ✅ Tính tổng ghế + combo
   const originalTotal = useMemo(() => {
     const seatTotal = selectedSeats.reduce(
       (acc, s) =>
-        acc +
-        (s.seatType.prices.find((p) => p.timeInDay === "Morning")?.amount || 0),
+        acc + (s.seatType.prices.find((p) => p.timeInDay === "Morning")?.amount || 0),
       0
     );
     const comboTotal = selectedCombos.reduce(
@@ -56,7 +52,6 @@ export default function TicketBill({
     return seatTotal + comboTotal;
   }, [selectedSeats, selectedCombos]);
 
-  // ✅ Tính giảm giá
   const applyDiscount = () => {
     setPromotionError("");
     if (!selectedPromotion) {
@@ -67,9 +62,7 @@ export default function TicketBill({
     if (originalTotal < selectedPromotion.minOrderValue) {
       setFinalPrice(originalTotal);
       setPromotionError(
-        `Đơn hàng cần tối thiểu ${selectedPromotion.minOrderValue.toLocaleString()}đ để áp dụng mã ${
-          selectedPromotion.code
-        }`
+        `Đơn hàng cần tối thiểu ${selectedPromotion.minOrderValue.toLocaleString()}đ để áp dụng mã ${selectedPromotion.code}`
       );
       return;
     }
@@ -79,10 +72,7 @@ export default function TicketBill({
       discountAmount = selectedPromotion.discountPrice;
     } else {
       discountAmount = (originalTotal * selectedPromotion.discountPrice) / 100;
-      if (
-        selectedPromotion.maxDiscountValue &&
-        discountAmount > selectedPromotion.maxDiscountValue
-      ) {
+      if (selectedPromotion.maxDiscountValue && discountAmount > selectedPromotion.maxDiscountValue) {
         discountAmount = selectedPromotion.maxDiscountValue;
       }
     }
@@ -99,7 +89,11 @@ export default function TicketBill({
     <div className="h-auto">
       <div className="flex flex-col h-auto p-4 md:p-6 bg-white rounded-lg shadow-lg border border-gray-200">
         <h1 className="text-sm md:text-base font-extrabold text-center mb-4 text-orange-600">
-          {step === "seat" ? "THÔNG TIN GHẾ" : "THÔNG TIN COMBO"}
+          {step === "seat"
+            ? "THÔNG TIN GHẾ"
+            : step === "combo"
+            ? "THÔNG TIN COMBO"
+            : "THANH TOÁN"}
         </h1>
 
         {/* Thông tin phim */}
@@ -108,9 +102,7 @@ export default function TicketBill({
             <span className="text-foreground">{branchName.toUpperCase()}</span>
           </div>
           <div className="flex text-base mb-1 gap-3">
-            <span className="text-foreground font-mono">
-              {movie.name?.toUpperCase()}
-            </span>
+            <span className="text-foreground font-mono">{movie.name?.toUpperCase()}</span>
           </div>
           <div className="flex text-base mb-1 gap-3">
             <Clock className="w-6 h-6 text-foreground font-mono" />
@@ -122,38 +114,35 @@ export default function TicketBill({
           </div>
         </div>
 
-        {/* Danh sách ghế */}
-        {selectedSeats.length === 0 && step === "seat" ? (
-          <div className="my-4 p-3 border-2 border-red-500 rounded-md bg-red-50 text-red-700 text-center text-sm font-medium">
-            Bạn chưa chọn ghế nào. Vui lòng chọn ghế.
-          </div>
-        ) : (
-          <div>
-            <p className="text-base font-semibold mb-2 text-gray-800">
-              Ghế đã chọn:
-            </p>
-            {selectedSeats.map((s) => (
-              <div key={s.id} className="flex justify-between text-sm mb-1">
-                <span className="text-gray-700">
-                  {s.row + s.number} - {s.seatType.name}
-                </span>
-                <span className="font-medium text-gray-800">
-                  {s.seatType.prices
-                    .find((p) => p.timeInDay === "Morning")
-                    ?.amount.toLocaleString()}
-                  đ
-                </span>
+        {/* Step seat */}
+        {step === "seat" && (
+          <>
+            {selectedSeats.length === 0 ? (
+              <div className="my-4 p-3 border-2 border-red-500 rounded-md bg-red-50 text-red-700 text-center text-sm font-medium">
+                Bạn chưa chọn ghế nào. Vui lòng chọn ghế.
               </div>
-            ))}
-          </div>
+            ) : (
+              <>
+                <p className="text-base font-semibold mb-2 text-gray-800">Ghế đã chọn:</p>
+                {selectedSeats.map((s) => (
+                  <div key={s.id} className="flex justify-between text-sm mb-1">
+                    <span className="text-gray-700">
+                      {s.row + s.number} - {s.seatType.name}
+                    </span>
+                    <span className="font-medium text-gray-800">
+                      {s.seatType.prices.find((p) => p.timeInDay === "Morning")?.amount.toLocaleString()}đ
+                    </span>
+                  </div>
+                ))}
+              </>
+            )}
+          </>
         )}
 
-        {/* Danh sách combo */}
+        {/* Step combo */}
         {step === "combo" && (
           <div className="mb-4 pt-4 pb-4 border-t border-spacing-1 border-gray-300">
-            <p className="text-base font-semibold mb-2 text-gray-800">
-              Combo đã chọn:
-            </p>
+            <p className="text-base font-semibold mb-2 text-gray-800">Combo đã chọn:</p>
             {selectedCombos.length > 0 ? (
               selectedCombos.map((c) => (
                 <div key={c.id} className="flex justify-between text-sm mb-1">
@@ -168,12 +157,8 @@ export default function TicketBill({
             ) : (
               <p className="text-sm text-gray-500">Chưa chọn combo nào.</p>
             )}
-
             <div className="mt-4 pt-4 border-t border-spacing-1 border-gray-300">
-              <label
-                htmlFor="promotionCode"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="promotionCode" className="block text-sm font-medium text-gray-700 mb-1">
                 Mã giảm giá:
               </label>
               <PromoCodeSelector
@@ -197,16 +182,23 @@ export default function TicketBill({
           </div>
         )}
 
-        {/* Tổng tiền + nút tiếp tục */}
+        {/* Step payment */}
+        {step === "payment" && (
+          <div className="text-sm text-gray-700 mb-4">
+            <p className="mb-2">Bạn đã sẵn sàng thanh toán.</p>
+            <p>Phương thức thanh toán được chọn ở bên trái.</p>
+          </div>
+        )}
+
+        {/* Tổng tiền + nút điều hướng */}
         <div className="mt-4 pt-4 border-t border-spacing-1 border-gray-300">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-lg md:text-xl font-bold text-gray-800">
-              Tổng cộng:
-            </span>
+            <span className="text-lg md:text-xl font-bold text-gray-800">Tổng cộng:</span>
             <span className="text-xl md:text-2xl font-bold text-orange-600">
               {finalPrice?.toLocaleString()}đ
             </span>
           </div>
+
           <button
             onClick={handleNext}
             disabled={selectedSeats.length === 0 && step === "seat"}
@@ -216,14 +208,19 @@ export default function TicketBill({
                 : "bg-orange-600 text-white hover:bg-orange-700 transition-colors duration-200"
             }`}
           >
-            {step === "seat" ? "Tiếp tục chọn combo" : "Xác nhận thanh toán"}
+            {step === "seat"
+              ? "Tiếp tục chọn combo"
+              : step === "combo"
+              ? "Xác nhận thanh toán"
+              : "Đặt vé"}
           </button>
-          {step === "combo" && (
+
+          {(step === "combo" || step === "payment") && (
             <button
               onClick={handleBack}
               className="w-full mt-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 rounded-lg transition-colors duration-200 text-base shadow-sm"
             >
-              &larr; Trở lại chọn ghế
+              &larr; Quay lại
             </button>
           )}
         </div>

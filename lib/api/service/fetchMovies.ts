@@ -72,9 +72,7 @@ export const MovieService = {
 
   // Lấy chi tiết phim
   getMovieById: async (id: string) => {
-    const response = await apiService.get<APIResponse<Movies>>(`/movies/`, {
-      id,
-    });
+    const response = await apiService.get<APIResponse<Movies>>(`/movies/${id}`);
     return response.data.data;
   },
 

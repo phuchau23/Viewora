@@ -49,7 +49,7 @@ export default function MoviesTables() {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
-
+console.log(selectedMovieId);
   const { sortConfig, handleSort, sortedData } = useSort([
     "name",
     "director",

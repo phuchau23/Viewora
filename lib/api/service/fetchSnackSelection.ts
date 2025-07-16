@@ -1,29 +1,38 @@
 import apiService from "../core";
 
 export interface SnackSelectionResponse {
-    code: number;
-    statusCode : string;
-    message : string;
-    data : SnackSelection[];
-}   
+  code: number;
+  statusCode: string;
+  message: string;
+  data: SnackSelection[];
+}
+
+export interface SnackSelectionRequest {
+    snackId: string;
+    quantity: number;
+}
 
 export interface SnackSelection {
-    id: string;
-    showTimeId: string;
-    snack : Snack[]
+  id: string;
+  showTimeId: string;
+  snack: Snack[];
+  quantity: number;
+  unitPrice: number;
 }
+
 export interface Snack {
-    id: string;
-    name: string;
-    price: number;
-    image?: string;
-    quantity: number;
-    unitPrice : number;
+  id: string;
+  name: string;
+  price: number;
+  image?: string;
 }
 
 export const SnackSelectionService = {
-    createSnackSelection : async (formData : FormData) => {
-        const response = await apiService.post<SnackSelectionResponse>(`/snackselection`, formData);
-        return response.data;
-    },
-}
+    createSnackSelection: async (data: SnackSelectionRequest, showTimeId: string) => {
+    const response = await apiService.post<SnackSelectionResponse>(
+      `/snackselection?showTimeId=${showTimeId}`,
+      data,
+    );
+    return response.data;
+  },
+};

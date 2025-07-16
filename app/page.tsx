@@ -8,6 +8,7 @@ import Footer from "@/components/footer";
 import MovieSearch from "./movies/components/MovieSearch";
 import CinemaCard from "@/components/common/cinemaCard";
 import { useMovies } from "@/hooks/useMovie";
+import { Loader } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -77,9 +78,6 @@ export default function Home() {
     return () => ctx.revert();
   }, [isLoaded]);
 
-  if (!isLoaded) {
-    return <Loader onFinish={() => setIsLoaded(true)} />;
-  }
 
   return (
     <div className="min-h-screen max-w-screen-xl mx-auto px-4 overflow-x-hidden">
@@ -128,96 +126,4 @@ export default function Home() {
 }
 
 // ------------------ Loader Component ------------------
-function Loader({ onFinish }: { onFinish: () => void }) {
-  const line1 = "THƯỚC PHIM LĂN BÁNH";
-  const line2 = "CẢM XÚC ĐONG ĐẦY";
-  const textRef = useRef<HTMLDivElement>(null);
-  const cursorRef = useRef<HTMLSpanElement>(null);
-  const [showLoader, setShowLoader] = useState(true);
 
-  useEffect(() => {
-    let index1 = 0;
-    let index2 = 0;
-
-    const typeLine1 = () => {
-      if (textRef.current) {
-        textRef.current.innerText = line1.slice(0, index1);
-        index1++;
-        if (index1 <= line1.length) {
-          setTimeout(typeLine1, 80);
-        } else {
-          setTimeout(typeLine2, 500); // 👉 Delay 0.5s trước khi gõ dòng 2
-        }
-      }
-    };
-
-    const typeLine2 = () => {
-      if (textRef.current) {
-        textRef.current.innerText = `${line1}\n${line2.slice(0, index2)}`;
-        index2++;
-        if (index2 <= line2.length) {
-          setTimeout(typeLine2, 80);
-        } else {
-          gsap.to(".loader", {
-            opacity: 0,
-            duration: 2,
-            delay: 1.2,
-            onComplete: () => {
-              setShowLoader(false);
-              onFinish();
-            },
-          });
-        }
-      }
-    };
-
-    typeLine1();
-
-    if (cursorRef.current) {
-      gsap.to(cursorRef.current, {
-        opacity: 0,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut",
-        duration: 0.6,
-      });
-    }
-  }, [onFinish]);
-
-  if (!showLoader) return null;
-
-  return (
-    <div className="loader fixed inset-0 z-[9999] bg-black text-white flex items-center justify-center">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-20"
-      >
-        <source src="/loader-bg.mp4" type="video/mp4" />
-      </video>
-
-      <div className="text-center relative z-10">
-        <div
-          className={`
-            text-[40px] md:text-[72px] font-extrabold leading-tight tracking-wide whitespace-pre-wrap font-['Bebas_Neue','Anton','sans-serif']
-            bg-gradient-to-r from-yellow-300 via-red-500 to-orange-400 bg-clip-text text-transparent
-            dark:drop-shadow-[0_2px_10px_rgba(255,100,0,0.6)]
-            light:text-black
-          `}
-        >
-          <div ref={textRef} className="inline-block" />
-          <span
-            ref={cursorRef}
-            className="inline-block w-[5px] h-[1em] bg-white ml-2 align-middle"
-          />
-        </div>
-
-        <div className="mt-6 text-sm text-gray-400 font-mono tracking-widest uppercase">
-          Loading cinematic experience...
-        </div>
-      </div>
-    </div>
-  );
-}

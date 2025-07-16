@@ -38,4 +38,4 @@ export const calculatePasswordStrength = (password: string): number => {
       default:
         return "";
     }
-  };
+  }; 

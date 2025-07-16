@@ -85,6 +85,11 @@ const adminNavItems = [
     icon: Calendar,
   },
   {
+    title: "Bookings",
+    url: "/admin/bookings",
+    icon: Ticket,
+  },
+  {
     title: "Settings",
     url: "/admin/settings",
     icon: Settings,
