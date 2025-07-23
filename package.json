@@ -6,7 +6,10 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "next lint",
-    "build": "next build && next-sitemap"
+    "build": "next build && next-sitemap",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
@@ -98,9 +101,18 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/firebase": "^2.4.32",
+    "@types/jest": "^30.0.0",
     "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.9",
-    "next-sitemap": "^4.2.3"
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
+    "jest-html-reporter": "^4.3.0",
+    "next-sitemap": "^4.2.3",
+    "ts-jest": "^29.4.0"
   }
 }
