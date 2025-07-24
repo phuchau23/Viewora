@@ -16,6 +16,7 @@ interface Ticket {
   userEmail: string;
   seatNumber: string;
   ticketPrice: number;
+  seatType?: string;
   screen?: string;
   dressCircle?: string;
   bookingId?: string;
@@ -63,64 +64,78 @@ const TicketCard: React.FC<{ ticket: Ticket; onClick: () => void }> = ({
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3หน้าหลัก pr-10">
-        <div className="space-y-1.5">
-          <div>
-            <h3 className="text-base font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wide">
-              {ticket.movieName}
-            </h3>
-            <p className="text-xs  dark:text-gray-400, text-gray-600 dark:text-gray-400">
-              Movie
-            </p>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              {ticket.userName}
-            </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Name</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
-              {ticket.userEmail}
-            </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Email</p>
-          </div>
+      <div className="space-y-3 pr-10">
+        {/* Hàng riêng cho tên phim */}
+        <div>
+          <h3 className="text-base font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wide">
+            {ticket.movieName}
+          </h3>
         </div>
-        <div className="space-y-1.5">
-          <div>
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              {formattedDate}
-            </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Date</p>
+
+        {/* Phần grid chia 3 cột như cũ */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="space-y-1.5">
+            <div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Name</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
+                {ticket.userName}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Email</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
+                {ticket.userEmail}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              {ticket.showTime}
-            </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Time</p>
+
+          <div className="space-y-1.5">
+            <div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Date</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
+                {formattedDate}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Time</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
+                {ticket.showTime}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                Theater
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
+                {ticket.theater}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              {ticket.theater}
-            </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Theater</p>
-          </div>
-        </div>
-        <div className="space-y-1.5 text-right">
-          <div>
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              {ticket.seatNumber}
-            </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Seat</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              {ticket.ticketPrice.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              })}
-            </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Price</p>
+
+          <div className="space-y-1.5 text-right">
+            <div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Seat</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
+                {ticket.seatNumber}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                Seat Type
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
+                {ticket.seatType}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Price</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
+                {ticket.ticketPrice.toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                })}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -165,28 +180,32 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
             {ticket.theater}
           </p>
         </div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-2">
           <div className="text-sm space-y-1">
             <p>
-              <span className="font-medium">Seat:</span> {ticket.seatNumber}
+              <span className="font-medium">Seat: </span> {ticket.seatNumber}
+            </p>
+            <p>
+              <span className="font-medium">Seat Type: </span>
+              {ticket.seatType}
             </p>
           </div>
         </div>
         <div className="text-sm space-y-1 mb-4">
           <p>
-            <span className="font-medium">Booked by:</span> {ticket.userName}
+            <span className="font-medium">Booked by: </span> {ticket.userName}
           </p>
           <p>
-            <span className="font-medium">Email:</span> {ticket.userEmail}
+            <span className="font-medium">Email: </span> {ticket.userEmail}
           </p>
           <p>
-            <span className="font-medium">Date:</span> {formattedDate}
+            <span className="font-medium">Date: </span> {formattedDate}
           </p>
           <p>
-            <span className="font-medium">Time:</span> {ticket.showTime}
+            <span className="font-medium">Time: </span> {ticket.showTime}
           </p>
           <p>
-            <span className="font-medium">Number of Tickets:</span>{" "}
+            <span className="font-medium">Number of Tickets: </span>
             {ticket.seatNumber.split(", ").length}
           </p>
         </div>
@@ -265,33 +284,39 @@ const BookedTicketsPage: React.FC = () => {
 
   // Map bookings to Ticket interface
   const tickets: Ticket[] =
-    data?.bookings?.map((booking) => ({
-      id: booking.bookingId,
-      movieName: booking.showTime.movie.name || "Unknown Movie",
-      movieId: booking.showTime.movie.id,
-      bookingDate: booking.bookingDate,
-      theater: booking.showTime.branch.name,
-      showTime: format(new Date(booking.showTime.startTime), "HH:mm"),
-      userName: profileData?.data?.fullName || "Unknown User",
-      userEmail: profileData?.data?.email || "Unknown Email",
-      seatNumber: booking.seats
-        .map((seat) => `${seat.row}${seat.number}`)
-        .join(", "),
-      ticketPrice: booking.totalPrice,
-      promotion: booking.promotion
-        ? {
-            title: booking.promotion.title,
-            code: booking.promotion.code,
-            discountPrice: booking.promotion.discountPrice,
-          }
-        : undefined,
-      snacks: booking.snacks?.map((s) => ({
-        name: s.snack.name,
-        quantity: s.quantity,
-        unitPrice: s.unitPrice,
-        image: s.snack.image,
-      })),
-    })) || [];
+    data?.bookings
+      ?.map((booking) => ({
+        id: booking.bookingId,
+        movieName: booking.showTime.movie.name || "Unknown Movie",
+        movieId: booking.showTime.movie.id,
+        bookingDate: booking.bookingDate,
+        theater: booking.showTime.branch.name,
+        showTime: format(new Date(booking.showTime.startTime), "HH:mm"),
+        userName: profileData?.data?.fullName || "Unknown User",
+        userEmail: profileData?.data?.email || "Unknown Email",
+        seatNumber: booking.seats
+          .map((seat) => `${seat.row}${seat.number}`)
+          .join(", "),
+        ticketPrice: booking.totalPrice,
+        seatType: booking.seats?.[0]?.seatType?.name || "Standard Seat",
+        promotion: booking.promotion
+          ? {
+              title: booking.promotion.title,
+              code: booking.promotion.code,
+              discountPrice: booking.promotion.discountPrice,
+            }
+          : undefined,
+        snacks: booking.snacks?.map((s) => ({
+          name: s.snack.name,
+          quantity: s.quantity,
+          unitPrice: s.unitPrice,
+          image: s.snack.image,
+        })),
+      }))
+      .sort(
+        (a, b) =>
+          new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime()
+      ) || [];
 
   return (
     <main className="container mx-auto p-4 max-w-4xl bg-gray-50 dark:bg-gray-900 min-h-screen">
