@@ -6,18 +6,18 @@ import {
 } from "@/lib/api/service/fetchShowTime";
 import { toast } from "sonner";
 
-export const useShowTime = () => {
+export const useShowTime = (startDate: string, endDate: string) => {
   const {
     data: response,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["showtime"],
-    queryFn: () => ShowTimeService.getShowTime(),
-    enabled: true,
+    queryKey: ["showtime", startDate, endDate], // ✅ Bắt buộc thêm vào
+    queryFn: () => ShowTimeService.getShowTime(startDate, endDate),
+    enabled: !!startDate && !!endDate, // ✅ sửa dòng này
   });
 
-  const showTimeArray = response?.data?.items ?? [];
+  const showTimeArray = response?.data ?? [];
 
   return {
     showTime: showTimeArray,

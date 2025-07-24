@@ -48,7 +48,7 @@ export default function PromotionsPage() {
         <h1 className="text-3xl font-bold text-orange">Promotions & Offers</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-          {promotions.map((promo) => (
+          {promotions.filter((promo) => promo.statusActive === "Active").map((promo) => (
             <Card
               key={promo.id}
               className="overflow-hidden group relative cursor-pointer rounded-2xl shadow-lg"

@@ -1,15 +1,18 @@
 "use client";
 import React, { useState } from "react";
-import { User, Calendar, Clock, Film, Play, X } from "lucide-react";
+import { User, Calendar, Clock, Film, Play, Star, X } from "lucide-react";
 import Image from "next/image";
 import { Movies } from "@/lib/api/service/fetchMovies";
+import MovieRatingComment from "./MovieRatingComment";
 
 interface MovieTabsProps {
   movie: Movies;
 }
 
 export default function MovieTabs({ movie }: MovieTabsProps) {
-  const [activeTab, setActiveTab] = useState<"info" | "trailer">("info");
+  const [activeTab, setActiveTab] = useState<"info" | "trailer" | "rating">(
+    "info"
+  );
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
   const getYouTubeEmbedUrl = (url: string) => {
@@ -20,6 +23,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
   const tabs = [
     { id: "info", label: "Thông tin phim", icon: Film },
     { id: "trailer", label: "Trailer & Video", icon: Play },
+    { id: "rating", label: "Rating", icon: Star },
   ];
 
   return (
@@ -33,7 +37,9 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as "info" | "trailer")}
+                  onClick={() =>
+                    setActiveTab(tab.id as "info" | "trailer" | "rating")
+                  }
                   className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all duration-200 ${
                     activeTab === tab.id
                       ? "bg-orange-400 text-background hover:text-background hover:bg-orange-400"
@@ -218,6 +224,12 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
             </div>
           )}
         </div>
+
+        {activeTab === "rating" && (
+          <div className="animate-fade-in">
+            <MovieRatingComment movieId={movie.id} />
+          </div>
+        )}
 
         {/* Trailer Modal */}
         {isTrailerOpen && (
