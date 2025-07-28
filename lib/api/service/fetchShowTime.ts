@@ -64,13 +64,7 @@ export interface PaginatedShowTimeResponse {
   code: number;
   statusCode: string;
   message: string;
-  data: {
-    items: ShowTime[];
-    totalItems: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-  };
+  data: ShowTime[];
 }
 
 export interface CreateShowtimeDto {
@@ -86,9 +80,9 @@ export interface RoomResponse {
 }
 export const ShowTimeService = {
 
-    getShowTime: async (): Promise<PaginatedShowTimeResponse> => {
+    getShowTime: async (startDate: string, endDate: string): Promise<PaginatedShowTimeResponse> => {
         try {
-          const res = await apiService.get<PaginatedShowTimeResponse>(`/showtimes`);
+          const res = await apiService.get<PaginatedShowTimeResponse>(`/showtimes/admin?startDate=${startDate}&endDate=${endDate}`);
           console.log("API result:", res);
           return res.data; 
         } catch (error) {

@@ -13,12 +13,15 @@ import { useShowTime } from "@/hooks/useShowTime";
 import { Button } from "@/components/ui/button";
 import CreateShowtimeForm from "./components/CreateShowtimeForm";
 import { ShowtimeDetailModal } from "./components/ShowtimeDetail";
+import BranchFilter from "./components/BranchFilter";
 
 // Responsive time slot generator
 const generateTimeSlots = () => {
   const slots = [];
-  for (let hour = 0; hour <= 23; hour++) {
-    slots.push(`${hour.toString().padStart(2, "0")}:00`);
+  for (let hour = 8; hour <= 26; hour++) {
+    const displayHour = hour % 24;
+    const paddedHour = displayHour.toString().padStart(2, "0");
+    slots.push(`${paddedHour}:00`);
   }
   return slots;
 };
@@ -55,89 +58,92 @@ const doTimesOverlap = (
 const calculateShowtimeLayout = (showtimes: any[]): ShowtimeWithLayout[] => {
   if (showtimes.length === 0) return [];
 
-  // Sort showtimes by start time
-  const sortedShowtimes = [...showtimes].sort(
+  const sorted = [...showtimes].sort(
     (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
   );
 
-  const layoutShowtimes: ShowtimeWithLayout[] = [];
+  const positioned: ShowtimeWithLayout[] = [];
+  let group: any[] = [];
+  let latestEndTime = 0;
 
-  for (let i = 0; i < sortedShowtimes.length; i++) {
-    const currentShowtime = sortedShowtimes[i];
+  const flushGroup = () => {
+    if (group.length === 0) return;
 
-    // Find all showtimes that overlap with the current one
-    const overlappingShowtimes = sortedShowtimes.filter((showtime) =>
-      doTimesOverlap(
-        currentShowtime.startTime,
-        currentShowtime.endTime,
-        showtime.startTime,
-        showtime.endTime
-      )
-    );
+    const columns: ShowtimeWithLayout[][] = [];
 
-    // Find available column for this showtime
-    let column = 0;
-    const usedColumns = new Set<number>();
+    for (const show of group) {
+      const showStart = new Date(show.startTime).getTime();
+      const showEnd = new Date(show.endTime).getTime();
 
-    // Check which columns are already used by overlapping showtimes
-    for (const overlapping of overlappingShowtimes) {
-      const existingLayout = layoutShowtimes.find(
-        (ls) => ls.id === overlapping.id
-      );
-      if (existingLayout) {
-        usedColumns.add(existingLayout.layoutColumn);
+      let placed = false;
+      for (let i = 0; i < columns.length; i++) {
+        const col = columns[i];
+        const hasOverlap = col.some((other) => {
+          const s2 = new Date(other.startTime).getTime();
+          const e2 = new Date(other.endTime).getTime();
+          return showStart < e2 && s2 < showEnd;
+        });
+        if (!hasOverlap) {
+          col.push(show);
+          placed = true;
+          break;
+        }
+      }
+
+      if (!placed) {
+        columns.push([show]);
       }
     }
 
-    // Find the first available column
-    while (usedColumns.has(column)) {
-      column++;
+    const totalCols = columns.length;
+    columns.forEach((col, colIndex) => {
+      col.forEach((s) => {
+        positioned.push({
+          ...s,
+          layoutColumn: totalCols === 1 ? 0 : colIndex,
+          totalColumns: totalCols,
+        });
+      });
+    });
+
+    group = [];
+  };
+
+  for (const show of sorted) {
+    const start = new Date(show.startTime).getTime();
+    if (start >= latestEndTime) {
+      flushGroup(); // finish previous overlap group
     }
 
-    // Calculate total columns needed for this group
-    const totalColumns = Math.max(overlappingShowtimes.length, column + 1);
-
-    // Update total columns for all overlapping showtimes
-    overlappingShowtimes.forEach((overlapping) => {
-      const existingIndex = layoutShowtimes.findIndex(
-        (ls) => ls.id === overlapping.id
-      );
-      if (existingIndex !== -1) {
-        layoutShowtimes[existingIndex].totalColumns = Math.max(
-          layoutShowtimes[existingIndex].totalColumns,
-          totalColumns
-        );
-      }
-    });
-
-    layoutShowtimes.push({
-      ...currentShowtime,
-      layoutColumn: column,
-      totalColumns: totalColumns,
-    });
+    group.push(show);
+    const end = new Date(show.endTime).getTime();
+    latestEndTime = Math.max(latestEndTime, end);
   }
 
-  return layoutShowtimes;
+  flushGroup(); // flush last group
+  return positioned;
 };
 
 const AdminShowtimePage: React.FC = () => {
-  const { showTime } = useShowTime();
-  console.log(showTime);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => {
-    // Find the earliest movie start date
-    const earliestDate = showTime.reduce((earliest, showtime) => {
-      const showtimeDate = new Date(showtime.startTime);
-      return showtimeDate < earliest ? showtimeDate : earliest;
-    }, new Date(showTime[0]?.startTime || new Date()));
-    // Set to start of week (Sunday)
-    const startOfWeek = new Date(earliestDate);
-    startOfWeek.setDate(earliestDate.getDate() - earliestDate.getDay());
-    startOfWeek.setHours(0, 0, 0, 0);
-    return startOfWeek;
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); // Move back to Monday
+    monday.setHours(0, 0, 0, 0);
+    return monday;
   });
+  const startDateStr = currentWeekStart.toDateString();
+  const endDate = new Date(currentWeekStart);
+  endDate.setDate(endDate.getDate() + 8); // Kết thúc sau 7 ngày
+  const endDateStr = endDate.toDateString();
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const { showTime } = useShowTime(startDateStr, endDateStr);
+  console.log(showTime);
+  console.log(startDateStr);
+  console.log(endDateStr);
 
   const getRoomTypeColor = (roomType?: { name?: string }) => {
     switch (roomType?.name) {
@@ -152,10 +158,10 @@ const AdminShowtimePage: React.FC = () => {
     }
   };
 
-  // Generate week dates starting from currentWeekStart
+  // Generate week dates starting from currentWeekStart (Monday to Sunday)
   const getWeekDates = () => {
     const dates = [];
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 7; i++) {
       const date = new Date(currentWeekStart);
       date.setDate(currentWeekStart.getDate() + i);
       dates.push(date);
@@ -168,7 +174,7 @@ const AdminShowtimePage: React.FC = () => {
   const navigateWeek = (direction: "prev" | "next") => {
     const newWeekStart = new Date(currentWeekStart);
     newWeekStart.setDate(
-      currentWeekStart.getDate() + (direction === "next" ? 4 : -4)
+      currentWeekStart.getDate() + (direction === "next" ? 7 : -7)
     );
     setCurrentWeekStart(newWeekStart);
   };
@@ -194,52 +200,49 @@ const AdminShowtimePage: React.FC = () => {
   };
 
   const getShowtimesForDate = (date: Date) => {
-    const targetDate = date.toISOString().split("T")[0];
-    return showTime.filter((showtime) => {
-      const showtimeDate = new Date(showtime.startTime);
-      const showtimeDateStr = showtimeDate.toISOString().split("T")[0];
-      return showtimeDateStr === targetDate;
-    });
+    const targetDate = date.toDateString();
+    return showTime
+      .filter((showtime) => {
+        const showtimeDate = new Date(showtime.startTime);
+        return showtimeDate.toDateString() === targetDate;
+      })
+      .filter((showtime) => {
+        if (!selectedBranch) return true;
+        return showtime.room.branch.name === selectedBranch;
+      });
   };
+
+  const gridTemplateColumns = `120px repeat(${weekDates.length}, minmax(150px, 1fr))`;
 
   const calculatePosition = (startTime: string, endTime: string) => {
     const start = new Date(startTime);
     const end = new Date(endTime);
-    const startHour = start.getHours();
-    const startMinute = start.getMinutes();
-    const endHour = end.getHours();
-    const endMinute = end.getMinutes();
 
-    // Each hour is 48px (h-12 in Tailwind), so 1 minute = 48/60 = 0.8px
-    const startOffset = startHour * 60 + startMinute; // Total minutes from 00:00
-    const endOffset = endHour * 60 + endMinute; // Total minutes from 00:00
-    const top = (startOffset / 60) * 48; // Position from top
-    const height = Math.max(((endOffset - startOffset) / 60) * 48, 30); // Minimum height 30px
+    const startOffset = start.getHours() * 60 + start.getMinutes();
+    let endOffset = end.getHours() * 60 + end.getMinutes();
+
+    // Nếu kết thúc vào hôm sau, cộng thêm 24h
+    if (end.getDate() !== start.getDate()) {
+      endOffset += 24 * 60;
+    }
+
+    // Trừ 8 tiếng (480 phút) vì 08:00 là mốc top = 0
+    const top = ((startOffset - 480) / 60) * 48;
+    const height = Math.max(((endOffset - startOffset) / 60) * 48, 30);
 
     return { top, height };
   };
 
   // Calculate layout position for overlapping showtimes
-  const calculateLayoutPosition = (
-    showtime: ShowtimeWithLayout,
-    containerWidth = 100
-  ) => {
-    // Set minimum width for each showtime block (at least 120px equivalent)
-    const minWidthPercent = Math.max(
-      25,
-      100 / Math.max(showtime.totalColumns, 4)
-    );
-    const columnWidth = Math.max(
-      minWidthPercent,
-      containerWidth / showtime.totalColumns
-    );
-    const leftOffset =
-      showtime.layoutColumn * (containerWidth / showtime.totalColumns);
-
+  const calculateLayoutPosition = (showtime: ShowtimeWithLayout) => {
+    const total = showtime.totalColumns;
+    const index = showtime.layoutColumn;
+    const columnWidth = 100 / total; // đảm bảo không vượt quá 100%
+    const leftOffset = index * columnWidth;
     return {
-      width: `${Math.min(columnWidth - 1, 95)}%`, // Ensure minimum spacing but max 95%
+      width: `${columnWidth}%`,
       left: `${leftOffset}%`,
-      minWidth: "80px", // Absolute minimum width
+      minWidth: "60px",
     };
   };
 
@@ -259,9 +262,11 @@ const AdminShowtimePage: React.FC = () => {
     return date < today;
   };
 
+  const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
+
   return (
-    <div className="min-h-screen bg-background p-2 sm:p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="overflow-x-auto">
+      <div className="min-w-max px-2 sm:px-6">
         {/* Header */}
         <div className="mb-4 sm:mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
@@ -283,7 +288,6 @@ const AdminShowtimePage: React.FC = () => {
             </Button>
           </div>
         </div>
-
         {/* Calendar Header */}
         <div className="bg-background rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 overflow-hidden">
           <div className="bg-background px-2 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-600">
@@ -296,12 +300,19 @@ const AdminShowtimePage: React.FC = () => {
               </div>
               <div className="flex items-center">
                 <p className="text-xs sm:text-sm font-medium text-foreground">
-                  Total Showtimes :{" "}
+                  Total Showtimes of Week :{" "}
                   <strong className="text-foreground font-bold">
                     {showTime.length}
                   </strong>
                 </p>
               </div>
+              <BranchFilter
+                branches={Array.from(
+                  new Set(showTime.map((s) => s.room.branch.name))
+                )}
+                selectedBranch={selectedBranch}
+                onChange={setSelectedBranch}
+              />
               <div className="flex items-center gap-1 sm:gap-4">
                 <button
                   onClick={() => navigateWeek("prev")}
@@ -338,17 +349,15 @@ const AdminShowtimePage: React.FC = () => {
 
           {/* Calendar Grid */}
           <div className="overflow-x-auto">
-            <div className="min-w-fit">
+            <div className="w-full">
               {" "}
               {/* Changed from min-w-[auto] to min-w-fit */}
               {/* Days Header */}
               <div
-                className="grid border-b border-gray-200 dark:border-gray-600 text-xs sm:text-base"
-                style={{
-                  gridTemplateColumns: `120px repeat(4, minmax(200px, 1fr))`,
-                }}
+                className="grid w-full border-b border-gray-200 dark:border-gray-600 text-xs sm:text-base"
+                style={{ gridTemplateColumns }}
               >
-                <div className="p-1 sm:p-3 bg-background font-medium text-foreground text-center border-r border-gray-200 dark:border-gray-600">
+                <div className="w-[120px] p-1 sm:p-3 bg-background font-medium text-foreground text-center border-r border-gray-200 dark:border-gray-600 shrink-0">
                   Time
                 </div>
                 {weekDates.map((date, index) => {
@@ -369,9 +378,6 @@ const AdminShowtimePage: React.FC = () => {
                           ? "bg-background"
                           : "bg-background"
                       }`}
-                      style={{
-                        minWidth: `${Math.max(150, maxOverlaps * 80)}px`,
-                      }}
                     >
                       <div
                         className={`font-semibold ${
@@ -403,12 +409,7 @@ const AdminShowtimePage: React.FC = () => {
               </div>
               {/* Time Grid Container */}
               <div className="relative">
-                <div
-                  className="grid"
-                  style={{
-                    gridTemplateColumns: `120px repeat(4, minmax(200px, 1fr))`,
-                  }}
-                >
+                <div className="grid" style={{ gridTemplateColumns }}>
                   {/* Time Column */}
                   <div className="border-r border-gray-200 dark:border-gray-600">
                     {timeSlots.map((timeSlot) => (
@@ -430,30 +431,12 @@ const AdminShowtimePage: React.FC = () => {
                     const layoutShowtimes =
                       calculateShowtimeLayout(dayShowtimes);
 
-                    // Calculate if this day needs extra width due to overlaps
-                    const maxOverlaps = Math.max(
-                      ...layoutShowtimes.map((s) => s.totalColumns),
-                      1
-                    );
-                    const needsExtraWidth = maxOverlaps > 2;
-
                     return (
                       <div
                         key={dateIndex}
-                        className={`relative border-r border-gray-200 dark:border-gray-600 last:border-r-0 ${
-                          needsExtraWidth ? "min-w-[250px]" : "min-w-[180px]"
-                        } ${
-                          isPast(date)
-                            ? "bg-background/30 dark:bg-background/30"
-                            : ""
-                        }`}
-                        style={{
-                          width: needsExtraWidth
-                            ? `${Math.max(200, maxOverlaps * 80)}px`
-                            : "auto",
-                        }}
+                        className="relative border-r border-gray-200 dark:border-gray-600 last:border-r-0"
                       >
-                        {/* Time slot backgrounds */}
+                        {/* Background time slots */}
                         {timeSlots.map((timeSlot) => (
                           <div
                             key={timeSlot}
@@ -461,7 +444,7 @@ const AdminShowtimePage: React.FC = () => {
                           ></div>
                         ))}
 
-                        {/* Showtime blocks with layout */}
+                        {/* Showtime blocks */}
                         {layoutShowtimes.map((showtime) => {
                           const { top, height } = calculatePosition(
                             showtime.startTime,
@@ -480,7 +463,7 @@ const AdminShowtimePage: React.FC = () => {
                               }`}
                               style={{
                                 top: `${top}px`,
-                                height: `${Math.max(height, 40)}px`, // Minimum height 40px
+                                height: `${Math.max(height, 40)}px`,
                                 width: layoutPosition.width,
                                 left: layoutPosition.left,
                                 minWidth: layoutPosition.minWidth,

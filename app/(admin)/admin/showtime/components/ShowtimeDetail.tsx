@@ -10,6 +10,7 @@ import {
   Trash2,
   Clock,
 } from "lucide-react";
+import { useDeleteShowTime } from "@/hooks/useShowTime";
 
 interface ShowtimeDetailModalProps {
   showtime: any;
@@ -65,6 +66,13 @@ export const ShowtimeDetailModal: React.FC<ShowtimeDetailModalProps> = ({
       default:
         return "bg-gray-100 text-gray-800";
     }
+  };
+
+  const { mutateAsync: deleteShowTime } = useDeleteShowTime();
+
+  const handleDeleteShowtime = async () => {
+    deleteShowTime(showtime.id);
+    onClose();
   };
 
   return (
@@ -230,7 +238,10 @@ export const ShowtimeDetailModal: React.FC<ShowtimeDetailModalProps> = ({
               <Edit size={16} />
               Edit Showtime
             </button>
-            <button className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium flex items-center gap-2 transition-colors">
+            <button
+              onClick={handleDeleteShowtime}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium flex items-center gap-2 transition-colors"
+            >
               <Trash2 size={16} />
               Delete
             </button>

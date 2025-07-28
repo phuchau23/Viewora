@@ -4,7 +4,9 @@ import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
-
+import { addDays, setHours, setMinutes } from "date-fns";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useMovies } from "@/hooks/useMovie";
 import { useBranch } from "@/hooks/useBranch";
 import { useRoomByBranchId } from "@/hooks/useRoom";
@@ -75,7 +77,7 @@ export default function CreateShowtimeForm({
           className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
         >
           <option value="">-- Chọn phim --</option>
-          {movies?.map((movie) => (
+          {movies?.filter((movie) => movie.status === "nowShowing").map((movie) => (
             <option key={movie.id} value={movie.id}>
               {movie.name}
             </option>
@@ -127,13 +129,28 @@ export default function CreateShowtimeForm({
       </div>
 
       {/* Start time */}
-      <div className="space-y-1">
+         {/* Start time */}
+         <div className="space-y-1">
         <Label htmlFor="startTime">🕒 Thời gian bắt đầu</Label>
-        <Input
-          type="datetime-local"
-          {...register("startTime", { required: "Vui lòng chọn thời gian" })}
-          className="dark:text-white"
-        />
+        <div className="w-full">
+          <DatePicker
+            selected={watch("startTime") ? new Date(watch("startTime")) : null}
+            onChange={(date: Date | null) => {
+              if (date) setValue("startTime", format(date, "yyyy-MM-dd HH:mm:ss"));
+
+            }}
+            showTimeSelect
+            timeIntervals={15}
+            timeFormat="HH:mm"
+            dateFormat="dd/MM/yyyy HH:mm"
+            minDate={new Date()}
+            maxDate={addDays(new Date(), 14)}
+            minTime={setHours(setMinutes(new Date(), 0), 8)}
+            maxTime={setHours(setMinutes(new Date(), 0), 22)}
+            className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
+            placeholderText="dd/MM/yyyy HH:mm"
+          />
+        </div>
         {errors.startTime && (
           <p className="text-sm text-red-500">{errors.startTime.message}</p>
         )}

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Seat } from "@/lib/api/service/fetchSeat";
-import { Clock, Monitor } from "lucide-react";
+import { Clock, MapPin, Monitor, X } from "lucide-react";
 import PromoCodeSelector from "./Promotionbooking";
 import { Snack } from "@/lib/api/service/fetchSnack";
 import { Promotion } from "@/lib/api/service/fetchPromotion";
@@ -40,7 +40,7 @@ export default function TicketBill({
     null
   );
   const [finalPrice, setFinalPrice] = useState(0);
-  const [promotionError, setPromotionError] = useState("");
+  const [promotionError, setPromotionError] = useState<React.ReactNode>("");
 
   const originalTotal = useMemo(() => {
     const seatTotal = selectedSeats.reduce(
@@ -66,12 +66,15 @@ export default function TicketBill({
     if (originalTotal < selectedPromotion.minOrderValue) {
       setFinalPrice(originalTotal);
       setPromotionError(
-        `Đơn hàng cần tối thiểu ${selectedPromotion.minOrderValue.toLocaleString()}đ để áp dụng mã ${
-          selectedPromotion.code
-        }`
+        <>
+          Đơn hàng cần tối thiểu{" "}
+          <strong>{selectedPromotion.minOrderValue.toLocaleString()}đ</strong> để áp dụng mã{" "}
+          <strong>{selectedPromotion.code}</strong>
+        </>
       );
       return;
     }
+    
 
     let discountAmount = 0;
     if (selectedPromotion.discountTypeEnum === "Fixed") {
@@ -97,22 +100,19 @@ export default function TicketBill({
   return (
     <div className="h-auto">
       <div className="flex flex-col h-auto p-4 md:p-6 bg-white rounded-lg shadow-lg border border-gray-200">
-        <h1 className="text-sm md:text-base font-extrabold text-center mb-4 text-orange-600">
-          {step === "seat"
-            ? "THÔNG TIN GHẾ"
-            : step === "combo"
-            ? "THÔNG TIN COMBO"
-            : "THANH TOÁN"}
+        <h1 className="text-2xl md:text-2xl font-extrabold text-center mb-4 text-orange-600">
+          ĐƠN HÀNG
         </h1>
 
         {/* Thông tin phim */}
         <div className="mb-4 pb-4 border-b border-spacing-1 border-gray-300">
-          <div className="flex text-2xl font-extrabold mb-1 gap-3">
-            <span className="text-foreground">{branchName.toUpperCase()}</span>
+          <div className="flex text-xl font-extrabold mb-1 gap-3 pb-4">
+            <span className="text-foreground">{movie.name?.toUpperCase()}</span>
           </div>
           <div className="flex text-base mb-1 gap-3">
+          <MapPin className="w-6 h-6 text-foreground font-mono" />
             <span className="text-foreground font-mono">
-              {movie.name?.toUpperCase()}
+            {branchName.toUpperCase()}
             </span>
           </div>
           <div className="flex text-base mb-1 gap-3">
@@ -157,47 +157,86 @@ export default function TicketBill({
 
         {/* Step combo */}
         {step === "combo" && (
-          <div className="mb-4 pt-4 pb-4 border-t border-spacing-1 border-gray-300">
-            <p className="text-base font-semibold mb-2 text-gray-800">
-              Combo đã chọn:
-            </p>
-            {selectedCombos.length > 0 ? (
-              selectedCombos.map((c) => (
-                <div key={c.id} className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-700">
-                    {c.name} x {c.quantity}
-                  </span>
-                  <span className="font-medium text-gray-800">
-                    {(c.price * (c.quantity || 0)).toLocaleString()}đ
-                  </span>
+          <div className="mb-4 space-y-4">
+            {/* Combo Section */}
+            <div>
+              <p className="text-base font-semibold mb-2 text-gray-800">
+                Combo đã chọn:
+              </p>
+              {selectedCombos.length > 0 ? (
+                <div className="space-y-2">
+                  {selectedCombos.map((c) => (
+                    <div
+                      key={c.id}
+                      className="flex justify-between text-sm border-b border-gray-100 pb-1"
+                    >
+                      <span className="text-gray-700">
+                        {c.name} × {c.quantity}
+                      </span>
+                      <span className="font-medium text-gray-800">
+                        {(c.price * (c.quantity || 0)).toLocaleString()} đ
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))
-            ) : (
-              <p className="text-sm text-gray-500">Chưa chọn combo nào.</p>
-            )}
-            <div className="mt-4 pt-4 border-t border-spacing-1 border-gray-300">
+              ) : (
+                <div className="p-3 text-sm text-gray-500 border border-dashed border-gray-300 rounded-md">
+                  Chưa chọn combo nào. Bạn có thể bỏ qua hoặc chọn để được
+                  khuyến mãi tốt hơn 
+                </div>
+              )}
+            </div>
+
+            {/* Promo Section */}
+            <div className="pt-4 border-t border-gray-300">
               <label
                 htmlFor="promotionCode"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="text-base font-semibold mb-2 text-gray-800"
               >
                 Mã giảm giá:
               </label>
+              
               <PromoCodeSelector
                 selectedCode={promotionCode}
                 totalPrice={originalTotal}
                 onSelect={(promo) => {
+                  const isCleared = !promo.code;
                   setPromotionCode(promo.code ?? "");
-                  setSelectedPromotion(promo as Promotion);
+                  setSelectedPromotion(isCleared ? null : (promo as Promotion));
+                  if (isCleared) {
+                    setFinalPrice(originalTotal);
+                    setPromotionError("");
+                  }
                 }}
               />
+
               {promotionError && (
-                <p className="text-sm text-red-600 mt-2">{promotionError}</p>
+                <div className="flex items-center text-sm text-yellow-500 mt-2">
+                  <p>{promotionError}</p>
+                </div>
               )}
+
               {selectedPromotion && finalPrice !== originalTotal && (
-                <p className="text-sm text-green-600 font-medium mt-2">
-                  Đã áp dụng mã <strong>{selectedPromotion.code}</strong> – Giảm{" "}
-                  {(originalTotal - finalPrice).toLocaleString()}đ
-                </p>
+                <div className="mt-3 flex items-center justify-between bg-red-50 border border-red-300 text-red-800 px-3 py-2 rounded-md">
+                  <p className="text-sm">
+                    Đã áp dụng mã <strong>{selectedPromotion.code}</strong> –
+                    Giảm{" "}
+                    <strong>
+                      {(originalTotal - finalPrice).toLocaleString()} đ
+                    </strong>
+                  </p>
+                  <button
+                    className="ml-4 text-red-600 text-sm underline"
+                    onClick={() => {
+                      setPromotionCode("");
+                      setSelectedPromotion(null);
+                      setFinalPrice(originalTotal);
+                      setPromotionError("");
+                    }}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -215,13 +254,30 @@ export default function TicketBill({
 
         {/* Tổng tiền + nút điều hướng */}
         <div className="mt-4 pt-4 border-t border-spacing-1 border-gray-300">
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-lg md:text-xl font-bold text-gray-800">
-              Tổng cộng:
-            </span>
-            <span className="text-xl md:text-2xl font-bold text-orange-600">
-              {finalPrice?.toLocaleString()}đ
-            </span>
+          <div className="space-y-2 mb-4">
+            {/* Tạm tính */}
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>Tổng tiền:</span>
+              <span>{originalTotal.toLocaleString()} đ</span>
+            </div>
+
+            {/* Giảm giá (nếu có) */}
+            {selectedPromotion && finalPrice !== originalTotal && (
+              <div className="flex justify-between text-sm text-red-700">
+                <span>Giảm giá:</span>
+                <span>- {(originalTotal - finalPrice).toLocaleString()} đ</span>
+              </div>
+            )}
+
+            {/* Tổng cộng */}
+            <div className="flex justify-between items-center pt-2 border-t border-gray-300">
+              <span className="text-lg md:text-xl font-bold text-gray-800">
+                Tạm tính
+              </span>
+              <span className="text-xl md:text-2xl font-bold text-orange-600">
+                {finalPrice.toLocaleString()} đ
+              </span>
+            </div>
           </div>
 
           <button

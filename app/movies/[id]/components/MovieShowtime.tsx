@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, Clock, Star } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight, Clock, Search, Star } from "lucide-react";
 import { useShowTimeByMovieId } from "@/hooks/useShowTime";
 import RoomSeatingChart from "./seatChart";
 
@@ -10,22 +10,40 @@ interface MovieShowtimeProps {
 }
 
 const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
   const [expandedShowId, setExpandedShowId] = useState<string | null>(null);
- 
-
-
-
-  
-
   const {
     showTime,
     isLoading,
     error: showTimeError,
   } = useShowTimeByMovieId(movieId);
+  const todayStr = new Date().toISOString().split("T")[0];
+
+  // 1. Lấy danh sách ngày có suất chiếu
+  const showTimeDates = Array.isArray(showTime)
+    ? Array.from(
+        new Set(
+          showTime.map(
+            (item) => new Date(item.startTime).toISOString().split("T")[0]
+          )
+        )
+      )
+    : [];
+
+  const isSelectedDateHasShowTime = selectedDate
+    ? showTimeDates.includes(selectedDate)
+    : false;
+
+  // 2. Tự động chọn ngày gần nhất có suất chiếu
+  useEffect(() => {
+    if (!selectedDate && showTimeDates.length > 0) {
+      if (showTimeDates.includes(todayStr)) {
+        setSelectedDate(todayStr);
+      }
+      // nếu không có thì chờ người dùng bấm nút
+    }
+  }, [showTimeDates, selectedDate, todayStr]);
 
   const generateDates = () => {
     const dates = [];
@@ -52,8 +70,6 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
     }
     return dates;
   };
-console.log("branch:", selectedBranch);
-console.log("date:", selectedDate);
   const formatTime = (dateString: string) =>
     new Date(dateString).toLocaleTimeString("vi-VN", {
       hour: "2-digit",
@@ -72,7 +88,14 @@ console.log("date:", selectedDate);
   const uniqueBranches = Array.isArray(showTime)
     ? Array.from(
         new Map(
-          showTime.map((item) => [item.room.branch.id, item.room.branch])
+          showTime
+            .filter((item) => {
+              const itemDate = new Date(item.startTime)
+                .toISOString()
+                .split("T")[0];
+              return itemDate === selectedDate;
+            })
+            .map((item) => [item.room.branch.id, item.room.branch])
         ).values()
       )
     : [];
@@ -136,26 +159,31 @@ console.log("date:", selectedDate);
           <button className="p-2 hover:bg-muted rounded-full shrink-0">
             <ChevronLeft className="w-5 h-5 text-muted-foreground" />
           </button>
-
           <div className="scrollbar-hide px-2">
             <div className="flex w-max gap-2">
-              {dates.map((d) => (
-                <button
-                  key={d.date}
-                  onClick={() => {
-                    setSelectedDate(d.date);
-                    setExpandedShowId(null);
-                  }}
-                  className={`flex-shrink-0 px-4 py-2 rounded-xl min-w-[70px] text-center text-sm font-medium transition-all ${
-                    selectedDate === d.date
-                      ? "bg-primary text-white shadow-md scale-105"
-                      : "bg-card text-foreground hover:bg-muted"
-                  }`}
-                >
-                  <div className="text-lg font-semibold">{d.day}</div>
-                  <div>{d.dayName}</div>
-                </button>
-              ))}
+              {dates.map((d) => {
+                const hasShow = showTimeDates.includes(d.date);
+                return (
+                  <button
+                    key={d.date}
+                    onClick={() => {
+                      setSelectedDate(d.date);
+                      setSelectedBranch(null);
+                      setExpandedShowId(null);
+                    }}
+                    className={`flex-shrink-0 px-4 py-2 rounded-xl min-w-[70px] text-center text-sm font-medium transition-all ${
+                      selectedDate === d.date
+                        ? "bg-primary text-white shadow-md scale-105"
+                        : hasShow
+                        ? "bg-card text-foreground hover:bg-muted"
+                        : "bg-muted text-muted-foreground opacity-50"
+                    }`}
+                  >
+                    <div className="text-lg font-semibold">{d.day}</div>
+                    <div>{d.dayName}</div>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -165,29 +193,51 @@ console.log("date:", selectedDate);
         </div>
 
         {/* Branch Selector */}
-        <div className="flex gap-3 mb-6">
-          {uniqueBranches.map((branch) => (
-            <button
-              key={branch.id}
-              onClick={() => {
-                setSelectedBranch(branch.id);
-                setExpandedShowId(null);
-              }}
-              className={`flex-shrink-0 flex flex-col items-center p-3 rounded-xl min-w-[80px] border transition-all ${
-                selectedBranch === branch.id
-                  ? "bg-orange-100 dark:bg-orange-900 border-orange-500 scale-105"
-                  : "bg-card border-border hover:bg-muted"
-              }`}
-            >
-              <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
-                {branch.name[0]}
-              </div>
-              <span className="text-xs mt-2 text-foreground text-center">
-                {branch.name}
-              </span>
-            </button>
-          ))}
-        </div>
+        {selectedDate &&
+          isSelectedDateHasShowTime &&
+          uniqueBranches.length > 0 && (
+            <div className="flex gap-3 mb-6">
+              {uniqueBranches.map((branch) => (
+                <button
+                  key={branch.id}
+                  onClick={() => {
+                    setSelectedBranch(branch.id);
+                    setExpandedShowId(null);
+                  }}
+                  className={`flex-shrink-0 flex flex-col items-center p-3 rounded-xl min-w-[80px] border transition-all ${
+                    selectedBranch === branch.id
+                      ? "bg-orange-100 dark:bg-orange-900 border-orange-500 scale-105"
+                      : "bg-card border-border hover:bg-muted"
+                  }`}
+                >
+                  <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                    {branch.name[0]}
+                  </div>
+                  <span className="text-xs mt-2 text-foreground text-center">
+                    {branch.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        {selectedDate && !isSelectedDateHasShowTime && (
+          <div className="p-4 rounded-xl shadow-sm border border-border">
+            <div className="my-6 text-center space-y-3">
+              <p className="text-foreground">
+                Không có suất chiếu vào ngày này.
+              </p>
+              {showTimeDates.length > 0 && (
+                <button
+                  onClick={() => setSelectedDate(showTimeDates[0])}
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+                >
+                  <Search className="w-5 h-5 center" />
+                  Tìm ngày gần nhất có suất chiếu
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Showtime Cards */}
         {Object.entries(
@@ -201,7 +251,6 @@ console.log("date:", selectedDate);
             {}
           )
         ).map(([key, shows]) => {
-          const [roomType] = key.split("-");
           const firstShow = shows[0];
           return (
             <div
@@ -211,7 +260,7 @@ console.log("date:", selectedDate);
               <div className="flex justify-between mb-2">
                 <h2 className="font-semibold text-lg text-foreground">
                   {firstShow.movie.name} – Phòng {firstShow.room.roomNumber} (
-                  {roomType})
+                  {firstShow.room.roomType.name})
                 </h2>
                 <div className="flex items-center text-yellow-500 gap-1">
                   <Star className="w-4 h-4" />
@@ -253,7 +302,15 @@ console.log("date:", selectedDate);
                           : ""
                       }`}
                     >
-                      {formatTime(show.startTime)} - {formatTime(show.endTime)}
+                      <span>
+                        <span className="text-base font-semibold text-black">
+                          {formatTime(show.startTime)}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {" "}
+                          ~ {formatTime(show.endTime)}
+                        </span>
+                      </span>
                     </button>
                   </div>
                 ))}
