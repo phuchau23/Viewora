@@ -15,14 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { PromotionService } from "@/lib/api/service/fetchPromotion";
 import { useCreatePromotion } from "@/hooks/usePromotions";
-
-// Helper formatters
-const formatVND = (amount: number): string =>
-  new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(amount);
+import { useTranslation } from "react-i18next";
 
 const formatForServer = (dateString?: string): string => {
   if (!dateString) return "";
@@ -36,6 +29,7 @@ const formatForServer = (dateString?: string): string => {
 };
 
 export function PromotionCreateDialog() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -90,17 +84,17 @@ export function PromotionCreateDialog() {
       !discountTypeEnum ||
       !imageFile
     ) {
-      setError("All required fields must be filled.");
+      setError(t("proadd.errorRequired"));
       return false;
     }
 
     if (new Date(startDate) > new Date(endDate)) {
-      setError("Start Date must be before End Date.");
+      setError(t("proadd.errorDate"));
       return false;
     }
 
     if (isNaN(+discountPrice) || +discountPrice <= 0) {
-      setError("Discount Price must be a positive number.");
+      setError(t("proadd.errorDiscount"));
       return false;
     }
 
@@ -112,7 +106,7 @@ export function PromotionCreateDialog() {
     for (const field of optionalFields) {
       const value = formData[field as keyof typeof formData];
       if (value && isNaN(Number(value))) {
-        setError(`${field} must be a number`);
+        setError(t("proadd.errorNumber", { field }));
         return false;
       }
     }
@@ -143,7 +137,7 @@ export function PromotionCreateDialog() {
 
     createPromotion(data, {
       onSuccess: () => {
-        toast.success("Promotion created!");
+        toast.success(t("proadd.createSuccess"));
         setFormData({
           title: "",
           startDate: "",
@@ -161,7 +155,7 @@ export function PromotionCreateDialog() {
         setOpen(false);
       },
       onError: (err) => {
-        const msg = err?.message || "Create failed.";
+        const msg = err?.message || t("proadd.createFailed");
         toast.error(msg);
         setError(msg);
       },
@@ -173,18 +167,18 @@ export function PromotionCreateDialog() {
       <DialogTrigger asChild>
         <Button variant="outline">
           <Plus className="mr-2 h-4 w-4" />
-          Add Promotion
+          {t("proadd.addPromotion")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Promotion</DialogTitle>
+          <DialogTitle>{t("proadd.dialogTitle")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
           {error && <p className="text-red-500">{error}</p>}
 
           <div className="space-y-2">
-            <Label htmlFor="title">Title *</Label>
+            <Label htmlFor="title">{t("proadd.title")} *</Label>
             <input
               id="title"
               name="title"
@@ -195,7 +189,7 @@ export function PromotionCreateDialog() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date *</Label>
+              <Label htmlFor="startDate">{t("proadd.startDate")} *</Label>
               <input
                 type="date"
                 name="startDate"
@@ -205,7 +199,7 @@ export function PromotionCreateDialog() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate">End Date *</Label>
+              <Label htmlFor="endDate">{t("proadd.endDate")} *</Label>
               <input
                 type="date"
                 name="endDate"
@@ -216,7 +210,7 @@ export function PromotionCreateDialog() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="code">Code *</Label>
+            <Label htmlFor="code">{t("proadd.code")} *</Label>
             <input
               name="code"
               value={formData.code}
@@ -225,7 +219,7 @@ export function PromotionCreateDialog() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="discountPrice">Discount Price *</Label>
+            <Label htmlFor="discountPrice">{t("proadd.discountPrice")} *</Label>
             <input
               name="discountPrice"
               type="number"
@@ -235,19 +229,19 @@ export function PromotionCreateDialog() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="discountTypeEnum">Type *</Label>
+            <Label htmlFor="discountTypeEnum">{t("proadd.type")} *</Label>
             <select
               name="discountTypeEnum"
               value={formData.discountTypeEnum}
               onChange={handleChange}
               className="p-2 border rounded-md w-full"
             >
-              <option value="Percent">Percent</option>
-              <option value="Fixed">Fixed</option>
+              <option value="Percent">{t("proadd.percent")}</option>
+              <option value="Fixed">{t("proadd.fixed")}</option>
             </select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="discountTypeId">Discount Type</Label>
+            <Label htmlFor="discountTypeId">{t("proadd.discountType")}</Label>
             <select
               name="discountTypeId"
               value={formData.discountTypeId}
@@ -255,7 +249,7 @@ export function PromotionCreateDialog() {
               className="p-2 border rounded-md w-full"
               disabled={isLoadingDiscountTypes}
             >
-              <option value="none">None</option>
+              <option value="none">{t("proadd.none")}</option>
               {discountTypes.map((type) => (
                 <option key={type.id} value={type.id}>
                   {type.name}
@@ -264,7 +258,7 @@ export function PromotionCreateDialog() {
             </select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="imageFile">Image *</Label>
+            <Label htmlFor="imageFile">{t("proadd.image")} *</Label>
             <input
               type="file"
               name="imageFile"
@@ -275,14 +269,14 @@ export function PromotionCreateDialog() {
             {imagePreview && (
               <img
                 src={imagePreview}
-                alt="Preview"
+                alt={t("proadd.preview")}
                 className="w-32 mt-2 rounded border"
                 onClick={() => setPreviewModal(true)}
               />
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="maxDiscountValue">Max Value</Label>
+            <Label htmlFor="maxDiscountValue">{t("proadd.maxValue")}</Label>
             <input
               name="maxDiscountValue"
               type="number"
@@ -292,7 +286,7 @@ export function PromotionCreateDialog() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="minOrderValue">Min Order</Label>
+            <Label htmlFor="minOrderValue">{t("proadd.minOrder")}</Label>
             <input
               name="minOrderValue"
               type="number"
@@ -302,7 +296,7 @@ export function PromotionCreateDialog() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="discountUserNum">User Limit</Label>
+            <Label htmlFor="discountUserNum">{t("proadd.userLimit")}</Label>
             <input
               name="discountUserNum"
               type="number"
@@ -313,14 +307,14 @@ export function PromotionCreateDialog() {
           </div>
           <div className="flex space-x-4 pt-2">
             <Button type="submit" disabled={isCreating}>
-              {isCreating ? "Creating..." : "Create"}
+              {isCreating ? t("proadd.creating") : t("proadd.create")}
             </Button>
             <Button
               variant="outline"
               type="button"
               onClick={() => setOpen(false)}
             >
-              Cancel
+              {t("proadd.cancel")}
             </Button>
           </div>
         </form>
@@ -342,7 +336,7 @@ export function PromotionCreateDialog() {
               </button>
               <img
                 src={imagePreview}
-                alt="Preview"
+                alt={t("proadd.preview")}
                 className="rounded-xl object-contain max-h-[80vh] w-auto"
               />
             </div>

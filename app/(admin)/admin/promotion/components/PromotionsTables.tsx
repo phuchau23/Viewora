@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState, useMemo } from "react";
 import { usePromotions, useDeletePromotion } from "@/hooks/usePromotions";
-import { Pencil, Search, Trash2, Download, Plus } from "lucide-react";
+import { Pencil, Search, Trash2, Download } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -29,8 +29,10 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { PromotionCreateDialog } from "./CreatePromotion";
 import { EditPromotion } from "./EditPromotion";
+import { useTranslation } from "react-i18next";
 
 export default function PromotionsTables() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [pageIndex, setPageIndex] = useState(1);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -40,7 +42,6 @@ export default function PromotionsTables() {
     pageSize
   );
   const { deletePromotion, isDeleting } = useDeletePromotion();
-
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedPromotionId, setSelectedPromotionId] = useState<string | null>(
     null
@@ -57,8 +58,6 @@ export default function PromotionsTables() {
   ]);
 
   const promotions = data?.promotions || [];
-  const totalPages = data?.totalPages || 1;
-
   const searchedPromotions = useMemo(() => {
     if (!searchTerm) return promotions;
     return promotions.filter(
@@ -82,7 +81,7 @@ export default function PromotionsTables() {
   if (isError) {
     return (
       <div className="container mx-auto p-6">
-        <p>Lỗi: {error?.message || "Không thể tải dữ liệu khuyến mãi"}</p>
+        <p>{t("pro.error", { message: error?.message || "" })}</p>
       </div>
     );
   }
@@ -90,9 +89,7 @@ export default function PromotionsTables() {
   const handleDelete = (id: string) => {
     toast(
       <div>
-        <div className="font-semibold mb-2">
-          Are you sure you want to delete this promotion?
-        </div>
+        <div className="font-semibold mb-2">{t("pro.deleteConfirm")}</div>
         <div className="flex gap-2 mt-4">
           <Button
             size="sm"
@@ -100,18 +97,16 @@ export default function PromotionsTables() {
             onClick={() => {
               deletePromotion(id, {
                 onSuccess: () => {
-                  toast.success("Promotion deleted successfully!", {
+                  toast.success(t("pro.deleteSuccess"), {
                     duration: 4000,
                     position: "top-right",
-                    className: "bg-white text-blue-600 border border-blue-300",
                   });
                   queryClient.invalidateQueries({ queryKey: ["promotions"] });
                 },
                 onError: (error: any) => {
-                  toast.error(error.message || "Failed to delete promotion", {
+                  toast.error(error.message || t("pro.deleteFailed"), {
                     duration: 4000,
                     position: "top-right",
-                    className: "bg-white text-blue-600 border border-blue-300",
                   });
                 },
               });
@@ -119,17 +114,16 @@ export default function PromotionsTables() {
             }}
             disabled={isDeleting}
           >
-            Delete
+            {t("pro.delete")}
           </Button>
           <Button size="sm" variant="outline" onClick={() => toast.dismiss()}>
-            Cancel
+            {t("pro.cancel")}
           </Button>
         </div>
       </div>,
       {
         duration: 8000,
         position: "top-right",
-        className: "bg-white text-blue-600 border border-blue-300",
       }
     );
   };
@@ -141,13 +135,21 @@ export default function PromotionsTables() {
 
   const handleExport = () => {
     if (!sortedPromotions.length) {
-      toast.error("No promotions to export");
+      toast.error(t("pro.noExport"));
       return;
     }
 
     exportToCSV(
       "promotions.csv",
-      ["Title", "Code", "Discount", "Start", "End", "Status", "Discount Type"],
+      [
+        t("pro.title"),
+        t("pro.code"),
+        t("pro.discount"),
+        t("pro.start"),
+        t("pro.end"),
+        t("pro.status"),
+        t("pro.discountType"),
+      ],
       sortedPromotions,
       (promo) => [
         promo.title,
@@ -158,7 +160,7 @@ export default function PromotionsTables() {
         new Date(promo.startTime).toLocaleDateString(),
         new Date(promo.endTime).toLocaleDateString(),
         promo.statusActive,
-        promo.discountTypeId?.name || "None",
+        promo.discountTypeId?.name || t("pro.none"),
       ]
     );
   };
@@ -167,17 +169,15 @@ export default function PromotionsTables() {
     <div className="mx-2 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Promotion Management</CardTitle>
-          <CardDescription>
-            Manage promotions for your application
-          </CardDescription>
+          <CardTitle>{t("pro.titlePage")}</CardTitle>
+          <CardDescription>{t("pro.descriptionPage")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex justify-between items-center mb-6">
             <div className="relative w-72">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Tìm kiếm theo tiêu đề hoặc mã"
+                placeholder={t("pro.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value.slice(0, 28))}
                 className="pl-10"
@@ -186,7 +186,7 @@ export default function PromotionsTables() {
             <div className="flex space-x-2">
               <Button variant="outline" onClick={handleExport}>
                 <Download className="mr-2 h-4 w-4" />
-                Export
+                {t("pro.export")}
               </Button>
               <PromotionCreateDialog />
             </div>
@@ -198,39 +198,39 @@ export default function PromotionsTables() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Image</TableHead>
+              <TableHead>{t("pro.image")}</TableHead>
               <TableHead onClick={() => handleSort("title")}>
-                Tiêu đề{" "}
+                {t("pro.title")}{" "}
                 {sortConfig.key === "title" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
               <TableHead onClick={() => handleSort("code")}>
-                Mã{" "}
+                {t("pro.code")}{" "}
                 {sortConfig.key === "code" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
               <TableHead onClick={() => handleSort("discountPrice")}>
-                Giảm giá{" "}
+                {t("pro.discount")}{" "}
                 {sortConfig.key === "discountPrice" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
               <TableHead onClick={() => handleSort("startTime")}>
-                Bắt đầu{" "}
+                {t("pro.start")}{" "}
                 {sortConfig.key === "startTime" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
               <TableHead onClick={() => handleSort("endTime")}>
-                Kết thúc{" "}
+                {t("pro.end")}{" "}
                 {sortConfig.key === "endTime" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
-              <TableHead>Loại giảm giá</TableHead>
+              <TableHead>{t("pro.discountType")}</TableHead>
               <TableHead onClick={() => handleSort("statusActive")}>
-                Trạng thái{" "}
+                {t("pro.status")}{" "}
                 {sortConfig.key === "statusActive" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
-              <TableHead>Hành động</TableHead>
+              <TableHead>{t("pro.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -260,7 +260,9 @@ export default function PromotionsTables() {
                 <TableCell>
                   {new Date(promo.endTime).toLocaleDateString()}
                 </TableCell>
-                <TableCell>{promo.discountTypeId?.name || "None"}</TableCell>
+                <TableCell>
+                  {promo.discountTypeId?.name || t("pro.none")}
+                </TableCell>
                 <TableCell>{promo.statusActive}</TableCell>
                 <TableCell>
                   <Button
@@ -285,7 +287,6 @@ export default function PromotionsTables() {
         </Table>
       </Card>
 
-      {/* Render Edit Dialog */}
       {selectedPromotionId && (
         <EditPromotion
           promotionId={selectedPromotionId}
@@ -294,7 +295,6 @@ export default function PromotionsTables() {
         />
       )}
 
-      {/* Image Preview Dialog */}
       {previewImage && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
@@ -312,7 +312,7 @@ export default function PromotionsTables() {
             </button>
             <img
               src={previewImage}
-              alt="Promotion preview"
+              alt={t("pro.preview")}
               className="rounded-xl object-contain max-h-[80vh] w-auto"
             />
           </div>

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useMovies } from "@/hooks/useMovie";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 function formatDuration(minutes: number): string {
   const hours = Math.floor(minutes / 60);
@@ -30,6 +31,7 @@ function formatDuration(minutes: number): string {
 }
 
 export default function MoviesPage() {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<"all" | "nowShowing" | "inComing">(
     "all"
   );
@@ -37,11 +39,9 @@ export default function MoviesPage() {
     "latest"
   );
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-
-  // Fetch movies using the useMovies hook
   const { movies, isLoading, isError, error } = useMovies();
+  const router = useRouter();
 
-  // Get all unique genres from movieTypes
   const allGenres = Array.from(
     new Set(
       movies.flatMap((movie) => movie.movieTypes.map((type) => type.name))
@@ -54,22 +54,16 @@ export default function MoviesPage() {
     );
   };
 
-  const router = useRouter();
-
-  // Filter movies
+  // Filter + Sort
   let filteredMovies = [...movies];
-
   if (filter !== "all") {
     filteredMovies = filteredMovies.filter((movie) => movie.status === filter);
   }
-
   if (selectedGenres.length > 0) {
     filteredMovies = filteredMovies.filter((movie) =>
       movie.movieTypes.some((type) => selectedGenres.includes(type.name))
     );
   }
-
-  // Sort movies
   if (sortBy === "name") {
     filteredMovies.sort((a, b) => a.name.localeCompare(b.name));
   } else if (sortBy === "latest") {
@@ -77,9 +71,7 @@ export default function MoviesPage() {
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-  }
-  // For "popularity", we would need a popularity field; using rate as a proxy
-  else if (sortBy === "popularity") {
+  } else if (sortBy === "popularity") {
     filteredMovies.sort((a, b) => b.rate - a.rate);
   }
 
@@ -87,7 +79,7 @@ export default function MoviesPage() {
     <div className="container px-4 py-8 md:py-12">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <h1 className="text-3xl font-bold">Movies</h1>
+          <h1 className="text-3xl font-bold">{t("title")}</h1>
 
           <div className="flex flex-wrap gap-3">
             <Button
@@ -95,21 +87,21 @@ export default function MoviesPage() {
               size="sm"
               onClick={() => setFilter("all")}
             >
-              All Movies
+              {t("filters.all")}
             </Button>
             <Button
               variant={filter === "nowShowing" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("nowShowing")}
             >
-              Now Showing
+              {t("filters.nowShowing")}
             </Button>
             <Button
               variant={filter === "inComing" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilter("inComing")}
             >
-              Coming Soon
+              {t("filters.comingSoon")}
             </Button>
           </div>
         </div>
@@ -120,7 +112,7 @@ export default function MoviesPage() {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
                   <Filter className="h-4 w-4" />
-                  Genres
+                  {t("genres")}
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -143,25 +135,26 @@ export default function MoviesPage() {
                 size="sm"
                 onClick={() => setSelectedGenres([])}
               >
-                Clear Filters
+                {t("clearFilters")}
               </Button>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Sort by:</span>
+            <span className="text-sm text-muted-foreground">{t("sortBy")}</span>
             <Select
-              defaultValue="latest"
               value={sortBy}
               onValueChange={(value) => setSortBy(value as any)}
             >
               <SelectTrigger className="w-32">
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder={t("sortBy")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="latest">Latest</SelectItem>
-                <SelectItem value="name">Name</SelectItem>
-                <SelectItem value="popularity">Popularity</SelectItem>
+                <SelectItem value="latest">{t("sort.latest")}</SelectItem>
+                <SelectItem value="name">{t("sort.name")}</SelectItem>
+                <SelectItem value="popularity">
+                  {t("sort.popularity")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -169,21 +162,21 @@ export default function MoviesPage() {
 
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-muted-foreground">Loading movies...</p>
+            <p className="text-muted-foreground">{t("loading")}</p>
           </div>
         )}
 
         {isError && (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-red-500">
-              Error loading movies: {error?.message || "Unknown error"}
+              {t("error")}: {error?.message || "Unknown"}
             </p>
             <Button
               variant="outline"
               onClick={() => window.location.reload()}
               className="mt-4"
             >
-              Retry
+              {t("retry")}
             </Button>
           </div>
         )}
@@ -209,12 +202,12 @@ export default function MoviesPage() {
                         {movie.status === "nowShowing" ? (
                           <Button size="sm" asChild>
                             <Link href={`/booking/${movie.id}`}>
-                              Buy Tickets
+                              {t("buyTickets")}
                             </Link>
                           </Button>
                         ) : (
                           <Button size="sm" variant="outline">
-                            Coming Soon
+                            {t("comingSoon")}
                           </Button>
                         )}
                         <Button
@@ -232,7 +225,7 @@ export default function MoviesPage() {
                   </div>
                   {movie.status === "inComing" && (
                     <Badge className="absolute top-2 right-2 bg-primary/90 hover:bg-primary">
-                      Coming Soon
+                      {t("comingSoon")}
                     </Badge>
                   )}
                 </div>
@@ -275,16 +268,14 @@ export default function MoviesPage() {
 
         {!isLoading && !isError && filteredMovies.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-muted-foreground mb-4">
-              No movies found matching your filters.
-            </p>
+            <p className="text-muted-foreground mb-4">{t("noMovies")}</p>
             <Button
               onClick={() => {
                 setFilter("all");
                 setSelectedGenres([]);
               }}
             >
-              Clear All Filters
+              {t("clearAllFilters")}
             </Button>
           </div>
         )}

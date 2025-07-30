@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   createColumnHelper,
   flexRender,
@@ -52,15 +53,13 @@ import {
   Eye,
   MoreHorizontal,
   Search,
-  Trash2,
   Filter,
   Download,
-  UserX,
+  Trash2,
   UserCheck,
+  UserX,
 } from "lucide-react";
 import { Employee } from "@/lib/api/service/fetchEmployees";
-
-const columnHelper = createColumnHelper<Employee>();
 
 interface EmployeesTableAdvancedProps {
   data: Employee[];
@@ -82,6 +81,7 @@ export function EmployeesTableAdvanced({
   onBulkDelete,
   onBulkStatusChange,
 }: EmployeesTableAdvancedProps) {
+  const { t } = useTranslation();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -115,7 +115,6 @@ export function EmployeesTableAdvanced({
 
   const columns = useMemo<ColumnDef<Employee>[]>(
     () => [
-      // Selection column
       {
         id: "select",
         header: ({ table }) => (
@@ -147,9 +146,8 @@ export function EmployeesTableAdvanced({
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-8 px-2 lg:px-3"
           >
-            Employee ID
+            {t("employeeTable.employeeId")}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
@@ -166,9 +164,8 @@ export function EmployeesTableAdvanced({
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-8 px-2 lg:px-3"
           >
-            Employee Name
+            {t("employeeTable.employeeName")}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
@@ -179,7 +176,7 @@ export function EmployeesTableAdvanced({
                 {row
                   .getValue<string>("employeeName")
                   .split(" ")
-                  .map((n) => n[0])
+                  .map((n: string) => n[0])
                   .join("")}
               </AvatarFallback>
             </Avatar>
@@ -199,9 +196,8 @@ export function EmployeesTableAdvanced({
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-8 px-2 lg:px-3"
           >
-            Identity Card
+            {t("employeeTable.identityCard")}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
@@ -214,16 +210,7 @@ export function EmployeesTableAdvanced({
       },
       {
         accessorKey: "email",
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-8 px-2 lg:px-3"
-          >
-            Email
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        ),
+        header: t("employeeTable.email"),
         cell: ({ row }) => (
           <div className="text-sm">{row.getValue("email")}</div>
         ),
@@ -231,16 +218,7 @@ export function EmployeesTableAdvanced({
       },
       {
         accessorKey: "phoneNumber",
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-8 px-2 lg:px-3"
-          >
-            Phone Number
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        ),
+        header: t("employeeTable.phoneNumber"),
         cell: ({ row }) => (
           <div className="font-mono text-sm">{row.getValue("phoneNumber")}</div>
         ),
@@ -248,7 +226,7 @@ export function EmployeesTableAdvanced({
       },
       {
         accessorKey: "address",
-        header: "Address",
+        header: t("employeeTable.address"),
         cell: ({ row }) => (
           <div
             className="text-sm max-w-[200px] truncate"
@@ -261,51 +239,27 @@ export function EmployeesTableAdvanced({
       },
       {
         accessorKey: "role",
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-8 px-2 lg:px-3"
-          >
-            Role
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        ),
+        header: t("employeeTable.role"),
         cell: ({ row }) => (
           <Badge variant={getRoleColor(row.getValue("role"))}>
             {row.getValue("role")}
           </Badge>
         ),
         size: 100,
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id));
-        },
       },
       {
         accessorKey: "status",
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-8 px-2 lg:px-3"
-          >
-            Status
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        ),
+        header: t("employeeTable.status"),
         cell: ({ row }) => (
           <Badge variant={getStatusColor(row.getValue("status"))}>
             {row.getValue("status")}
           </Badge>
         ),
         size: 100,
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id));
-        },
       },
       {
         id: "actions",
-        header: "Actions",
+        header: t("employeeTable.actions"),
         cell: ({ row }) => {
           const employee = row.original;
           return (
@@ -314,7 +268,6 @@ export function EmployeesTableAdvanced({
                 variant="ghost"
                 size="sm"
                 onClick={() => onView(employee)}
-                className="h-8 w-8 p-0"
               >
                 <Eye className="h-4 w-4" />
               </Button>
@@ -322,32 +275,31 @@ export function EmployeesTableAdvanced({
                 variant="ghost"
                 size="sm"
                 onClick={() => onEdit(employee)}
-                className="h-8 w-8 p-0"
               >
                 <Edit className="h-4 w-4" />
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Button variant="ghost" size="sm">
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => onView(employee)}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Details
+                    <Eye className="mr-2 h-4 w-4" />{" "}
+                    {t("employeeTable.viewDetails")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onEdit(employee)}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit Employee
+                    <Edit className="mr-2 h-4 w-4" />{" "}
+                    {t("employeeTable.editEmployee")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => onDelete(employee)}
                     className="text-destructive"
                   >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete Employee
+                    <Trash2 className="mr-2 h-4 w-4" />{" "}
+                    {t("employeeTable.deleteEmployee")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -357,7 +309,7 @@ export function EmployeesTableAdvanced({
         size: 120,
       },
     ],
-    [onView, onEdit, onDelete]
+    [t, onView, onEdit, onDelete]
   );
 
   const table = useReactTable({
@@ -372,13 +324,7 @@ export function EmployeesTableAdvanced({
     onGlobalFilterChange: setGlobalFilter,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
-    state: {
-      sorting,
-      columnFilters,
-      globalFilter,
-      rowSelection,
-      pagination,
-    },
+    state: { sorting, columnFilters, globalFilter, rowSelection, pagination },
   });
 
   const selectedEmployees = table
@@ -387,17 +333,16 @@ export function EmployeesTableAdvanced({
 
   return (
     <div className="space-y-4">
-      {/* Search and Filters */}
+      {/* Search & Filter */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search employees..."
+              placeholder={t("employeeTable.searchPlaceholder")}
               value={globalFilter ?? ""}
-              onChange={(event) => setGlobalFilter(String(event.target.value))}
+              onChange={(e) => setGlobalFilter(String(e.target.value))}
               className="pl-8 max-w-sm"
-              maxLength={28}
             />
           </div>
           <Select
@@ -414,13 +359,17 @@ export function EmployeesTableAdvanced({
           >
             <SelectTrigger className="w-[130px]">
               <Filter className="mr-2 h-4 w-4" />
-              <SelectValue placeholder="Role" />
+              <SelectValue placeholder={t("employeeTable.roleFilter")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
-              <SelectItem value="Admin">Admin</SelectItem>
-              <SelectItem value="Manager">Manager</SelectItem>
-              <SelectItem value="Employee">Employee</SelectItem>
+              <SelectItem value="all">{t("employeeTable.allRoles")}</SelectItem>
+              <SelectItem value="Admin">{t("employeeTable.admin")}</SelectItem>
+              <SelectItem value="Manager">
+                {t("employeeTable.manager")}
+              </SelectItem>
+              <SelectItem value="Employee">
+                {t("employeeTable.employee")}
+              </SelectItem>
             </SelectContent>
           </Select>
           <Select
@@ -437,28 +386,38 @@ export function EmployeesTableAdvanced({
           >
             <SelectTrigger className="w-[130px]">
               <Filter className="mr-2 h-4 w-4" />
-              <SelectValue placeholder="Status" />
+              <SelectValue placeholder={t("employeeTable.statusFilter")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="Active">Active</SelectItem>
-              <SelectItem value="Inactive">Inactive</SelectItem>
+              <SelectItem value="all">
+                {t("employeeTable.allStatus")}
+              </SelectItem>
+              <SelectItem value="Active">
+                {t("employeeTable.active")}
+              </SelectItem>
+              <SelectItem value="Inactive">
+                {t("employeeTable.inactive")}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="flex items-center space-x-2">
           <span className="text-sm text-muted-foreground">
-            {table.getFilteredRowModel().rows.length} of{" "}
-            {table.getCoreRowModel().rows.length} employee(s)
+            {t("employeeTable.rowCount", {
+              count: table.getFilteredRowModel().rows.length,
+              total: table.getCoreRowModel().rows.length,
+            })}
           </span>
         </div>
       </div>
 
-      {/* Bulk Actions */}
+      {/* Bulk actions */}
       {selectedEmployees.length > 0 && (
         <div className="flex items-center space-x-2 p-4 bg-muted rounded-lg">
           <span className="text-sm font-medium">
-            {selectedEmployees.length} employee(s) selected
+            {t("employeeTable.selectedCount", {
+              count: selectedEmployees.length,
+            })}
           </span>
           <div className="flex items-center space-x-2 ml-auto">
             <Button
@@ -466,8 +425,8 @@ export function EmployeesTableAdvanced({
               size="sm"
               onClick={() => onBulkStatusChange?.(selectedEmployees, "Active")}
             >
-              <UserCheck className="mr-2 h-4 w-4" />
-              Activate
+              <UserCheck className="mr-2 h-4 w-4" />{" "}
+              {t("employeeTable.activate")}
             </Button>
             <Button
               variant="outline"
@@ -476,20 +435,19 @@ export function EmployeesTableAdvanced({
                 onBulkStatusChange?.(selectedEmployees, "Inactive")
               }
             >
-              <UserX className="mr-2 h-4 w-4" />
-              Deactivate
+              <UserX className="mr-2 h-4 w-4" /> {t("employeeTable.deactivate")}
             </Button>
             <Button variant="outline" size="sm">
-              <Download className="mr-2 h-4 w-4" />
-              Export Selected
+              <Download className="mr-2 h-4 w-4" />{" "}
+              {t("employeeTable.exportSelected")}
             </Button>
             <Button
               variant="destructive"
               size="sm"
               onClick={() => onBulkDelete?.(selectedEmployees)}
             >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete Selected
+              <Trash2 className="mr-2 h-4 w-4" />{" "}
+              {t("employeeTable.deleteSelected")}
             </Button>
           </div>
         </div>
@@ -518,7 +476,7 @@ export function EmployeesTableAdvanced({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -544,7 +502,7 @@ export function EmployeesTableAdvanced({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No employees found.
+                  {t("employeeTable.noEmployeesFound")}
                 </TableCell>
               </TableRow>
             )}
@@ -555,12 +513,12 @@ export function EmployeesTableAdvanced({
       {/* Pagination */}
       <div className="flex items-center justify-between px-2">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <p className="text-sm font-medium">
+            {t("employeeTable.rowsPerPage")}
+          </p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value));
-            }}
+            onValueChange={(value) => table.setPageSize(Number(value))}
           >
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
@@ -576,8 +534,10 @@ export function EmployeesTableAdvanced({
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            {t("employeeTable.page", {
+              current: table.getState().pagination.pageIndex + 1,
+              total: table.getPageCount(),
+            })}
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -586,7 +546,9 @@ export function EmployeesTableAdvanced({
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
-              <span className="sr-only">Go to first page</span>
+              <span className="sr-only">
+                {t("employeeTable.goToFirstPage")}
+              </span>
               <ChevronsLeft className="h-4 w-4" />
             </Button>
             <Button
@@ -595,7 +557,9 @@ export function EmployeesTableAdvanced({
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              <span className="sr-only">Go to previous page</span>
+              <span className="sr-only">
+                {t("employeeTable.goToPreviousPage")}
+              </span>
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
@@ -604,7 +568,7 @@ export function EmployeesTableAdvanced({
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              <span className="sr-only">Go to next page</span>
+              <span className="sr-only">{t("employeeTable.goToNextPage")}</span>
               <ChevronRight className="h-4 w-4" />
             </Button>
             <Button
@@ -613,7 +577,7 @@ export function EmployeesTableAdvanced({
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >
-              <span className="sr-only">Go to last page</span>
+              <span className="sr-only">{t("employeeTable.goToLastPage")}</span>
               <ChevronsRight className="h-4 w-4" />
             </Button>
           </div>

@@ -4,10 +4,12 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sun, Moon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function ThemeSelector() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setMounted(true);
@@ -16,8 +18,10 @@ export default function ThemeSelector() {
   if (!mounted) return null; // Fix hydration mismatch
 
   return (
-    <div className="">
-      <h1 className="text-2xl font-bold my-4 text-center">Theme Selector</h1>
+    <div>
+      <h1 className="text-2xl font-bold my-4 text-center">
+        {t("setting.themeSelectorTitle")}
+      </h1>
       <div className="mx-auto w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
         {["light", "dark"].map((mode) => (
           <Card
@@ -44,7 +48,9 @@ export default function ThemeSelector() {
                     )}
                   </div>
                   <span className="font-medium text-gray-900 capitalize dark:text-white">
-                    {mode} mode
+                    {mode === "light"
+                      ? t("setting.lightModeLabel")
+                      : t("setting.darkModeLabel")}
                   </span>
                 </div>
                 {mode === "light" ? (

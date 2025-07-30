@@ -26,7 +26,11 @@ export default function Points({ user }: PointsProps) {
   // Initialize filteredRecords with all records when data is loaded
   useEffect(() => {
     if (data?.records) {
-      setFilteredRecords(data.records);
+      const sorted = [...data.records].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setFilteredRecords(sorted);
     }
   }, [data]);
 
@@ -51,6 +55,12 @@ export default function Points({ user }: PointsProps) {
     if (historyType !== "all") {
       records = records.filter((record) => record.actionType === historyType);
     }
+
+    // ✅ Sort again after filtering
+    records = records.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
     setFilteredRecords(records);
   };

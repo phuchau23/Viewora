@@ -2,12 +2,12 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Seat } from "@/lib/api/service/fetchSeat";
-import { Clock, Monitor } from "lucide-react";
+import { Clock, MapPin, Monitor, X } from "lucide-react";
 import PromoCodeSelector from "./Promotionbooking";
 import { Snack } from "@/lib/api/service/fetchSnack";
 import { Promotion } from "@/lib/api/service/fetchPromotion";
 import { Movies } from "@/lib/api/service/fetchMovies";
-import PaymentMethodSelector from "./PaymentMethodSelector";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   movie: Partial<Movies>;
@@ -36,11 +36,12 @@ export default function TicketBill({
   handleNext,
   handleBack,
 }: Props) {
+  const { t } = useTranslation();
   const [selectedPromotion, setSelectedPromotion] = useState<Promotion | null>(
     null
   );
   const [finalPrice, setFinalPrice] = useState(0);
-  const [promotionError, setPromotionError] = useState("");
+  const [promotionError, setPromotionError] = useState<React.ReactNode>("");
 
   const originalTotal = useMemo(() => {
     const seatTotal = selectedSeats.reduce(
@@ -66,9 +67,11 @@ export default function TicketBill({
     if (originalTotal < selectedPromotion.minOrderValue) {
       setFinalPrice(originalTotal);
       setPromotionError(
-        `Đơn hàng cần tối thiểu ${selectedPromotion.minOrderValue.toLocaleString()}đ để áp dụng mã ${
-          selectedPromotion.code
-        }`
+        <>
+          {t("minOrderRequired")}{" "}
+          <strong>{selectedPromotion.minOrderValue.toLocaleString()}đ</strong>{" "}
+          {t("toApplyPromo", { code: selectedPromotion.code })}
+        </>
       );
       return;
     }
@@ -97,22 +100,19 @@ export default function TicketBill({
   return (
     <div className="h-auto">
       <div className="flex flex-col h-auto p-4 md:p-6 bg-white rounded-lg shadow-lg border border-gray-200">
-        <h1 className="text-sm md:text-base font-extrabold text-center mb-4 text-orange-600">
-          {step === "seat"
-            ? "THÔNG TIN GHẾ"
-            : step === "combo"
-            ? "THÔNG TIN COMBO"
-            : "THANH TOÁN"}
+        <h1 className="text-2xl md:text-2xl font-extrabold text-center mb-4 text-orange-600">
+          {t("orderTitle")}
         </h1>
 
         {/* Thông tin phim */}
         <div className="mb-4 pb-4 border-b border-spacing-1 border-gray-300">
-          <div className="flex text-2xl font-extrabold mb-1 gap-3">
-            <span className="text-foreground">{branchName.toUpperCase()}</span>
+          <div className="flex text-xl font-extrabold mb-1 gap-3 pb-4">
+            <span className="text-foreground">{movie.name?.toUpperCase()}</span>
           </div>
           <div className="flex text-base mb-1 gap-3">
+            <MapPin className="w-6 h-6 text-foreground font-mono" />
             <span className="text-foreground font-mono">
-              {movie.name?.toUpperCase()}
+              {branchName.toUpperCase()}
             </span>
           </div>
           <div className="flex text-base mb-1 gap-3">
@@ -130,12 +130,12 @@ export default function TicketBill({
           <>
             {selectedSeats.length === 0 ? (
               <div className="my-4 p-3 border-2 border-red-500 rounded-md bg-red-50 text-red-700 text-center text-sm font-medium">
-                Bạn chưa chọn ghế nào. Vui lòng chọn ghế.
+                {t("noSeatSelected")}
               </div>
             ) : (
               <>
                 <p className="text-base font-semibold mb-2 text-gray-800">
-                  Ghế đã chọn:
+                  {t("selectedSeats")}
                 </p>
                 {selectedSeats.map((s) => (
                   <div key={s.id} className="flex justify-between text-sm mb-1">
@@ -157,47 +157,83 @@ export default function TicketBill({
 
         {/* Step combo */}
         {step === "combo" && (
-          <div className="mb-4 pt-4 pb-4 border-t border-spacing-1 border-gray-300">
-            <p className="text-base font-semibold mb-2 text-gray-800">
-              Combo đã chọn:
-            </p>
-            {selectedCombos.length > 0 ? (
-              selectedCombos.map((c) => (
-                <div key={c.id} className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-700">
-                    {c.name} x {c.quantity}
-                  </span>
-                  <span className="font-medium text-gray-800">
-                    {(c.price * (c.quantity || 0)).toLocaleString()}đ
-                  </span>
+          <div className="mb-4 space-y-4">
+            <div>
+              <p className="text-base font-semibold mb-2 text-gray-800">
+                {t("selectedCombos")}
+              </p>
+              {selectedCombos.length > 0 ? (
+                <div className="space-y-2">
+                  {selectedCombos.map((c) => (
+                    <div
+                      key={c.id}
+                      className="flex justify-between text-sm border-b border-gray-100 pb-1"
+                    >
+                      <span className="text-gray-700">
+                        {c.name} × {c.quantity}
+                      </span>
+                      <span className="font-medium text-gray-800">
+                        {(c.price * (c.quantity || 0)).toLocaleString()} đ
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))
-            ) : (
-              <p className="text-sm text-gray-500">Chưa chọn combo nào.</p>
-            )}
-            <div className="mt-4 pt-4 border-t border-spacing-1 border-gray-300">
+              ) : (
+                <div className="p-3 text-sm text-gray-500 border border-dashed border-gray-300 rounded-md">
+                  {t("noComboSelected")}
+                </div>
+              )}
+            </div>
+
+            {/* Promo Section */}
+            <div className="pt-4 border-t border-gray-300">
               <label
                 htmlFor="promotionCode"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="text-base font-semibold mb-2 text-gray-800"
               >
-                Mã giảm giá:
+                {t("promoCode")}
               </label>
+
               <PromoCodeSelector
                 selectedCode={promotionCode}
                 totalPrice={originalTotal}
                 onSelect={(promo) => {
+                  const isCleared = !promo.code;
                   setPromotionCode(promo.code ?? "");
-                  setSelectedPromotion(promo as Promotion);
+                  setSelectedPromotion(isCleared ? null : (promo as Promotion));
+                  if (isCleared) {
+                    setFinalPrice(originalTotal);
+                    setPromotionError("");
+                  }
                 }}
               />
+
               {promotionError && (
-                <p className="text-sm text-red-600 mt-2">{promotionError}</p>
+                <div className="flex items-center text-sm text-yellow-500 mt-2">
+                  <p>{promotionError}</p>
+                </div>
               )}
+
               {selectedPromotion && finalPrice !== originalTotal && (
-                <p className="text-sm text-green-600 font-medium mt-2">
-                  Đã áp dụng mã <strong>{selectedPromotion.code}</strong> – Giảm{" "}
-                  {(originalTotal - finalPrice).toLocaleString()}đ
-                </p>
+                <div className="mt-3 flex items-center justify-between bg-red-50 border border-red-300 text-red-800 px-3 py-2 rounded-md">
+                  <p className="text-sm">
+                    {t("promoApplied", {
+                      code: selectedPromotion.code,
+                      amount: (originalTotal - finalPrice).toLocaleString(),
+                    })}
+                  </p>
+                  <button
+                    className="ml-4 text-red-600 text-sm underline"
+                    onClick={() => {
+                      setPromotionCode("");
+                      setSelectedPromotion(null);
+                      setFinalPrice(originalTotal);
+                      setPromotionError("");
+                    }}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -205,23 +241,35 @@ export default function TicketBill({
 
         {/* Step payment */}
         {step === "payment" && (
-          <>
-            <div className="text-sm text-gray-700 mb-4">
-              <p className="mb-2">Bạn đã sẵn sàng thanh toán.</p>
-              <p>Phương thức thanh toán được chọn ở bên trái.</p>
-            </div>
-          </>
+          <div className="text-sm text-gray-700 mb-4">
+            <p className="mb-2">{t("readyForPayment")}</p>
+            <p>{t("paymentMethodInfo")}</p>
+          </div>
         )}
 
         {/* Tổng tiền + nút điều hướng */}
         <div className="mt-4 pt-4 border-t border-spacing-1 border-gray-300">
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-lg md:text-xl font-bold text-gray-800">
-              Tổng cộng:
-            </span>
-            <span className="text-xl md:text-2xl font-bold text-orange-600">
-              {finalPrice?.toLocaleString()}đ
-            </span>
+          <div className="space-y-2 mb-4">
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>{t("total")}</span>
+              <span>{originalTotal.toLocaleString()} đ</span>
+            </div>
+
+            {selectedPromotion && finalPrice !== originalTotal && (
+              <div className="flex justify-between text-sm text-red-700">
+                <span>{t("discountAmount")}</span>
+                <span>- {(originalTotal - finalPrice).toLocaleString()} đ</span>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center pt-2 border-t border-gray-300">
+              <span className="text-lg md:text-xl font-bold text-gray-800">
+                {t("subtotal")}
+              </span>
+              <span className="text-xl md:text-2xl font-bold text-orange-600">
+                {finalPrice.toLocaleString()} đ
+              </span>
+            </div>
           </div>
 
           <button
@@ -234,10 +282,10 @@ export default function TicketBill({
             }`}
           >
             {step === "seat"
-              ? "Tiếp tục chọn combo"
+              ? t("nextToCombo")
               : step === "combo"
-              ? "Xác nhận thanh toán"
-              : "Đặt vé"}
+              ? t("confirmPayment")
+              : t("bookTicket")}
           </button>
 
           {(step === "combo" || step === "payment") && (
@@ -245,7 +293,7 @@ export default function TicketBill({
               onClick={handleBack}
               className="w-full mt-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 rounded-lg transition-colors duration-200 text-base shadow-sm"
             >
-              &larr; Quay lại
+              &larr; {t("back")}
             </button>
           )}
         </div>

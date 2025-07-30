@@ -18,8 +18,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCreateMovie } from "@/hooks/useMovie";
 import { useGetTypes } from "@/hooks/useTypes";
+import { useTranslation } from "react-i18next";
 
 export const CreateModal = () => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [posterFile, setPosterFile] = useState<File | null>(null);
@@ -70,7 +72,6 @@ export const CreateModal = () => {
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData();
@@ -88,23 +89,19 @@ export const CreateModal = () => {
     formData.append("StartShow", get("StartShow"));
     formData.append("Trailer", get("Trailer"));
     formData.append("Age", get("Age"));
-    
 
     if (selectedTypes.length === 0) {
-      alert("Vui lòng chọn ít nhất một thể loại phim.");
+      alert(t("movieadd.selectTypeWarning"));
       return;
     }
 
-    selectedTypes.forEach((type) =>
-      formData.append("MovieTypeNames", type)
-    );
+    selectedTypes.forEach((type) => formData.append("MovieTypeNames", type));
 
     if (posterFile) formData.append("Poster", posterFile);
     bannerFiles.forEach((file) => formData.append("Banner", file));
 
     createMovie(formData, {
       onSuccess: () => setOpen(false),
-      
     });
   };
 
@@ -118,56 +115,56 @@ export const CreateModal = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Thêm phim mới</Button>
+        <Button>{t("movieadd.addButton")}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] rounded-2xl shadow-xl p-6 overflow-y-auto">
         <form onSubmit={handleSubmit} className="space-y-6">
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold text-center">
-              Thêm phim mới
+              {t("movieadd.title")}
             </DialogTitle>
             <DialogDescription className="text-center text-muted-foreground">
-              Nhập thông tin chi tiết để thêm phim vào hệ thống
+              {t("movieadd.description")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              "Name",
-              "Director",
-              "Actor",
-              "Duration",
-              "Rate",
-            ].map((field, i) => (
-              <div key={i} className="space-y-1">
-                <Label htmlFor={field}>{field}</Label>
-                <Input
-                  id={field}
-                  name={field}
-                  type={["Duration", "Rate"].includes(field) ? "number" : "text"}
-                  required
-                />
-              </div>
-            ))}
+            {["Name", "Director", "Actor", "Duration", "Rate"].map(
+              (field, i) => (
+                <div key={i} className="space-y-1">
+                  <Label htmlFor={field}>
+                    {t(`movieadd.${field.toLowerCase()}`)}
+                  </Label>
+                  <Input
+                    id={field}
+                    name={field}
+                    type={
+                      ["Duration", "Rate"].includes(field) ? "number" : "text"
+                    }
+                    required
+                  />
+                </div>
+              )
+            )}
 
             <div className="space-y-1">
-              <Label htmlFor="ReleaseDate">Ngày phát hành</Label>
+              <Label htmlFor="ReleaseDate">{t("movieadd.releaseDate")}</Label>
               <Input type="date" name="ReleaseDate" required />
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="StartShow">Ngày bắt đầu chiếu</Label>
+              <Label htmlFor="StartShow">{t("movieadd.startShow")}</Label>
               <Input type="date" name="StartShow" required />
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="Age">Độ tuổi</Label>
+              <Label htmlFor="Age">{t("movieadd.age")}</Label>
               <select
                 name="Age"
                 required
                 className="w-full p-2 border rounded-md"
               >
-                <option value="">Chọn độ tuổi</option>
+                <option value="">{t("movieadd.selectAge")}</option>
                 {["P", "K", "T13", "T16", "T18"].map((age) => (
                   <option key={age} value={age}>
                     {age}
@@ -177,20 +174,22 @@ export const CreateModal = () => {
             </div>
 
             <div className="md:col-span-2 space-y-1">
-              <Label htmlFor="Description">Mô tả</Label>
+              <Label htmlFor="Description">
+                {t("movieadd.descriptionField")}
+              </Label>
               <Textarea name="Description" rows={4} required />
             </div>
 
             <div className="md:col-span-2 space-y-1">
-              <Label htmlFor="Trailer">URL trailer</Label>
+              <Label htmlFor="Trailer">{t("movieadd.trailer")}</Label>
               <Input name="Trailer" required />
             </div>
 
             <div className="md:col-span-2 space-y-2">
-              <Label>Thể loại (chọn nhiều)</Label>
+              <Label>{t("movieadd.types")}</Label>
               <div className="grid grid-cols-2 gap-2 border rounded-md p-3 max-h-[150px] overflow-y-auto">
                 {isTypesLoading ? (
-                  <p>Đang tải...</p>
+                  <p>{t("movieadd.loadingTypes")}</p>
                 ) : (
                   types?.data?.map((type) => (
                     <div key={type.id} className="flex items-center gap-2">
@@ -206,14 +205,13 @@ export const CreateModal = () => {
               </div>
             </div>
 
-            {/* Banner Upload */}
             <div className="space-y-1">
               <button
                 type="button"
                 onClick={() => document.getElementById("bannerInput")?.click()}
                 className="px-4 py-2 text-sm text-orange-600 bg-orange-50 border border-orange-200 rounded-md hover:bg-orange-100 transition"
               >
-                + Upload Banners
+                {t("movieadd.uploadBanners")}
               </button>
               <input
                 id="bannerInput"
@@ -246,14 +244,13 @@ export const CreateModal = () => {
               )}
             </div>
 
-            {/* Poster Upload */}
             <div className="space-y-1">
               <button
                 type="button"
                 onClick={() => document.getElementById("posterInput")?.click()}
                 className="px-4 py-2 text-sm text-orange-600 bg-orange-50 border border-orange-200 rounded-md hover:bg-orange-100 transition"
               >
-                + Upload Poster
+                {t("movieadd.uploadPoster")}
               </button>
               <input
                 id="posterInput"
@@ -285,10 +282,10 @@ export const CreateModal = () => {
 
           <DialogFooter className="mt-6 flex justify-end gap-2">
             <DialogClose asChild>
-              <Button variant="outline">Huỷ</Button>
+              <Button variant="outline">{t("movieadd.cancel")}</Button>
             </DialogClose>
             <Button type="submit" disabled={isCreating}>
-              {isCreating ? "Đang lưu..." : "Lưu thay đổi"}
+              {isCreating ? t("movieadd.saving") : t("movieadd.save")}
             </Button>
           </DialogFooter>
         </form>

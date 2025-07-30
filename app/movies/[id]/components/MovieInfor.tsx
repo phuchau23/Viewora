@@ -1,15 +1,20 @@
 "use client";
 import React, { useState } from "react";
-import { User, Calendar, Clock, Film, Play, X } from "lucide-react";
+import { User, Calendar, Clock, Film, Play, Star, X } from "lucide-react";
 import Image from "next/image";
 import { Movies } from "@/lib/api/service/fetchMovies";
+import MovieRatingComment from "./MovieRatingComment";
+import { useTranslation } from "react-i18next";
 
 interface MovieTabsProps {
   movie: Movies;
 }
 
 export default function MovieTabs({ movie }: MovieTabsProps) {
-  const [activeTab, setActiveTab] = useState<"info" | "trailer">("info");
+  const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState<"info" | "trailer" | "rating">(
+    "info"
+  );
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
   const getYouTubeEmbedUrl = (url: string) => {
@@ -18,8 +23,9 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
   };
 
   const tabs = [
-    { id: "info", label: "Thông tin phim", icon: Film },
-    { id: "trailer", label: "Trailer & Video", icon: Play },
+    { id: "info", label: t("movietabs.info"), icon: Film },
+    { id: "trailer", label: t("movietabs.trailer"), icon: Play },
+    { id: "rating", label: t("movietabs.rating"), icon: Star },
   ];
 
   return (
@@ -33,7 +39,9 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as "info" | "trailer")}
+                  onClick={() =>
+                    setActiveTab(tab.id as "info" | "trailer" | "rating")
+                  }
                   className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all duration-200 ${
                     activeTab === tab.id
                       ? "bg-orange-400 text-background hover:text-background hover:bg-orange-400"
@@ -47,16 +55,16 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
             })}
           </div>
         </div>
+
         {/* Tab Content */}
         <div className="min-h-[auto]">
           {activeTab === "info" && (
-            <div className=" animate-fade-in">
-              {/* Main Info */}
+            <div className="animate-fade-in">
               <div className="lg:col-span-2 space-y-8">
                 <div className="flex gap-6 w-full">
                   <div className="w-2/3">
                     <h2 className="text-3xl font-bold mb-6 text-orange-400">
-                      Chi tiết phim
+                      {t("details.title")}
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-4">
@@ -64,29 +72,29 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                           <Film className="w-5 h-5 dark:text-white mt-1" />
                           <div>
                             <p className="font-semibold text-gray-800 dark:text-white">
-                              Đạo diễn
+                              {t("details.director")}
                             </p>
                             <p className="text-lg">{movie.director}</p>
                           </div>
                         </div>
-
                         <div className="flex items-start gap-3">
                           <Clock className="w-5 h-5 dark:text-white mt-1" />
                           <div>
                             <p className="font-semibold text-gray-800 dark:text-white">
-                              Thời lượng
+                              {t("details.duration")}
                             </p>
-                            <p className="text-lg">{movie.duration} phút</p>
+                            <p className="text-lg">
+                              {movie.duration} {t("details.minute")}
+                            </p>
                           </div>
                         </div>
                       </div>
-
                       <div className="space-y-4">
                         <div className="flex items-start gap-3">
                           <Calendar className="w-5 h-5 dark:text-white mt-1" />
                           <div>
                             <p className="font-semibold text-gray-800 dark:text-white">
-                              Khởi chiếu
+                              {t("details.release")}
                             </p>
                             <p className="text-lg">
                               {new Date(movie.startShow).toLocaleDateString(
@@ -95,12 +103,11 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                             </p>
                           </div>
                         </div>
-
                         <div className="flex items-start gap-3">
                           <User className="w-5 h-5 dark:text-white mt-1" />
                           <div>
                             <p className="font-semibold text-gray-800 dark:text-white">
-                              Độ tuổi
+                              {t("details.age")}
                             </p>
                             <p className="text-lg">{movie.age}</p>
                           </div>
@@ -111,7 +118,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                   <div>
                     <div className="mb-7 mt-2">
                       <h3 className="text-2xl font-bold mb-4 text-orange-400">
-                        Diễn viên
+                        {t("details.actor")}
                       </h3>
                       <p className="text-lg leading-relaxed text-gray-800 dark:text-white">
                         {movie.actor}
@@ -119,7 +126,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                     </div>
                     <div className="mb-6">
                       <h3 className="text-xl font-bold mb-4 text-orange-400">
-                        Thể loại
+                        {t("details.genre")}
                       </h3>
                       <div className="flex flex-wrap gap-2">
                         {movie.movieTypes.map((genre, index) => (
@@ -134,10 +141,9 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                     </div>
                   </div>
                 </div>
-
                 <div className="border-t border-gray-700 pt-6">
                   <h3 className="text-2xl font-bold mb-4 text-orange-400">
-                    Nội dung phim
+                    {t("details.content")}
                   </h3>
                   <p className="text-lg leading-relaxed text-gray-800 dark:text-white">
                     {movie.description}
@@ -150,16 +156,15 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
           {activeTab === "trailer" && (
             <div className="animate-fade-in">
               <div className="max-w-3xl mx-auto px-3 sm:px-4 lg:px-6 border border-gray-700 p-6 rounded-lg">
-                {/* Additional Video Info */}
                 <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   <div>
                     <h4 className="text-lg font-semibold text-orange-400 mb-3 tracking-wide">
-                      Thông tin video
+                      {t("trailer.info")}
                     </h4>
                     <div className="space-y-2 text-xs text-gray-200">
                       <p className="flex gap-2">
                         <span className="text-gray-400 font-medium">
-                          Chất lượng:
+                          {t("trailer.quality")}
                         </span>
                         <span className="font-semibold text-black dark:text-white">
                           HD 1080p
@@ -167,7 +172,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                       </p>
                       <p className="flex gap-2">
                         <span className="text-gray-400 font-medium">
-                          Ngôn ngữ:
+                          {t("trailer.language")}
                         </span>
                         <span className="font-semibold text-black dark:text-white">
                           Tiếng Việt, Tiếng Anh
@@ -175,7 +180,7 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                       </p>
                       <p className="flex gap-2">
                         <span className="text-gray-400 font-medium">
-                          Phụ đề:
+                          {t("trailer.subtitle")}
                         </span>
                         <span className="font-semibold text-black dark:text-white">
                           Tiếng Việt
@@ -193,28 +198,33 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
                       alt={`${movie.name} trailer`}
                       className="w-full h-full object-cover opacity-75 group-hover:opacity-60 transition-opacity duration-300"
                     />
-
                     <div className="absolute inset-0 flex items-center justify-center">
                       <button
                         onClick={() => setIsTrailerOpen(true)}
                         className="w-16 h-16 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
-                        aria-label="Play Trailer"
+                        aria-label={t("trailer.play")}
                       >
                         <Play className="w-6 h-6 text-white ml-1" />
                       </button>
                     </div>
-
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                       <h3 className="text-white text-xl font-bold tracking-wide">
-                        {movie.name} - Official Trailer
+                        {movie.name} - {t("trailer.official")}
                       </h3>
                       <p className="text-gray-200 text-xs mt-1 font-medium">
-                        Thời lượng: {movie.duration} phút
+                        {t("details.duration")}: {movie.duration}{" "}
+                        {t("details.minute")}
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {activeTab === "rating" && (
+            <div className="animate-fade-in">
+              <MovieRatingComment movieId={movie.id} />
             </div>
           )}
         </div>
@@ -223,11 +233,11 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
         {isTrailerOpen && (
           <div
             className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
-            onClick={() => setIsTrailerOpen(false)} // Thêm sự kiện onClick cho div bao ngoài
+            onClick={() => setIsTrailerOpen(false)}
           >
             <div
               className="relative w-full max-w-6xl aspect-video"
-              onClick={(e) => e.stopPropagation()} // Ngăn sự kiện click lan truyền lên div cha
+              onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={() => setIsTrailerOpen(false)}
@@ -235,7 +245,6 @@ export default function MovieTabs({ movie }: MovieTabsProps) {
               >
                 <X className="w-8 h-8" />
               </button>
-
               <iframe
                 src={getYouTubeEmbedUrl(movie.trailerUrl)}
                 title={`${movie.name} Trailer`}
