@@ -41,7 +41,7 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     const conn = new signalR.HubConnectionBuilder()
       .withUrl(
-        `https://localhost:7014/chatHub?userId=${customerId}&role=Customer`
+        `${process.env.NEXT_PUBLIC_SIGNALR_CHAT}/chatHub?userId=${customerId}&role=Customer`
       )
       .withAutomaticReconnect()
       .build();

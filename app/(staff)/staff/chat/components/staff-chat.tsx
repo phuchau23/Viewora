@@ -66,7 +66,9 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
 
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
-      .withUrl(`https://localhost:7014/chatHub?role=Employee&userId=${staffId}`)
+      .withUrl(
+        `${process.env.NEXT_PUBLIC_SIGNALR_CHAT}/chatHub?role=Employee&userId=${staffId}`
+      )
       .withAutomaticReconnect()
       .configureLogging(LogLevel.Information)
       .build();
