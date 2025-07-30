@@ -14,13 +14,15 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Send, Users, MessageCircle, Clock } from "lucide-react";
+import { Send, Users, MessageCircle, Clock, LogOut } from "lucide-react";
 import { cn } from "@/utils/utils";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 interface Customer {
   userId: string;
@@ -41,6 +43,7 @@ interface StaffChatProps {
 }
 
 export default function StaffChat({ staffId, staffName }: StaffChatProps) {
+  const router = useRouter();
   const [connection, setConnection] = useState<HubConnection | null>(null);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
@@ -51,6 +54,7 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -176,6 +180,12 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
     return lastWord[0]?.toUpperCase() || "";
   }
 
+  const handleLogout = () => {
+    Cookies.remove("auth-token");
+    setToken(null);
+    router.push("/login");
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar - Customer List */}
@@ -202,6 +212,7 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
                 </span>
               </div>
             </div>
+            <LogOut className="w-4 h-4 cursor-pointer" onClick={handleLogout} />
           </div>
         </div>
 
