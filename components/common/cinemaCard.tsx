@@ -18,7 +18,6 @@ interface CinemaCardProps {
 export default function CinemaCard({ movies }: CinemaCardProps) {
   const swiperRef = useRef<SwiperClass>();
 
-
   return (
     <div className="relative w-[400px] h-[500px] mx-auto mt-8 px-4">
       {/* Navigation buttons (move these inside Swiper) */}

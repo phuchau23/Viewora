@@ -1,4 +1,5 @@
 import HomeClient from "@/components/common/homeClient";
+import ChatWidget from "@/app/chatbox/LiveChat";
 
 export const metadata = {
   title: "Đặt vé phim online | Viewora",
@@ -18,7 +19,7 @@ export const metadata = {
     ],
   },
   twitter: {
-    card: "summary_large_image",    
+    card: "summary_large_image",
     title: "Đặt vé phim online | Viewora",
     description: "Xem lịch chiếu, chọn ghế, đặt vé tiện lợi.",
     images: ["https://viewora.io.vn/logo1.png"],
@@ -34,5 +35,10 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <HomeClient />;
+  return (
+    <>
+      <HomeClient />
+      <ChatWidget />
+    </>
+  );
 }
