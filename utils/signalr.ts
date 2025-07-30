@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as signalR from "@microsoft/signalr";
 import Cookies from "js-cookie";
-import { env } from "process";
 
 export interface HeldSeat {
   seatId: string;
@@ -35,7 +34,7 @@ export function useSeatSignalR(
     if (!showTimeId) return;
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${env.NEXT_PUBLIC_SIGNALR_HOLDSEAT}/hub/cinema`, {
+      .withUrl(process.env.NEXT_PUBLIC_SIGNALR_HOLDSEAT + "/hub/cinema", {
         accessTokenFactory: getTokenFromCookie,
       })
       .withAutomaticReconnect()
