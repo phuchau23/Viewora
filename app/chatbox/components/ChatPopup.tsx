@@ -35,7 +35,7 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
 
   const customerId = userId || generateCustomerId();
 
-  const customerName = useUserProfile().data?.data?.fullName;
+  // const customerName = useUserProfile().data?.data?.fullName;
 
   // Kết nối SignalR
   useEffect(() => {
