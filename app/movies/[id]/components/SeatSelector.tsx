@@ -2,17 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { Seat, seatType } from "@/lib/api/service/fetchSeat";
-import {
-  useSeatSignalR,
-  HeldSeat,
-  getUserIdFromToken,
-} from "@/utils/signalr";
+import { useSeatSignalR, HeldSeat, getUserIdFromToken } from "@/utils/signalr";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   seats: Seat[];
   showTimeId: string;
   selectedSeats: string[];
-  setSelectedSeats: React.Dispatch<React.SetStateAction<string[]>>; // ✅ đúng
+  setSelectedSeats: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export default function SeatSelector({
@@ -21,6 +18,7 @@ export default function SeatSelector({
   selectedSeats,
   setSelectedSeats,
 }: Props) {
+  const { t } = useTranslation();
   const userId = useMemo(() => getUserIdFromToken(), []);
   const [myHeldSeats, setMyHeldSeats] = useState<string[]>([]);
   const [othersHeldSeats, setOthersHeldSeats] = useState<string[]>([]);
@@ -29,10 +27,9 @@ export default function SeatSelector({
     showTimeId,
     (seatInfos) => {
       const myId = getUserIdFromToken();
-
       const validSeats = (seatInfos || []).filter(
         (s): s is HeldSeat =>
-          s !== null &&
+          s &&
           typeof s === "object" &&
           typeof s.seatId === "string" &&
           typeof s.heldBy === "string"
@@ -41,7 +38,6 @@ export default function SeatSelector({
       const mySeats = validSeats
         .filter((s) => s.heldBy === myId)
         .map((s) => s.seatId);
-
       setMyHeldSeats((prev) => Array.from(new Set([...prev, ...mySeats])));
       setOthersHeldSeats((prev) =>
         Array.from(
@@ -51,12 +47,7 @@ export default function SeatSelector({
           ])
         )
       );
-
-      // 🔄 Đồng bộ lại UI nếu có ghế mình giữ
-      setSelectedSeats((prev) => {
-        const combined = Array.from(new Set([...prev, ...mySeats]));
-        return combined;
-      });
+      setSelectedSeats((prev) => Array.from(new Set([...prev, ...mySeats])));
     },
     (releasedSeatIds) => {
       setMyHeldSeats((prev) =>
@@ -72,22 +63,16 @@ export default function SeatSelector({
   );
 
   const toggleSeat = (seatId: string) => {
-    const isHeldByOthers = othersHeldSeats.includes(seatId);
-    if (isHeldByOthers) return; // 🚫 Ghế đã bị người khác giữ
-
+    if (othersHeldSeats.includes(seatId)) return;
     setSelectedSeats((prev) => {
       const isSelected = prev.includes(seatId);
-      let updated: string[];
-
       if (isSelected) {
-        updated = prev.filter((id) => id !== seatId);
         releaseSeat(seatId);
+        return prev.filter((id) => id !== seatId);
       } else {
-        updated = [...prev, seatId];
         holdSeats([seatId]);
+        return [...prev, seatId];
       }
-
-      return updated;
     });
   };
 
@@ -100,17 +85,17 @@ export default function SeatSelector({
   }, [seats]);
 
   const getSeatColor = (seatId: string, type: string) => {
-    if (selectedSeats.includes(seatId)) return "bg-yellow-500"; // Đã chọn
+    if (selectedSeats.includes(seatId)) return "bg-yellow-500";
     if (othersHeldSeats.includes(seatId))
       return "bg-gray-400 cursor-not-allowed";
     if (type === seatType.vip) return "bg-red-400";
     if (type === seatType.couple) return "bg-pink-300";
-    return "bg-blue-400"; // Ghế thường
+    return "bg-blue-400";
   };
 
   return (
     <div className="text-center">
-      <div className="text-center mb-4 font-bold">MÀN HÌNH</div>
+      <div className="text-center mb-4 font-bold">{t("screenLabel")}</div>
       <div className="flex flex-col gap-4 items-center">
         {Object.entries(groupedByRow)
           .sort((a, b) => a[0].localeCompare(b[0]))
@@ -124,7 +109,6 @@ export default function SeatSelector({
                   .sort((a, b) => a.number - b.number)
                   .map((seat) => {
                     const isCouple = seat.seatType.name === seatType.couple;
-                    const isHeldByOthers = othersHeldSeats.includes(seat.id);
                     const seatColor = getSeatColor(seat.id, seat.seatType.name);
 
                     return (
@@ -132,7 +116,7 @@ export default function SeatSelector({
                         key={seat.id}
                         onClick={() => toggleSeat(seat.id)}
                         title={seat.seatType.name}
-                        disabled={isHeldByOthers}
+                        disabled={othersHeldSeats.includes(seat.id)}
                         className={`rounded-md border border-white font-semibold overflow-hidden
                           ${seatColor}
                           hover:brightness-110 hover:scale-105 transition-all duration-150
@@ -150,11 +134,11 @@ export default function SeatSelector({
       </div>
 
       <div className="mt-6 flex justify-center gap-4 text-sm flex-wrap">
-        <Legend color="bg-blue-400" label="Ghế thường" />
-        <Legend color="bg-red-400" label="Ghế VIP" />
-        <Legend color="bg-pink-300" label="Ghế đôi" />
-        <Legend color="bg-yellow-500" label="Bạn đã chọn hoặc đang giữ" />
-        <Legend color="bg-gray-400" label="Ghế đang được giữ bởi người khác" />
+        <Legend color="bg-blue-400" label={t("normalSeat")} />
+        <Legend color="bg-red-400" label={t("vipSeat")} />
+        <Legend color="bg-pink-300" label={t("coupleSeat")} />
+        <Legend color="bg-yellow-500" label={t("yourSelected")} />
+        <Legend color="bg-gray-400" label={t("othersHeld")} />
       </div>
     </div>
   );

@@ -10,8 +10,10 @@ import SnackService, {
   SnackListResponse,
 } from "@/lib/api/service/fetchSnack";
 import { formatVND } from "@/utils/price/formatPrice";
+import { useTranslation } from "react-i18next";
 
 export default function SnacksPage() {
+  const { t } = useTranslation();
   const [snacks, setSnacks] = useState<Snack[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,17 +25,17 @@ export default function SnacksPage() {
         const response: SnackListResponse = await SnackService.getSnacks();
         setSnacks(response.data.items);
       } catch (err) {
-        setError("Failed to load snacks. Please try again later.");
+        setError(t("loadError"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchSnacks();
-  }, []);
+  }, [t]);
 
   if (loading) {
-    return <div className="container px-4 py-8 md:py-12">Loading...</div>;
+    return <div className="container px-4 py-8 md:py-12">{t("loading")}</div>;
   }
 
   if (error) {
@@ -43,7 +45,7 @@ export default function SnacksPage() {
   return (
     <div className="container px-20 py-8 md:py-12">
       <div className="flex flex-col gap-6">
-        <h1 className="text-3xl font-bold text-orange">Snacks & Combos</h1>
+        <h1 className="text-3xl font-bold text-orange">{t("snacktitle")}</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
           {snacks.map((snack) => (
@@ -65,7 +67,7 @@ export default function SnacksPage() {
                 {snack.image ? (
                   <Image
                     src={snack.image}
-                    alt={snack.name ?? "Snack"}
+                    alt={snack.name ?? t("snack")}
                     fill
                     className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                     priority={false}
@@ -74,7 +76,7 @@ export default function SnacksPage() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 rounded-xl">
-                    Không có ảnh
+                    {t("noImage")}
                   </div>
                 )}
 
@@ -84,14 +86,15 @@ export default function SnacksPage() {
                       {snack.name}
                     </h3>
                     <p className="text-white mb-2">
-                      Price: {formatVND(snack.price)}
+                      {t("price")}: {formatVND(snack.price)}
                     </p>
                     <p className="text-white mb-4">
-                      Status: {snack.isAvailable ? "Available" : "Unavailable"}
+                      {t("status")}:{" "}
+                      {snack.isAvailable ? t("available") : t("unavailable")}
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-white">
-                        Click for details
+                        {t("clickForDetails")}
                       </span>
                       <Button
                         asChild
@@ -99,7 +102,7 @@ export default function SnacksPage() {
                         className="bg-orange-500 text-white hover:bg-orange-300"
                       >
                         <Link href={`/user/snacks/${snack.id}`}>
-                          Learn More
+                          {t("learnMore")}
                         </Link>
                       </Button>
                     </div>
@@ -109,21 +112,24 @@ export default function SnacksPage() {
               <CardContent className="p-6 block md:hidden">
                 <h3 className="text-xl font-semibold mb-2">{snack.name}</h3>
                 <p className="text-muted-foreground mb-2">
-                  Price: {formatVND(snack.price)}
+                  {t("price")}: {formatVND(snack.price)}
                 </p>
                 <p className="text-muted-foreground mb-4">
-                  Status: {snack.isAvailable ? "Available" : "Unavailable"}
+                  {t("status")}:{" "}
+                  {snack.isAvailable ? t("available") : t("unavailable")}
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
-                    Click for details
+                    {t("clickForDetails")}
                   </span>
                   <Button
                     asChild
                     size="sm"
                     className="bg-orange-500 text-white hover:bg-orange-300"
                   >
-                    <Link href={`/user/snacks/${snack.id}`}>Learn More</Link>
+                    <Link href={`/user/snacks/${snack.id}`}>
+                      {t("learnMore")}
+                    </Link>
                   </Button>
                 </div>
               </CardContent>

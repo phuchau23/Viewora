@@ -9,22 +9,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useBookingById } from "@/hooks/useBooking";
-import {
-  Calendar,
-  Clock,
-  Mail,
-  Phone,
-  Popcorn,
-  Ticket,
-  Video,
-  MapPin,
-  Film,
-} from "lucide-react";
+import { Clock, Video, MapPin, Film } from "lucide-react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface BookingDetailModalProps {
   open: boolean;
@@ -37,7 +27,8 @@ export function BookingDetailModal({
   onClose,
   bookingId,
 }: BookingDetailModalProps) {
-  const { booking, isLoading, isError, error } = useBookingById(bookingId);
+  const { t } = useTranslation();
+  const { booking } = useBookingById(bookingId);
 
   if (!booking) return null;
 
@@ -45,9 +36,9 @@ export function BookingDetailModal({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Booking Details</DialogTitle>
+          <DialogTitle>{t("bookingdetail.title")}</DialogTitle>
           <DialogDescription>
-            Complete information about the booking
+            {t("bookingdetail.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -80,13 +71,15 @@ export function BookingDetailModal({
           {/* Showtime Info */}
           <div className="space-y-4">
             <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
-              Movie Information
+              {t("bookingdetail.movieInfo")}
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center space-x-3">
                 <Film className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">Movie</p>
+                  <p className="text-sm font-medium">
+                    {t("bookingdetail.movie")}
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     {booking.showTime.movie.name}
                   </p>
@@ -95,7 +88,9 @@ export function BookingDetailModal({
               <div className="flex items-center space-x-3">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">Time</p>
+                  <p className="text-sm font-medium">
+                    {t("bookingdetail.time")}
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     {booking.showTime.startTime}
                   </p>
@@ -104,7 +99,9 @@ export function BookingDetailModal({
               <div className="flex items-center space-x-3">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">Branch</p>
+                  <p className="text-sm font-medium">
+                    {t("bookingdetail.branch")}
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     {booking.showTime.branch.name}
                   </p>
@@ -113,7 +110,9 @@ export function BookingDetailModal({
               <div className="flex items-center space-x-3">
                 <Video className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">Room</p>
+                  <p className="text-sm font-medium">
+                    {t("bookingdetail.room")}
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     {booking.showTime.branch.room.roomNumber} (
                     {booking.showTime.branch.room.roomType.name})
@@ -131,12 +130,16 @@ export function BookingDetailModal({
               {/* Seats */}
               <div className="space-y-2">
                 <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
-                  Seats
+                  {t("bookingdetail.seats")}
                 </h4>
                 <ul className="list-disc ml-6 text-muted-foreground text-sm">
                   {booking.seats.map((seat: any) => (
                     <li key={seat.id}>
-                      Row {seat.row} - Seat {seat.number} ({seat.seatType.name})
+                      {t("bookingdetail.seatRow", {
+                        row: seat.row,
+                        number: seat.number,
+                        type: seat.seatType.name,
+                      })}
                     </li>
                   ))}
                 </ul>
@@ -146,13 +149,16 @@ export function BookingDetailModal({
               {booking.snackSelections.length > 0 && (
                 <div className="space-y-2">
                   <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
-                    Snacks
+                    {t("bookingdetail.snacks")}
                   </h4>
                   <ul className="list-disc ml-6 text-muted-foreground text-sm">
                     {booking.snackSelections.map((snack: any) => (
                       <li key={snack.id}>
-                        {snack.snack.name} x{snack.quantity} -{" "}
-                        {snack.unitPrice.toLocaleString()}₫
+                        {t("bookingdetail.snackItem", {
+                          name: snack.snack.name,
+                          qty: snack.quantity,
+                          price: snack.unitPrice.toLocaleString(),
+                        })}
                       </li>
                     ))}
                   </ul>
@@ -165,7 +171,7 @@ export function BookingDetailModal({
               <div className="flex-shrink-0 flex items-center justify-center">
                 <img
                   src={`data:image/png;base64,${booking.qrCodeUrl}`}
-                  alt="QR Code"
+                  alt={t("bookingdetail.qrAlt")}
                   className="w-40 h-40 rounded border shadow"
                 />
               </div>
@@ -175,13 +181,15 @@ export function BookingDetailModal({
           {/* Total Price */}
           <Separator />
           <div className="text-right font-semibold text-green-600 text-lg">
-            Total: {Number(booking.totalPrice).toLocaleString()} VNĐ
+            {t("bookingdetail.total", {
+              price: Number(booking.totalPrice).toLocaleString(),
+            })}
           </div>
         </div>
 
         <DialogFooter className="pt-4">
           <Button variant="outline" onClick={onClose}>
-            Close
+            {t("bookingdetail.close")}
           </Button>
         </DialogFooter>
       </DialogContent>

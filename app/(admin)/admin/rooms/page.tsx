@@ -9,7 +9,6 @@ import {
   ChevronRight,
   X,
   Home,
-  Clock,
   CheckCircle,
 } from "lucide-react";
 import { Dialog } from "@headlessui/react";
@@ -17,8 +16,10 @@ import { useBranch } from "@/hooks/useBranch";
 import { Branch } from "@/lib/api/service/fetchBranch";
 import { useRoomByBranchId } from "@/hooks/useRoom";
 import RoomSeatingChart from "@/app/movies/[id]/components/seatChart";
+import { useTranslation } from "react-i18next";
 
 function App() {
+  const { t } = useTranslation();
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [showRooms, setShowRooms] = useState(false);
@@ -64,7 +65,7 @@ function App() {
           <div className="flex items-center">
             <Building2 className="h-8 w-8 text-blue-600 dark:text-white" />
             <h1 className="ml-3 text-2xl font-semibold text-gray-900 dark:text-white">
-              Quản lý Chi nhánh
+              {t("room.manageBranch")}
             </h1>
           </div>
           <div className="flex items-center gap-4">
@@ -72,7 +73,7 @@ function App() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <input
                 type="text"
-                placeholder="Tìm kiếm chi nhánh..."
+                placeholder={t("room.searchBranch")}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -80,7 +81,7 @@ function App() {
             </div>
             <button className="inline-flex items-center px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors">
               <Filter className="h-4 w-4 mr-2" />
-              Bộ lọc
+              {t("room.filter")}
             </button>
           </div>
         </div>
@@ -92,19 +93,19 @@ function App() {
             <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
               <StatCard
                 icon={<Building2 className="text-blue-600" />}
-                label="Tổng chi nhánh"
+                label={t("room.totalBranch")}
                 value={branches?.length || 0}
                 bg="bg-blue-100"
               />
               <StatCard
                 icon={<Home className="text-purple-600" />}
-                label="Tổng phòng"
+                label={t("room.totalRoom")}
                 value={branches?.reduce((sum, b) => sum + b.totalRoom, 0) || 0}
                 bg="bg-purple-100"
               />
               <StatCard
                 icon={<CheckCircle className="text-orange-600" />}
-                label="Đang hoạt động"
+                label={t("room.active")}
                 value={branches?.length || 0}
                 bg="bg-orange-100"
               />
@@ -139,7 +140,7 @@ function App() {
                         </div>
                       )}
                       <span className="absolute top-4 right-4 bg-white bg-opacity-80 dark:bg-gray-900 px-3 py-1 rounded-full text-sm font-medium shadow text-gray-800 dark:text-white">
-                        {branch.totalRoom} phòng
+                        {branch.totalRoom} {t("room.room")}
                       </span>
                     </div>
                     <div className="p-5">
@@ -167,7 +168,7 @@ function App() {
                 className="flex items-center px-4 py-2 text-gray-700 hover:text-blue-600"
               >
                 <ChevronRight className="h-4 w-4 mr-2 rotate-180" />
-                Quay lại danh sách chi nhánh
+                {t("room.backToBranch")}
               </button>
               <button
                 onClick={closeRoomView}
@@ -185,7 +186,7 @@ function App() {
             </div>
 
             {loadingRooms ? (
-              <p>Đang tải phòng...</p>
+              <p>{t("room.loadingRoom")}</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {rooms?.map((room) => (
@@ -195,13 +196,14 @@ function App() {
                     onClick={() => openRoomChartModal(room)}
                   >
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      Phòng {room.roomNumber}
+                      {t("room.room")} {room.roomNumber}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      Loại: {room.roomType?.name || "Không rõ"}
+                      {t("room.type")}:{" "}
+                      {room.roomType?.name || t("room.unknown")}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Sức chứa: {room.capacity}
+                      {t("room.capacity")}: {room.capacity}
                     </p>
                     <p className="text-sm text-green-600">{room.status}</p>
                   </div>
@@ -223,7 +225,8 @@ function App() {
           <Dialog.Panel className="w-full max-w-7xl max-h-[90vh] overflow-y-auto bg-white dark:bg-background rounded-lg p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <Dialog.Title className="text-lg font-bold">
-                Sơ đồ ghế - Phòng {selectedRoom?.roomNumber}
+                {t("room.seatChart")} - {t("room.room")}{" "}
+                {selectedRoom?.roomNumber}
               </Dialog.Title>
               <button
                 onClick={closeRoomChartModal}
@@ -234,7 +237,9 @@ function App() {
             </div>
             {selectedRoom && selectedBranch && (
               <RoomSeatingChart
-                movie={{ name: selectedRoom.roomType?.name || "Không rõ" }}
+                movie={{
+                  name: selectedRoom.roomType?.name || t("room.unknown"),
+                }}
                 showtime={selectedRoom.roomNumber.toString()}
                 roomNumber={selectedRoom.roomNumber}
                 branchName={selectedBranch.name}

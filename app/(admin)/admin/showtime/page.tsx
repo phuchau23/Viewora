@@ -14,8 +14,8 @@ import { Button } from "@/components/ui/button";
 import CreateShowtimeForm from "./components/CreateShowtimeForm";
 import { ShowtimeDetailModal } from "./components/ShowtimeDetail";
 import BranchFilter from "./components/BranchFilter";
+import { useTranslation } from "react-i18next";
 
-// Responsive time slot generator
 const generateTimeSlots = () => {
   const slots = [];
   for (let hour = 8; hour <= 26; hour++) {
@@ -28,7 +28,6 @@ const generateTimeSlots = () => {
 
 const timeSlots = generateTimeSlots();
 
-// Interface for showtime with layout information
 interface ShowtimeWithLayout {
   id: string;
   startTime: string;
@@ -68,13 +67,11 @@ const calculateShowtimeLayout = (showtimes: any[]): ShowtimeWithLayout[] => {
 
   const flushGroup = () => {
     if (group.length === 0) return;
-
     const columns: ShowtimeWithLayout[][] = [];
 
     for (const show of group) {
       const showStart = new Date(show.startTime).getTime();
       const showEnd = new Date(show.endTime).getTime();
-
       let placed = false;
       for (let i = 0; i < columns.length; i++) {
         const col = columns[i];
@@ -105,7 +102,6 @@ const calculateShowtimeLayout = (showtimes: any[]): ShowtimeWithLayout[] => {
         });
       });
     });
-
     group = [];
   };
 
@@ -119,12 +115,12 @@ const calculateShowtimeLayout = (showtimes: any[]): ShowtimeWithLayout[] => {
     const end = new Date(show.endTime).getTime();
     latestEndTime = Math.max(latestEndTime, end);
   }
-
-  flushGroup(); // flush last group
+  flushGroup();
   return positioned;
 };
 
 const AdminShowtimePage: React.FC = () => {
+  const { t } = useTranslation();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => {
     const today = new Date();
@@ -141,9 +137,6 @@ const AdminShowtimePage: React.FC = () => {
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const { showTime } = useShowTime(startDateStr, endDateStr);
-  console.log(showTime);
-  console.log(startDateStr);
-  console.log(endDateStr);
 
   const getRoomTypeColor = (roomType?: { name?: string }) => {
     switch (roomType?.name) {
@@ -158,7 +151,6 @@ const AdminShowtimePage: React.FC = () => {
     }
   };
 
-  // Generate week dates starting from currentWeekStart (Monday to Sunday)
   const getWeekDates = () => {
     const dates = [];
     for (let i = 0; i < 7; i++) {
@@ -168,7 +160,6 @@ const AdminShowtimePage: React.FC = () => {
     }
     return dates;
   };
-
   const weekDates = getWeekDates();
 
   const navigateWeek = (direction: "prev" | "next") => {
@@ -213,11 +204,9 @@ const AdminShowtimePage: React.FC = () => {
   };
 
   const gridTemplateColumns = `120px repeat(${weekDates.length}, minmax(150px, 1fr))`;
-
   const calculatePosition = (startTime: string, endTime: string) => {
     const start = new Date(startTime);
     const end = new Date(endTime);
-
     const startOffset = start.getHours() * 60 + start.getMinutes();
     let endOffset = end.getHours() * 60 + end.getMinutes();
 
@@ -229,11 +218,8 @@ const AdminShowtimePage: React.FC = () => {
     // Trừ 8 tiếng (480 phút) vì 08:00 là mốc top = 0
     const top = ((startOffset - 480) / 60) * 48;
     const height = Math.max(((endOffset - startOffset) / 60) * 48, 30);
-
     return { top, height };
   };
-
-  // Calculate layout position for overlapping showtimes
   const calculateLayoutPosition = (showtime: ShowtimeWithLayout) => {
     const total = showtime.totalColumns;
     const index = showtime.layoutColumn;
@@ -267,15 +253,14 @@ const AdminShowtimePage: React.FC = () => {
   return (
     <div className="overflow-x-auto">
       <div className="min-w-max px-2 sm:px-6">
-        {/* Header */}
         <div className="mb-4 sm:mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">
-                Movie Showtime Management
+                {t("adminshowtime.title")}
               </h1>
               <p className="text-gray-600 text-sm sm:text-base">
-                Manage cinema showtimes and schedules
+                {t("adminshowtime.description")}
               </p>
             </div>
             <Button
@@ -283,24 +268,28 @@ const AdminShowtimePage: React.FC = () => {
               className="bg-orange-600 hover:bg-orange-700 text-foreground px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium flex items-center gap-2 transition-colors"
             >
               <Plus className="text-white" size={20} />
-              <span className="hidden sm:inline text-white">Add Showtime</span>
-              <span className="sm:hidden text-white">Add</span>
+              <span className="hidden sm:inline text-white">
+                {t("adminshowtime.addShowtime")}
+              </span>
+              <span className="sm:hidden text-white">
+                {t("adminshowtime.add")}
+              </span>
             </Button>
           </div>
         </div>
-        {/* Calendar Header */}
+
         <div className="bg-background rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 overflow-hidden">
           <div className="bg-background px-2 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-600">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
               <div className="flex items-center gap-2 sm:gap-4 mb-2 sm:mb-0">
                 <Calendar className="text-foreground" size={24} />
                 <h2 className="text-lg sm:text-xl font-semibold text-foreground">
-                  Weekly Schedule
+                  {t("adminshowtime.weeklySchedule")}
                 </h2>
               </div>
               <div className="flex items-center">
                 <p className="text-xs sm:text-sm font-medium text-foreground">
-                  Total Showtimes of Week :{" "}
+                  {t("adminshowtime.totalShowtimes")}{" "}
                   <strong className="text-foreground font-bold">
                     {showTime.length}
                   </strong>
@@ -320,7 +309,7 @@ const AdminShowtimePage: React.FC = () => {
                 >
                   <ChevronLeft size={20} />
                   <span className="text-sm font-medium hidden sm:inline">
-                    Previous
+                    {t("adminshowtime.previous")}
                   </span>
                 </button>
                 <div className="text-center px-1">
@@ -339,7 +328,7 @@ const AdminShowtimePage: React.FC = () => {
                   className="p-2 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-1"
                 >
                   <span className="text-sm font-medium hidden sm:inline">
-                    Next
+                    {t("adminshowtime.next")}
                   </span>
                   <ChevronRight size={20} />
                 </button>
@@ -347,18 +336,14 @@ const AdminShowtimePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Calendar Grid */}
           <div className="overflow-x-auto">
             <div className="w-full">
-              {" "}
-              {/* Changed from min-w-[auto] to min-w-fit */}
-              {/* Days Header */}
               <div
                 className="grid w-full border-b border-gray-200 dark:border-gray-600 text-xs sm:text-base"
                 style={{ gridTemplateColumns }}
               >
                 <div className="w-[120px] p-1 sm:p-3 bg-background font-medium text-foreground text-center border-r border-gray-200 dark:border-gray-600 shrink-0">
-                  Time
+                  {t("adminshowtime.time")}
                 </div>
                 {weekDates.map((date, index) => {
                   const dayShowtimes = getShowtimesForDate(date);
@@ -367,7 +352,6 @@ const AdminShowtimePage: React.FC = () => {
                     ...layoutShowtimes.map((s) => s.totalColumns),
                     1
                   );
-
                   return (
                     <div
                       key={index}
@@ -394,13 +378,15 @@ const AdminShowtimePage: React.FC = () => {
                         {getDayName(date)}
                         {isToday(date) && (
                           <span className="ml-1 text-xs bg-blue-600 text-white px-1 rounded">
-                            Today
+                            {t("adminshowtime.today")}
                           </span>
                         )}
                       </div>
                       {maxOverlaps > 1 && (
                         <div className="text-xs text-gray-500 mt-1">
-                          {maxOverlaps} phim đang chiếu
+                          {t("adminshowtime.moviesShowing", {
+                            count: maxOverlaps,
+                          })}
                         </div>
                       )}
                     </div>
@@ -410,7 +396,6 @@ const AdminShowtimePage: React.FC = () => {
               {/* Time Grid Container */}
               <div className="relative">
                 <div className="grid" style={{ gridTemplateColumns }}>
-                  {/* Time Column */}
                   <div className="border-r border-gray-200 dark:border-gray-600">
                     {timeSlots.map((timeSlot) => (
                       <div
@@ -425,7 +410,6 @@ const AdminShowtimePage: React.FC = () => {
                     ))}
                   </div>
 
-                  {/* Day Columns */}
                   {weekDates.map((date, dateIndex) => {
                     const dayShowtimes = getShowtimesForDate(date);
                     const layoutShowtimes =
@@ -436,15 +420,12 @@ const AdminShowtimePage: React.FC = () => {
                         key={dateIndex}
                         className="relative border-r border-gray-200 dark:border-gray-600 last:border-r-0"
                       >
-                        {/* Background time slots */}
                         {timeSlots.map((timeSlot) => (
                           <div
                             key={timeSlot}
                             className="h-8 sm:h-12 border-b border-gray-200 dark:border-gray-600 hover:bg-background transition-colors"
                           ></div>
                         ))}
-
-                        {/* Showtime blocks */}
                         {layoutShowtimes.map((showtime) => {
                           const { top, height } = calculatePosition(
                             showtime.startTime,
@@ -476,7 +457,8 @@ const AdminShowtimePage: React.FC = () => {
                                     {showtime.movie.name}
                                   </div>
                                   <div className="text-xs opacity-90 truncate">
-                                    Room {showtime.room.roomNumber}
+                                    {t("adminshowtime.room")}{" "}
+                                    {showtime.room.roomNumber}
                                   </div>
                                 </div>
                                 <div className="text-xs opacity-90 truncate font-medium">
@@ -497,7 +479,6 @@ const AdminShowtimePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Showtime Detail Modal */}
       <ShowtimeDetailModal
         showtime={selectedShowtime}
         isOpen={isDetailModalOpen}
@@ -511,7 +492,7 @@ const AdminShowtimePage: React.FC = () => {
         <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white dark:bg-gray-900 shadow-xl z-50 transform transition-transform duration-300 border-l border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Add Showtime
+              {t("adminshowtime.addShowtime")}
             </h2>
             <button
               onClick={() => setIsCreateModalOpen(false)}

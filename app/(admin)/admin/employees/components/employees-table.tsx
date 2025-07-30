@@ -1,8 +1,7 @@
-'use client';
+"use client";
 
 import { useState, useMemo } from "react";
 import {
-  createColumnHelper,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -53,6 +52,7 @@ import {
 } from "lucide-react";
 import { Employee } from "@/lib/api/service/fetchEmployees";
 import { useUpdateEmployeeStatus } from "@/hooks/useEmployees";
+import { useTranslation } from "react-i18next";
 
 interface EmployeesTableProps {
   data: Employee[];
@@ -73,10 +73,12 @@ export function EmployeesTable({
   setPagination,
   pageCount,
 }: EmployeesTableProps) {
+  const { t } = useTranslation(); // <- namespace
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const { mutate: updateEmployeeStatus } = useUpdateEmployeeStatus();
+
   const getRoleColor = (role: string) => {
     switch (role) {
       case "Admin":
@@ -90,9 +92,8 @@ export function EmployeesTable({
   const handleUpdateEmployeeStatus = (id: string) => {
     updateEmployeeStatus({ id });
   };
-  const getStatusColor = (isActive: boolean) => {
-    return isActive ? "default" : "secondary";
-  };
+  const getStatusColor = (isActive: boolean) =>
+    isActive ? "default" : "secondary";
 
   const columns = useMemo<ColumnDef<Employee, unknown>[]>(
     () => [
@@ -105,7 +106,7 @@ export function EmployeesTable({
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2 lg:px-3"
           >
-            Full Name
+            {t("table.fullName")}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
@@ -123,7 +124,7 @@ export function EmployeesTable({
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2 lg:px-3"
           >
-            Email
+            {t("table.email")}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
@@ -136,9 +137,7 @@ export function EmployeesTable({
                   {email?.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <div className="font-medium">{email}</div>
-              </div>
+              <div className="font-medium">{email}</div>
             </div>
           );
         },
@@ -153,7 +152,7 @@ export function EmployeesTable({
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2 lg:px-3"
           >
-            Role
+            {t("table.role")}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
@@ -172,7 +171,7 @@ export function EmployeesTable({
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 px-2 lg:px-3"
           >
-            Status
+            {t("table.status")}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
@@ -185,7 +184,7 @@ export function EmployeesTable({
       },
       {
         id: "actions",
-        header: "Actions",
+        header: t("table.actions"),
         cell: ({ row }) => {
           const employee = row.original;
           return (
@@ -222,16 +221,14 @@ export function EmployeesTable({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => onView(employee)}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Details
+                    <Eye className="mr-2 h-4 w-4" /> {t("table.viewDetails")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onEdit(employee)}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit Employee
+                    <Edit className="mr-2 h-4 w-4" /> {t("table.editEmployee")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onDelete(employee)}>
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete Employee
+                    <Trash2 className="mr-2 h-4 w-4" />{" "}
+                    {t("table.deleteEmployee")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -241,7 +238,7 @@ export function EmployeesTable({
         size: 120,
       },
     ],
-    [onView, onEdit, onDelete]
+    [t, onView, onEdit, onDelete]
   );
 
   const table = useReactTable({
@@ -256,12 +253,7 @@ export function EmployeesTable({
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
-    state: {
-      sorting,
-      columnFilters,
-      globalFilter,
-      pagination,
-    },
+    state: { sorting, columnFilters, globalFilter, pagination },
     pageCount,
   });
 
@@ -269,24 +261,22 @@ export function EmployeesTable({
     <div className="space-y-4">
       {/* Search and Filters */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search employees..."
-              value={globalFilter ?? ""}
-              onChange={(event) => setGlobalFilter(String(event.target.value))}
-              className="pl-8 max-w-sm"
-              maxLength={28}
-            />
-          </div>
+        <div className="relative">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={t("table.searchPlaceholder")}
+            value={globalFilter ?? ""}
+            onChange={(event) => setGlobalFilter(String(event.target.value))}
+            className="pl-8 max-w-sm"
+            maxLength={28}
+          />
         </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-muted-foreground">
-            {table.getFilteredRowModel().rows.length} of{" "}
-            {table.getCoreRowModel().rows.length} employee(s)
-          </span>
-        </div>
+        <span className="text-sm text-muted-foreground">
+          {t("table.employeesCount", {
+            current: table.getFilteredRowModel().rows.length,
+            total: table.getCoreRowModel().rows.length,
+          })}
+        </span>
       </div>
 
       {/* Table */}
@@ -338,7 +328,7 @@ export function EmployeesTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No employees found.
+                  {t("table.noEmployeesFound")}
                 </TableCell>
               </TableRow>
             )}
@@ -349,12 +339,10 @@ export function EmployeesTable({
       {/* Pagination */}
       <div className="flex items-center justify-between px-2">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <p className="text-sm font-medium">{t("table.rowsPerPage")}</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value));
-            }}
+            onValueChange={(value) => table.setPageSize(Number(value))}
           >
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
@@ -370,8 +358,10 @@ export function EmployeesTable({
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            {t("table.page", {
+              current: table.getState().pagination.pageIndex + 1,
+              total: table.getPageCount(),
+            })}
           </div>
           <div className="flex items-center space-x-2">
             <Button
