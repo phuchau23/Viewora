@@ -46,7 +46,7 @@ export function middleware(request: NextRequest) {
 
   // Nếu user là Staff mà vào trang không phải /staff → redirect về /staff
   if (!isEmployeeRoute && userRole === 'Employee' && !pathname.startsWith('/staff/')) {
-    return NextResponse.redirect(new URL('/staff/dashboard', request.url));
+    return NextResponse.redirect(new URL('/staff/chat', request.url));
   }
 
   // Nếu user là Admin mà vào trang không phải /admin → redirect về /admin
