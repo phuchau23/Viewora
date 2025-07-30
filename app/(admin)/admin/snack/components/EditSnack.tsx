@@ -17,6 +17,7 @@ import { Snack, SnackService } from "@/lib/api/service/fetchSnack";
 import { toast } from "sonner";
 import { formatVND } from "@/utils/price/formatPrice";
 import { useUpdateSnack } from "@/hooks/useSnacks";
+import { useTranslation } from "react-i18next";
 
 interface EditSnackDialogProps {
   snackId: string;
@@ -29,6 +30,7 @@ export default function EditSnackDialog({
   open,
   onOpenChange,
 }: EditSnackDialogProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { updateSnack, isUpdating } = useUpdateSnack();
   const [name, setName] = useState("");
@@ -70,12 +72,12 @@ export default function EditSnackDialog({
 
   const handleSubmit = async () => {
     if (!name || !price) {
-      toast.error("Please fill all required fields");
+      toast.error(t("snackedit.requiredFields"));
       return;
     }
 
     if (isNaN(Number(price)) || Number(price) <= 0) {
-      toast.error("Price must be a valid positive number");
+      toast.error(t("snackedit.invalidPrice"));
       return;
     }
 
@@ -92,12 +94,14 @@ export default function EditSnackDialog({
     try {
       setIsSubmitting(true);
       await updateSnack({ id: snackId, formData });
-      toast.success("Snack updated successfully");
+      toast.success(t("snackedit.updateSuccess"));
       queryClient.invalidateQueries({ queryKey: ["snacks"] });
       onOpenChange(false);
     } catch (err: any) {
       toast.error(
-        err?.response?.data?.message || err?.message || "Failed to update snack"
+        err?.response?.data?.message ||
+          err?.message ||
+          t("snackedit.updateFailed")
       );
     } finally {
       setIsSubmitting(false);
@@ -108,28 +112,26 @@ export default function EditSnackDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Snack</DialogTitle>
-          <DialogDescription>
-            Update the details of the snack.
-          </DialogDescription>
+          <DialogTitle>{t("snackedit.title")}</DialogTitle>
+          <DialogDescription>{t("snackedit.description")}</DialogDescription>
         </DialogHeader>
 
         {isLoading ? (
-          <p>Loading snack data...</p>
+          <p>{t("snackedit.loading")}</p>
         ) : isError || !snack ? (
-          <p>Error: {error?.message || "Could not load snack"}</p>
+          <p>{t("snackedit.error", { error: error?.message || "" })}</p>
         ) : (
           <Card>
             <CardHeader>
-              <CardTitle>Snack Form</CardTitle>
+              <CardTitle>{t("snackedit.formTitle")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label>Name</Label>
+                <Label>{t("snackedit.name")}</Label>
                 <Input value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div>
-                <Label>Price</Label>
+                <Label>{t("snackedit.price")}</Label>
                 <Input
                   type="number"
                   value={price}
@@ -137,12 +139,12 @@ export default function EditSnackDialog({
                 />
                 {price && (
                   <p className="text-sm text-gray-500 mt-1">
-                    Preview: {formatVND(Number(price))}
+                    {t("snackedit.previewPrice")}: {formatVND(Number(price))}
                   </p>
                 )}
               </div>
               <div>
-                <Label>Image</Label>
+                <Label>{t("snackedit.image")}</Label>
                 <Input
                   type="file"
                   accept="image/*"
@@ -157,7 +159,7 @@ export default function EditSnackDialog({
                 {imagePreview && (
                   <img
                     src={imagePreview}
-                    alt="Snack preview"
+                    alt={t("snackedit.imagePreviewAlt")}
                     className="w-32 mt-2 rounded border cursor-pointer"
                     onClick={() => setPreviewModal(true)}
                   />
@@ -169,10 +171,12 @@ export default function EditSnackDialog({
                   onClick={handleSubmit}
                   disabled={isSubmitting || isUpdating}
                 >
-                  {isSubmitting || isUpdating ? "Saving..." : "Save"}
+                  {isSubmitting || isUpdating
+                    ? t("snackedit.saving")
+                    : t("snackedit.save")}
                 </Button>
                 <Button variant="outline" onClick={() => onOpenChange(false)}>
-                  Cancel
+                  {t("snackedit.cancel")}
                 </Button>
               </div>
             </CardContent>
@@ -196,7 +200,7 @@ export default function EditSnackDialog({
               </button>
               <img
                 src={imagePreview}
-                alt="Snack preview"
+                alt={t("snackedit.imagePreviewAlt")}
                 className="rounded-xl max-h-[80vh]"
               />
             </div>

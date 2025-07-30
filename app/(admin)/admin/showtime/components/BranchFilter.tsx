@@ -1,5 +1,7 @@
-// components/BranchFilter.tsx
+"use client";
+
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface BranchFilterProps {
   branches: string[];
@@ -12,9 +14,11 @@ const BranchFilter: React.FC<BranchFilterProps> = ({
   selectedBranch,
   onChange,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-      <label htmlFor="branch-select">Filter by Branch</label>
+      <label htmlFor="branch-select">{t("filterLabel")}</label>
       <select
         id="branch-select"
         className="border border-gray-300 rounded px-3 py-1 text-sm"
@@ -24,7 +28,7 @@ const BranchFilter: React.FC<BranchFilterProps> = ({
           onChange(value === "" ? null : value);
         }}
       >
-        <option value="">All Branches</option>
+        <option value="">{t("allBranches")}</option>
         {branches.map((branch) => (
           <option key={branch} value={branch}>
             {branch}

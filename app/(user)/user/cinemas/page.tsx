@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Search, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,14 +16,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 
-// Helper function to extract city/region from address
 function extractLocation(address: string): string {
   const parts = address.split(",");
   return parts[parts.length - 1]?.trim() || "Unknown";
 }
 
-// Helper function to format date/time
 function formatDateTime(dateTime: string): string {
   return new Date(dateTime).toLocaleString("en-US", {
     dateStyle: "short",
@@ -32,54 +31,25 @@ function formatDateTime(dateTime: string): string {
 }
 
 export default function CinemasPage() {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [openBranchId, setOpenBranchId] = useState<string | null>(null);
 
-  // Fetch branches
   const { branches, isLoading, error } = useBranch();
-
-  // Fetch showtimes for the currently open branch
   const {
     showtimes,
     isLoading: isShowtimesLoading,
     error: showtimesError,
   } = useShowtimesByBranchId(openBranchId);
 
-  // Debug: Log showtimes data with branch details
-  useEffect(() => {
-    if (openBranchId) {
-      const branch = branches.find((b) => b.id === openBranchId);
-      console.log("Branch ID:", openBranchId);
-      console.log("Branch Name:", branch?.name);
-      console.log("Branch Rooms:", branch?.totalRoom);
-      console.log("Showtimes:", showtimes);
-      console.log("Showtimes Error:", showtimesError);
-      console.log("Showtimes Count:", showtimes?.length);
-      showtimes?.forEach((s, index) =>
-        console.log(`Showtime ${index + 1}:`, {
-          id: s.id,
-          movie: s.movie.name,
-          room: s.room.roomNumber,
-          startTime: s.startTime,
-          isExpired: s.isExpired,
-          status: s.movie.status,
-        })
-      );
-    }
-  }, [openBranchId, showtimes, showtimesError, branches]);
-
-  // Filter out inactive branches
   const activeBranches = branches.filter(
     (branch) => branch.status === "Active"
   );
-
-  // Get all unique locations
   const locations = Array.from(
     new Set(activeBranches.map((branch) => extractLocation(branch.address)))
   ).sort();
 
-  // Filter branches
   let filteredBranches = [...activeBranches];
   if (searchQuery) {
     filteredBranches = filteredBranches.filter(
@@ -97,14 +67,14 @@ export default function CinemasPage() {
   return (
     <div className="container px-4 py-8 md:py-12">
       <div className="flex flex-col gap-6">
-        <h1 className="text-3xl font-bold">Cinemas</h1>
+        <h1 className="text-3xl font-bold">{t("cinemas.title")}</h1>
 
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search cinemas..."
+              placeholder={t("cinemas.searchPlaceholder")}
               className="pl-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -117,14 +87,14 @@ export default function CinemasPage() {
               size="sm"
               onClick={() => setSelectedLocation(null)}
             >
-              All Locations
+              {t("cinemas.allLocations")}
             </Button>
             <Select
               value={selectedLocation ?? undefined}
               onValueChange={setSelectedLocation}
             >
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Locations" />
+                <SelectValue placeholder={t("cinemas.locations")} />
               </SelectTrigger>
               <SelectContent>
                 {locations.map((location) => (
@@ -139,21 +109,21 @@ export default function CinemasPage() {
 
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-muted-foreground">Loading cinema list...</p>
+            <p className="text-muted-foreground">{t("cinemas.loading")}</p>
           </div>
         )}
 
         {error && (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-red-500">
-              Error loading cinema list: {error.message || "Unknown error"}
+              {t("cinemas.error")}: {error.message || "Unknown error"}
             </p>
             <Button
               variant="outline"
               onClick={() => window.location.reload()}
               className="mt-4"
             >
-              Try Again
+              {t("cinemas.retry")}
             </Button>
           </div>
         )}
@@ -161,7 +131,7 @@ export default function CinemasPage() {
         {!isLoading && !error && (
           <div className="space-y-4 mt-4">
             {filteredBranches.map((branch) => {
-              const branchName = branch.name || "Unknown Branch";
+              const branchName = branch.name || t("cinemas.unknownBranch");
               const isOpen = openBranchId === branch.id;
 
               return (
@@ -180,10 +150,6 @@ export default function CinemasPage() {
                         alt={branchName}
                         fill
                         className="object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            "/fallback-branch.jpg";
-                        }}
                       />
                       <div className="absolute bottom-0 left-0 p-4">
                         <Badge className="bg-primary/90 hover:bg-primary">
@@ -208,10 +174,10 @@ export default function CinemasPage() {
                       </div>
                       <div className="flex items-center gap-4 mt-2">
                         <p className="text-muted-foreground text-sm">
-                          Phone: {branch.phoneNumber}
+                          {t("cinemas.phone")}: {branch.phoneNumber}
                         </p>
                         <p className="text-muted-foreground text-sm">
-                          Rooms: {branch.totalRoom}
+                          {t("cinemas.rooms")}: {branch.totalRoom}
                         </p>
                       </div>
                     </CardContent>
@@ -219,16 +185,16 @@ export default function CinemasPage() {
                   {isOpen && (
                     <div className="p-6 border-t bg-muted/50">
                       <h4 className="font-semibold text-lg mb-4">
-                        Current Movies at {branchName}
+                        {t("cinemas.currentMovies", { branch: branchName })}
                       </h4>
                       {isShowtimesLoading && (
                         <p className="text-muted-foreground">
-                          Loading movie list...
+                          {t("cinemas.loadingMovies")}
                         </p>
                       )}
                       {showtimesError && (
                         <p className="text-muted-foreground">
-                          No showtimes available for this cinema at the moment.
+                          {t("cinemas.noShowtimes")}
                         </p>
                       )}
                       {!isShowtimesLoading &&
@@ -241,13 +207,15 @@ export default function CinemasPage() {
                                 {showtime.movie.name}
                               </h5>
                               <p className="text-sm text-muted-foreground">
-                                Showtime: {formatDateTime(showtime.startTime)}
+                                {t("cinemas.showtime")}:{" "}
+                                {formatDateTime(showtime.startTime)}
                               </p>
                               <p className="text-sm text-muted-foreground">
-                                Room: {showtime.room.roomNumber}
+                                {t("cinemas.room")}: {showtime.room.roomNumber}
                               </p>
                               <p className="text-sm text-muted-foreground">
-                                Duration: {showtime.movie.duration} minutes
+                                {t("cinemas.duration")}:{" "}
+                                {showtime.movie.duration} {t("cinemas.minutes")}
                               </p>
                             </div>
                           ))}
@@ -256,7 +224,7 @@ export default function CinemasPage() {
                         !isShowtimesLoading &&
                         !showtimesError && (
                           <p className="text-muted-foreground">
-                            No movies currently showing.
+                            {t("cinemas.noMovies")}
                           </p>
                         )
                       )}
@@ -271,7 +239,7 @@ export default function CinemasPage() {
         {!isLoading && !error && filteredBranches.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-muted-foreground mb-4">
-              No cinemas found matching the search criteria.
+              {t("cinemas.noCinemas")}
             </p>
             <Button
               onClick={() => {
@@ -279,7 +247,7 @@ export default function CinemasPage() {
                 setSelectedLocation(null);
               }}
             >
-              Clear Filters
+              {t("cinemas.clearFilters")}
             </Button>
           </div>
         )}

@@ -274,334 +274,22 @@ header {
   font-size: 1rem;
   padding: 0 0.5rem;
 }
-</style></head><body><main class="jesthtml-content"><header><h1 id="title">Test Report</h1></header><section id="metadata-container"><div id="timestamp">Started: 2025-07-23 16:21:01</div><div id="summary"><div id="suite-summary"><div class="summary-total">Suites (13)</div><div class="summary-passed ">3 passed</div><div class="summary-failed ">10 failed</div><div class="summary-pending  summary-empty">0 pending</div></div><div id="test-summary"><div class="summary-total">Tests (73)</div><div class="summary-passed ">34 passed</div><div class="summary-failed ">39 failed</div><div class="summary-pending  summary-empty">0 pending</div></div></div></section><details id="suite-1" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\AdminDashboard.test.tsx</div><div class="suite-time">1.786s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">AdminDashboard</div><div class="test-title">renders page title and subtitle</div><div class="test-status">passed</div><div class="test-duration">0.106s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">AdminDashboard</div><div class="test-title">renders statistic cards with values</div><div class="test-status">passed</div><div class="test-duration">0.045s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">AdminDashboard</div><div class="test-title">renders recent activity items</div><div class="test-status">passed</div><div class="test-duration">0.027s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">AdminDashboard</div><div class="test-title">renders quick actions with links</div><div class="test-status">passed</div><div class="test-duration">0.014s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">AdminDashboard</div><div class="test-title">renders all icons correctly</div><div class="test-status">failed</div><div class="test-duration">0.04s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Found multiple elements by: [data-testid="icon-users"]
-
-Here are the matching elements:
-
-Ignored nodes: comments, script, style
-&lt;svg
-  class="h-4 w-4 text-muted-foreground"
-  data-testid="icon-users"
-/&gt;
-
-Ignored nodes: comments, script, style
-&lt;svg
-  class="h-5 w-5"
-  data-testid="icon-users"
-/&gt;
-
-(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
-
-Ignored nodes: comments, script, style
-&lt;body&gt;
-  &lt;div&gt;
-    &lt;div
-      class="space-y-6"
-    &gt;
-      &lt;div&gt;
-        &lt;h1
-          class="text-3xl font-bold tracking-tight"
-        &gt;
-          Admin Dashboard
-        &lt;/h1&gt;
-        &lt;p
-          class="text-muted-foreground"
-        &gt;
-          Welcome to your administration panel. Manage users, tickets, and system settings.
-        &lt;/p&gt;
-      &lt;/div&gt;
-      &lt;div
-        class="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
-      &gt;
-        &lt;div
-          class="rounded-lg border bg-card text-card-foreground shadow-sm"
-        &gt;
-          &lt;div
-            class="p-6 flex flex-row items-center justify-between space-y-0 pb-2"
-          &gt;
-            &lt;h3
-              class="tracking-tight text-sm font-medium"
-            &gt;
-              Total Users
-            &lt;/h3&gt;
-            &lt;svg
-              class="h-4 w-4 text-muted-foreground"
-              data-testid="icon-users"
-            /&gt;
-          &lt;/div&gt;
-          &lt;div
-            class="p-6 pt-0"
-          &gt;
-            &lt;div
-              class="text-2xl font-bold"
-            &gt;
-              1,234
-            &lt;/div&gt;
-            &lt;p
-              class="text-xs text-muted-foreground"
-            &gt;
-              +12% from last month
-            &lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div
-          class="rounded-lg border bg-card text-card-foreground shadow-sm"
-        &gt;
-          &lt;div
-            class="p-6 flex flex-row items-center justify-between space-y-0 pb-2"
-          &gt;
-            &lt;h3
-              class="tracking-tight text-sm font-medium"
-            &gt;
-              Open Tickets
-            &lt;/h3&gt;
-            &lt;svg
-              class="h-4 w-4 text-muted-foreground"
-              data-testid="icon-ticket"
-            /&gt;
-          &lt;/div&gt;
-          &lt;div
-            class="p-6 pt-0"
-          &gt;
-            &lt;div
-              class="text-2xl font-bold"
-            &gt;
-              23
-            &lt;/div&gt;
-            &lt;p
-              class="text-xs text-muted-foreground"
-            &gt;
-              -4 from yesterday
-            &lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div
-          class="rounded-lg border bg-card text-card-foreground shadow-sm"
-        &gt;
-          &lt;div
-            class="p-6 flex flex-row items-center justify-between space-y-0 pb-2"
-          &gt;
-            &lt;h3
-              class="tracking-tight text-sm font-medium"
-            &gt;
-              System Health
-            &lt;/h3&gt;
-            &lt;svg
-              class="h-4 w-4 text-muted-foreground"
-              data-testid="icon-trending"
-            /&gt;
-          &lt;/div&gt;
-          &lt;div
-            class="p-6 pt-0"
-          &gt;
-            &lt;div
-              class="text-2xl font-bold"
-            &gt;
-              98.5%
-            &lt;/div&gt;
-            &lt;p
-              class="text-xs text-muted-foreground"
-            &gt;
-              Uptime this month
-            &lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div
-          class="rounded-lg border bg-card text-card-foreground shadow-sm"
-        &gt;
-          &lt;div
-            class="p-6 flex flex-row items-center justify-between space-y-0 pb-2"
-          &gt;
-            &lt;h3
-              class="tracking-tight text-sm font-medium"
-            &gt;
-              Alerts
-            &lt;/h3&gt;
-            &lt;svg
-              class="h-4 w-4 text-muted-foreground"
-              data-testid="icon-alert"
-            /&gt;
-          &lt;/div&gt;
-          &lt;div
-            class="p-6 pt-0"
-          &gt;
-            &lt;div
-              class="text-2xl font-bold"
-            &gt;
-              2
-            &lt;/div&gt;
-            &lt;p
-              class="text-xs text-muted-foreground"
-            &gt;
-              Requires attention
-            &lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-      &lt;div
-        class="grid gap-4 md:grid-cols-2"
-      &gt;
-        &lt;div
-          class="rounded-lg border bg-card text-card-foreground shadow-sm"
-        &gt;
-          &lt;div
-            class="flex flex-col space-y-1.5 p-6"
-          &gt;
-            &lt;h3
-              class="text-2xl font-semibold leading-none tracking-tight"
-            &gt;
-              Recent Activity
-            &lt;/h3&gt;
-            &lt;p
-              class="text-sm text-muted-foreground"
-            &gt;
-              Latest system activities and user actions
-            &lt;/p&gt;
-          &lt;/div&gt;
-          &lt;div
-            class="p-6 pt-0"
-          &gt;
-            &lt;div
-              class="space-y-4"
-            &gt;
-              &lt;div
-                class="flex items-center space-x-4"
-              &gt;
-                &lt;div
-                  class="w-2 h-2 bg-green-500 rounded-full"
-                /&gt;
-                &lt;div
-                  class="flex-1"
-                &gt;
-                  &lt;p
-                    class="text-sm font-medium"
-                  &gt;
-                    New user registered
-                  &lt;/p&gt;
-                  &lt;p
-                    class="text-xs text-muted-foreground"
-                  &gt;
-                    2 minutes ago
-                  &lt;/p&gt;
-                &lt;/div&gt;
-              &lt;/div&gt;
-              &lt;div
-                class="flex items-center space-x-4"
-              &gt;
-                &lt;div
-                  class="w-2 h-2 bg-blue-500 rounded-full"
-                /&gt;
-                &lt;div
-                  class="flex-1"
-                &gt;
-                  &lt;p
-                    class="text-sm font-medium"
-                  &gt;
-                    Ticket #1234 resolved
-                  &lt;/p&gt;
-                  &lt;p
-                    class="text-xs text-muted-foreground"
-                  &gt;
-                    15 minutes ago
-                  &lt;/p&gt;
-                &lt;/div&gt;
-              &lt;/div&gt;
-              &lt;div
-                class="flex items-center space-x-4"
-              &gt;
-                &lt;div
-                  class="w-2 h-2 bg-orange-500 rounded-full"
-                /&gt;
-                &lt;div
-                  class="flex-1"
-                &gt;
-                  &lt;p
-                    class="text-sm font-medium"
-                  &gt;
-                    System backup completed
-                  &lt;/p&gt;
-                  &lt;p
-                    class="text-xs text-muted-foreground"
-                  &gt;
-                    1 hour ago
-                  &lt;/p&gt;
-                &lt;/div&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div
-          class="rounded-lg border bg-card text-card-foreground shadow-sm"
-        &gt;
-          &lt;div
-            class="flex flex-col space-y-1.5 p-6"
-          &gt;
-            &lt;h3
-              class="text-2xl font-semibold leading-none tracking-tight"
-            &gt;
-              Quick Actions
-            &lt;/h3&gt;
-            &lt;p
-              class="text-sm text-muted-foreground"
-            &gt;
-              Common administrative tasks
-            &lt;/p&gt;
-          &lt;/div&gt;
-          &lt;div
-            class="p-6 pt-0"
-          &gt;
-            &lt;div
-              class="space-y-2"
-            &gt;
-              &lt;a
-                class="block p-3 rounded-lg border hover:bg-accent transition-colors"
-                href="/admin/user-manager"
-              &gt;
-                &lt;div
-                  class="flex items-center space-x-3"
-                &gt;
-                  &lt;svg
-                    class="h-5 w-5"
-                    data-testid="icon-users"
-                  /&gt;
-                  &lt;span
-                    class="font-medium"
-                  &gt;
-                    Manage Users
-                  &lt;/span&gt;
-                &lt;/div&gt;
-              &lt;/a&gt;
-              &lt;a
-                class="block p-3 rounded-lg border hover:bg-accent transition-colors"
-                href="/admin/tickets"
-              &gt;
-                &lt;div
-                  class="flex items-center space-x-3"
-                &gt;
-                  &lt;svg
-                    class="h-5 w-5"
-                    data-testid="icon-ticket"
-                  /&gt;
-                  &lt;span
-                    class="font-medium"
-                  &gt;
-                    View Tickets
-                  &lt;/span&gt;
-                &lt;/div&gt;
-              &lt;/a&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/body&gt;
-    at Object.getElementError (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\config.js:37:19)
-    at getElementError (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\query-helpers.js:20:35)
-    at getMultipleElementsFoundError (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\query-helpers.js:23:10)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\query-helpers.js:55:13
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\query-helpers.js:95:19
-    at Object.getByTestId (D:\TAM\FPTGITHUB\Viewora\app\__tests__\AdminDashboard.test.tsx:55:19)
+</style></head><body><main class="jesthtml-content"><header><h1 id="title">Test Report</h1></header><section id="metadata-container"><div id="timestamp">Started: 2025-07-28 13:35:35</div><div id="summary"><div id="suite-summary"><div class="summary-total">Suites (13)</div><div class="summary-passed ">3 passed</div><div class="summary-failed ">10 failed</div><div class="summary-pending  summary-empty">0 pending</div></div><div id="test-summary"><div class="summary-total">Tests (73)</div><div class="summary-passed ">30 passed</div><div class="summary-failed ">43 failed</div><div class="summary-pending  summary-empty">0 pending</div></div></div></section><details id="suite-1" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx</div><div class="suite-time">1.26s</div></summary><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">renders total score (default value if undefined)</div><div class="test-status">failed</div><div class="test-duration">0.114s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
+    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
+    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
+    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
+    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
+    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
+    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
+    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:74:11)
     at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
     at new Promise (&lt;anonymous&gt;)
     at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
@@ -615,7 +303,186 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-2" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\PersonalInfo.test.tsx</div><div class="suite-time">1.857s</div></summary><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">renders loading state</div><div class="test-status">failed</div><div class="test-duration">0.095s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">renders records, including invalid date and empty date</div><div class="test-status">failed</div><div class="test-duration">0.017s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
+    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
+    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
+    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
+    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
+    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
+    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
+    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:58:11)
+    at Object.renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:83:5)
+    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">filters by date and type, then clears filters</div><div class="test-status">failed</div><div class="test-duration">0.016s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
+    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
+    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
+    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
+    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
+    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
+    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
+    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:58:11)
+    at Object.renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:95:5)
+    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">shows loading state</div><div class="test-status">failed</div><div class="test-duration">0.01s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
+    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
+    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
+    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
+    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
+    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
+    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
+    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:58:11)
+    at Object.renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:121:5)
+    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">shows error state</div><div class="test-status">failed</div><div class="test-duration">0.011s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
+    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
+    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
+    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
+    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
+    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
+    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
+    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:58:11)
+    at Object.renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:132:5)
+    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">shows no records message when empty</div><div class="test-status">failed</div><div class="test-duration">0.01s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
+    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
+    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
+    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
+    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
+    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
+    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
+    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:58:11)
+    at Object.renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:145:5)
+    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">works in dark theme</div><div class="test-status">failed</div><div class="test-duration">0.02s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
+    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
+    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
+    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
+    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
+    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
+    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
+    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:150:11)
+    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-2" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\PersonalInfo.test.tsx</div><div class="suite-time">1.322s</div></summary><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">renders loading state</div><div class="test-status">failed</div><div class="test-duration">0.073s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
     at useTranslation (D:\TAM\FPTGITHUB\Viewora\node_modules\react-i18next\dist\commonjs\useTranslation.js:43:20)
     at PersonalInfo (D:\TAM\FPTGITHUB\Viewora\app\(user)\user\account\components\PersonalInfoPage.tsx:8:31)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
@@ -647,7 +514,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">renders error state</div><div class="test-status">failed</div><div class="test-duration">0.012s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">renders error state</div><div class="test-status">failed</div><div class="test-duration">0.008s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
     at useTranslation (D:\TAM\FPTGITHUB\Viewora\node_modules\react-i18next\dist\commonjs\useTranslation.js:43:20)
     at PersonalInfo (D:\TAM\FPTGITHUB\Viewora\app\(user)\user\account\components\PersonalInfoPage.tsx:8:31)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
@@ -679,7 +546,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">renders user data correctly</div><div class="test-status">failed</div><div class="test-duration">0.016s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">renders user data correctly</div><div class="test-status">failed</div><div class="test-duration">0.008s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
     at useTranslation (D:\TAM\FPTGITHUB\Viewora\node_modules\react-i18next\dist\commonjs\useTranslation.js:43:20)
     at PersonalInfo (D:\TAM\FPTGITHUB\Viewora\app\(user)\user\account\components\PersonalInfoPage.tsx:8:31)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
@@ -711,7 +578,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">renders fallback text for missing user data</div><div class="test-status">failed</div><div class="test-duration">0.019s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">renders fallback text for missing user data</div><div class="test-status">failed</div><div class="test-duration">0.013s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
     at useTranslation (D:\TAM\FPTGITHUB\Viewora\node_modules\react-i18next\dist\commonjs\useTranslation.js:43:20)
     at PersonalInfo (D:\TAM\FPTGITHUB\Viewora\app\(user)\user\account\components\PersonalInfoPage.tsx:8:31)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
@@ -775,7 +642,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">renders unspecified gender</div><div class="test-status">failed</div><div class="test-duration">0.016s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">renders unspecified gender</div><div class="test-status">failed</div><div class="test-duration">0.009s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
     at useTranslation (D:\TAM\FPTGITHUB\Viewora\node_modules\react-i18next\dist\commonjs\useTranslation.js:43:20)
     at PersonalInfo (D:\TAM\FPTGITHUB\Viewora\app\(user)\user\account\components\PersonalInfoPage.tsx:8:31)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
@@ -807,7 +674,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">handles undefined rewardPoint</div><div class="test-status">failed</div><div class="test-duration">0.017s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">handles undefined rewardPoint</div><div class="test-status">failed</div><div class="test-duration">0.01s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
     at useTranslation (D:\TAM\FPTGITHUB\Viewora\node_modules\react-i18next\dist\commonjs\useTranslation.js:43:20)
     at PersonalInfo (D:\TAM\FPTGITHUB\Viewora\app\(user)\user\account\components\PersonalInfoPage.tsx:8:31)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
@@ -839,7 +706,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">handles null profileData</div><div class="test-status">failed</div><div class="test-duration">0.024s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">PersonalInfo</div><div class="test-title">handles null profileData</div><div class="test-status">failed</div><div class="test-duration">0.009s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'react')
     at useTranslation (D:\TAM\FPTGITHUB\Viewora\node_modules\react-i18next\dist\commonjs\useTranslation.js:43:20)
     at PersonalInfo (D:\TAM\FPTGITHUB\Viewora\app\(user)\user\account\components\PersonalInfoPage.tsx:8:31)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
@@ -871,215 +738,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-3" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx</div><div class="suite-time">1.834s</div></summary><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">renders total score (default value if undefined)</div><div class="test-status">failed</div><div class="test-duration">0.138s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
-    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
-    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
-    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
-    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
-    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
-    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
-    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
-    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
-    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
-    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
-    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
-    at Object.&lt;anonymous&gt; (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:74:11)
-    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
-    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
-    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
-    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
-    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
-    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
-    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">renders records, including invalid date and empty date</div><div class="test-status">failed</div><div class="test-duration">0.027s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
-    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
-    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
-    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
-    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
-    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
-    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
-    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
-    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
-    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
-    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
-    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
-    at renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:58:11)
-    at Object.renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:83:5)
-    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
-    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
-    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
-    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
-    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
-    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
-    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">filters by date and type, then clears filters</div><div class="test-status">failed</div><div class="test-duration">0.022s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
-    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
-    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
-    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
-    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
-    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
-    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
-    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
-    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
-    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
-    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
-    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
-    at renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:58:11)
-    at Object.renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:95:5)
-    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
-    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
-    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
-    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
-    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
-    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
-    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">shows loading state</div><div class="test-status">failed</div><div class="test-duration">0.019s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
-    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
-    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
-    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
-    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
-    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
-    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
-    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
-    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
-    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
-    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
-    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
-    at renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:58:11)
-    at Object.renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:121:5)
-    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
-    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
-    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
-    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
-    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
-    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
-    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">shows error state</div><div class="test-status">failed</div><div class="test-duration">0.019s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
-    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
-    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
-    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
-    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
-    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
-    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
-    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
-    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
-    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
-    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
-    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
-    at renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:58:11)
-    at Object.renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:132:5)
-    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
-    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
-    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
-    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
-    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
-    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
-    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">shows no records message when empty</div><div class="test-status">failed</div><div class="test-duration">0.018s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
-    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
-    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
-    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
-    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
-    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
-    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
-    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
-    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
-    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
-    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
-    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
-    at renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:58:11)
-    at Object.renderComp (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:145:5)
-    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
-    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
-    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
-    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
-    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
-    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
-    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">Points Component - Coverage Boost</div><div class="test-title">works in dark theme</div><div class="test-status">failed</div><div class="test-duration">0.018s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: window.matchMedia is not a function
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\next-themes\dist\index.js:1:1694
-    at commitHookEffectListMount (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:23150:26)
-    at commitPassiveMountOnFiber (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24931:11)
-    at commitPassiveMountEffects_complete (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24891:9)
-    at commitPassiveMountEffects_begin (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24878:7)
-    at commitPassiveMountEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:24866:3)
-    at flushPassiveEffectsImpl (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27039:3)
-    at flushPassiveEffects (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26984:14)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26769:9
-    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
-    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
-    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
-    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
-    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
-    at Object.&lt;anonymous&gt; (D:\TAM\FPTGITHUB\Viewora\app\__tests__\Points.test.tsx:150:11)
-    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
-    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
-    at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
-    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
-    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
-    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
-    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
-    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
-    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-4" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EditProfileModal.test.tsx</div><div class="suite-time">0s</div></summary><div class="suite-tests"/></details><details id="suite-5" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\BookingsHistory.test.tsx</div><div class="suite-time">2.052s</div></summary><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">hiển thị loading khi đang tải</div><div class="test-status">failed</div><div class="test-duration">0.079s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Unable to find an element with the text: /loading your tickets/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-3" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\BookingsHistory.test.tsx</div><div class="suite-time">1.532s</div></summary><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">hiển thị loading khi đang tải</div><div class="test-status">failed</div><div class="test-duration">0.059s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Unable to find an element with the text: /loading your tickets/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
 
 Ignored nodes: comments, script, style
 &lt;body&gt;
@@ -1114,7 +773,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">hiển thị lỗi khi có lỗi</div><div class="test-status">passed</div><div class="test-duration">0.009s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">render danh sách bookings</div><div class="test-status">failed</div><div class="test-duration">0.194s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'name')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">hiển thị lỗi khi có lỗi</div><div class="test-status">passed</div><div class="test-duration">0.019s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">render danh sách bookings</div><div class="test-status">failed</div><div class="test-duration">0.107s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'name')
     at name (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\bookings\components\DetailBooking.tsx:139:75)
     at Array.map (&lt;anonymous&gt;)
     at map (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\bookings\components\DetailBooking.tsx:137:34)
@@ -1146,7 +805,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">hiển thị thông báo khi không có bookings</div><div class="test-status">failed</div><div class="test-duration">0.027s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'name')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">hiển thị thông báo khi không có bookings</div><div class="test-status">failed</div><div class="test-duration">0.022s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'name')
     at name (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\bookings\components\DetailBooking.tsx:139:75)
     at Array.map (&lt;anonymous&gt;)
     at map (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\bookings\components\DetailBooking.tsx:137:34)
@@ -1178,7 +837,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">mở modal và hiển thị chi tiết booking khi click 'Chi tiết'</div><div class="test-status">failed</div><div class="test-duration">0.025s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'name')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">mở modal và hiển thị chi tiết booking khi click 'Chi tiết'</div><div class="test-status">failed</div><div class="test-duration">0.022s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'name')
     at name (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\bookings\components\DetailBooking.tsx:139:75)
     at Array.map (&lt;anonymous&gt;)
     at map (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\bookings\components\DetailBooking.tsx:137:34)
@@ -1210,7 +869,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">handles pagination change</div><div class="test-status">failed</div><div class="test-duration">0.021s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'name')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">handles pagination change</div><div class="test-status">failed</div><div class="test-duration">0.017s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'name')
     at name (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\bookings\components\DetailBooking.tsx:139:75)
     at Array.map (&lt;anonymous&gt;)
     at map (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\bookings\components\DetailBooking.tsx:137:34)
@@ -1242,7 +901,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">handles invalid booking data gracefully</div><div class="test-status">failed</div><div class="test-duration">0.02s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of null (reading 'fullName')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">BookingsHistory</div><div class="test-title">handles invalid booking data gracefully</div><div class="test-status">failed</div><div class="test-duration">0.018s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of null (reading 'fullName')
     at fullName (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\bookings\page.tsx:123:64)
     at Array.map (&lt;anonymous&gt;)
     at map (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\bookings\page.tsx:121:24)
@@ -1274,7 +933,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-6" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EditEmployeeModal.test.tsx</div><div class="suite-time">2.157s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">EditEmployeeModal</div><div class="test-title">renders modal when open</div><div class="test-status">passed</div><div class="test-duration">0.251s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EditEmployeeModal</div><div class="test-title">calls updateEmployee and onClose when submitted</div><div class="test-status">passed</div><div class="test-duration">0.107s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EditEmployeeModal</div><div class="test-title">updates form fields correctly</div><div class="test-status">passed</div><div class="test-duration">0.068s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EditEmployeeModal</div><div class="test-title">calls onClose when Back button clicked</div><div class="test-status">passed</div><div class="test-duration">0.039s</div></div></div></div></details><details id="suite-7" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EmployeeDetailsModal.test.tsx</div><div class="suite-time">2.305s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeDetailsModal</div><div class="test-title">should return null when employee is null</div><div class="test-status">passed</div><div class="test-duration">0.058s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeeDetailsModal</div><div class="test-title">should render employee details when employee is provided</div><div class="test-status">failed</div><div class="test-duration">0.296s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Found multiple elements with the text: John Doe
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-4" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EmployeeDetailsModal.test.tsx</div><div class="suite-time">1.593s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeDetailsModal</div><div class="test-title">should return null when employee is null</div><div class="test-status">passed</div><div class="test-duration">0.024s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeeDetailsModal</div><div class="test-title">should render employee details when employee is provided</div><div class="test-status">failed</div><div class="test-duration">0.224s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Found multiple elements with the text: John Doe
 
 Here are the matching elements:
 
@@ -1460,7 +1119,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeDetailsModal</div><div class="test-title">should call onEdit when Edit button clicked</div><div class="test-status">passed</div><div class="test-duration">0.069s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeeDetailsModal</div><div class="test-title">should call onClose when Close button clicked</div><div class="test-status">failed</div><div class="test-duration">0.082s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Found multiple elements with the text: Close
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeDetailsModal</div><div class="test-title">should call onEdit when Edit button clicked</div><div class="test-status">passed</div><div class="test-duration">0.044s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeeDetailsModal</div><div class="test-title">should call onClose when Close button clicked</div><div class="test-status">failed</div><div class="test-duration">0.048s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Found multiple elements with the text: Close
 
 Here are the matching elements:
 
@@ -1646,7 +1305,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-8" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\CinemasPage.test.tsx</div><div class="suite-time">2.548s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">renders loading state</div><div class="test-status">passed</div><div class="test-duration">0.176s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">renders error state</div><div class="test-status">passed</div><div class="test-duration">0.076s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">renders list of branches and opens a branch to showtimes</div><div class="test-status">passed</div><div class="test-duration">0.183s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">shows showtimes loading state</div><div class="test-status">failed</div><div class="test-duration">0.113s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Unable to find an element with the text: /Loading movie list/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-5" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EditEmployeeModal.test.tsx</div><div class="suite-time">1.711s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">EditEmployeeModal</div><div class="test-title">renders modal when open</div><div class="test-status">passed</div><div class="test-duration">0.203s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EditEmployeeModal</div><div class="test-title">calls updateEmployee and onClose when submitted</div><div class="test-status">passed</div><div class="test-duration">0.096s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EditEmployeeModal</div><div class="test-title">updates form fields correctly</div><div class="test-status">passed</div><div class="test-duration">0.058s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EditEmployeeModal</div><div class="test-title">calls onClose when Back button clicked</div><div class="test-status">passed</div><div class="test-duration">0.03s</div></div></div></div></details><details id="suite-6" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EditProfileModal.test.tsx</div><div class="suite-time">0s</div></summary><div class="suite-tests"/></details><details id="suite-7" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\CinemasPage.test.tsx</div><div class="suite-time">1.942s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">renders loading state</div><div class="test-status">passed</div><div class="test-duration">0.138s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">renders error state</div><div class="test-status">passed</div><div class="test-duration">0.065s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">renders list of branches and opens a branch to showtimes</div><div class="test-status">passed</div><div class="test-duration">0.135s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">shows showtimes loading state</div><div class="test-status">failed</div><div class="test-duration">0.115s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Unable to find an element with the text: /Loading movie list/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
 
 Ignored nodes: comments, script, style
 &lt;body&gt;
@@ -2009,7 +1668,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">shows showtimes error state</div><div class="test-status">failed</div><div class="test-duration">0.045s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Unable to find an element with the text: /No showtimes available for this cinema/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">shows showtimes error state</div><div class="test-status">failed</div><div class="test-duration">0.054s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Unable to find an element with the text: /No showtimes available for this cinema/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
 
 Ignored nodes: comments, script, style
 &lt;body&gt;
@@ -2372,7 +2031,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">shows no movies currently showing</div><div class="test-status">failed</div><div class="test-duration">0.072s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Unable to find an element with the text: /No movies currently showing/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">shows no movies currently showing</div><div class="test-status">failed</div><div class="test-duration">0.043s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Unable to find an element with the text: /No movies currently showing/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
 
 Ignored nodes: comments, script, style
 &lt;body&gt;
@@ -2735,7 +2394,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">filters by search query and shows no results</div><div class="test-status">passed</div><div class="test-duration">0.061s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">filters by location</div><div class="test-status">failed</div><div class="test-duration">0.037s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Found multiple elements with the text: /Locations/
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">filters by search query and shows no results</div><div class="test-status">passed</div><div class="test-duration">0.056s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">CinemasPage</div><div class="test-title">filters by location</div><div class="test-status">failed</div><div class="test-duration">0.028s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Found multiple elements with the text: /Locations/
 
 Here are the matching elements:
 
@@ -3075,7 +2734,177 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-9" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EmployeesTableAdvanced.test.tsx</div><div class="suite-time">2.653s</div></summary><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeesTableAdvanced</div><div class="test-title">renders employee rows with account name</div><div class="test-status">failed</div><div class="test-duration">0.399s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'split')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-8" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\AdminDashboard.test.tsx</div><div class="suite-time">2.065s</div></summary><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">AdminDashboard</div><div class="test-title">renders page title and subtitle</div><div class="test-status">failed</div><div class="test-duration">0.098s</div></div><div class="failureMessages"> <pre class="failureMsg">Error: No QueryClient set, use QueryClientProvider to set one
+    at useQueryClient (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\QueryClientProvider.tsx:18:11)
+    at useBaseQuery (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\useBaseQuery.ts:54:18)
+    at useQuery (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\useQuery.ts:51:10)
+    at useMovies (D:\TAM\FPTGITHUB\Viewora\hooks\useMovie.tsx:10:46)
+    at Dashboard (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\dashboard\components\dashboardChart.tsx\page.tsx:169:16)
+    at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
+    at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
+    at beginWork (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:21587:16)
+    at beginWork$1 (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27426:14)
+    at performUnitOfWork (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26560:12)
+    at workLoopSync (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26466:5)
+    at renderRootSync (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26434:7)
+    at recoverFromConcurrentError (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:25850:20)
+    at performConcurrentWorkOnRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:25750:22)
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (D:\TAM\FPTGITHUB\Viewora\app\__tests__\AdminDashboard.test.tsx:17:11)
+    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">AdminDashboard</div><div class="test-title">renders statistic cards with values</div><div class="test-status">failed</div><div class="test-duration">0.016s</div></div><div class="failureMessages"> <pre class="failureMsg">Error: No QueryClient set, use QueryClientProvider to set one
+    at useQueryClient (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\QueryClientProvider.tsx:18:11)
+    at useBaseQuery (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\useBaseQuery.ts:54:18)
+    at useQuery (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\useQuery.ts:51:10)
+    at useMovies (D:\TAM\FPTGITHUB\Viewora\hooks\useMovie.tsx:10:46)
+    at Dashboard (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\dashboard\components\dashboardChart.tsx\page.tsx:169:16)
+    at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
+    at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
+    at beginWork (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:21587:16)
+    at beginWork$1 (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27426:14)
+    at performUnitOfWork (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26560:12)
+    at workLoopSync (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26466:5)
+    at renderRootSync (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26434:7)
+    at recoverFromConcurrentError (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:25850:20)
+    at performConcurrentWorkOnRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:25750:22)
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (D:\TAM\FPTGITHUB\Viewora\app\__tests__\AdminDashboard.test.tsx:25:11)
+    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">AdminDashboard</div><div class="test-title">renders recent activity items</div><div class="test-status">failed</div><div class="test-duration">0.006s</div></div><div class="failureMessages"> <pre class="failureMsg">Error: No QueryClient set, use QueryClientProvider to set one
+    at useQueryClient (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\QueryClientProvider.tsx:18:11)
+    at useBaseQuery (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\useBaseQuery.ts:54:18)
+    at useQuery (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\useQuery.ts:51:10)
+    at useMovies (D:\TAM\FPTGITHUB\Viewora\hooks\useMovie.tsx:10:46)
+    at Dashboard (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\dashboard\components\dashboardChart.tsx\page.tsx:169:16)
+    at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
+    at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
+    at beginWork (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:21587:16)
+    at beginWork$1 (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27426:14)
+    at performUnitOfWork (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26560:12)
+    at workLoopSync (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26466:5)
+    at renderRootSync (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26434:7)
+    at recoverFromConcurrentError (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:25850:20)
+    at performConcurrentWorkOnRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:25750:22)
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (D:\TAM\FPTGITHUB\Viewora\app\__tests__\AdminDashboard.test.tsx:37:11)
+    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">AdminDashboard</div><div class="test-title">renders quick actions with links</div><div class="test-status">failed</div><div class="test-duration">0.008s</div></div><div class="failureMessages"> <pre class="failureMsg">Error: No QueryClient set, use QueryClientProvider to set one
+    at useQueryClient (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\QueryClientProvider.tsx:18:11)
+    at useBaseQuery (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\useBaseQuery.ts:54:18)
+    at useQuery (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\useQuery.ts:51:10)
+    at useMovies (D:\TAM\FPTGITHUB\Viewora\hooks\useMovie.tsx:10:46)
+    at Dashboard (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\dashboard\components\dashboardChart.tsx\page.tsx:169:16)
+    at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
+    at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
+    at beginWork (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:21587:16)
+    at beginWork$1 (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27426:14)
+    at performUnitOfWork (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26560:12)
+    at workLoopSync (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26466:5)
+    at renderRootSync (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26434:7)
+    at recoverFromConcurrentError (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:25850:20)
+    at performConcurrentWorkOnRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:25750:22)
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (D:\TAM\FPTGITHUB\Viewora\app\__tests__\AdminDashboard.test.tsx:45:11)
+    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">AdminDashboard</div><div class="test-title">renders all icons correctly</div><div class="test-status">failed</div><div class="test-duration">0.009s</div></div><div class="failureMessages"> <pre class="failureMsg">Error: No QueryClient set, use QueryClientProvider to set one
+    at useQueryClient (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\QueryClientProvider.tsx:18:11)
+    at useBaseQuery (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\useBaseQuery.ts:54:18)
+    at useQuery (D:\TAM\FPTGITHUB\Viewora\node_modules\@tanstack\react-query\src\useQuery.ts:51:10)
+    at useMovies (D:\TAM\FPTGITHUB\Viewora\hooks\useMovie.tsx:10:46)
+    at Dashboard (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\dashboard\components\dashboardChart.tsx\page.tsx:169:16)
+    at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
+    at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
+    at beginWork (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:21587:16)
+    at beginWork$1 (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:27426:14)
+    at performUnitOfWork (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26560:12)
+    at workLoopSync (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26466:5)
+    at renderRootSync (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:26434:7)
+    at recoverFromConcurrentError (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:25850:20)
+    at performConcurrentWorkOnRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:25750:22)
+    at flushActQueue (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2667:24)
+    at act (D:\TAM\FPTGITHUB\Viewora\node_modules\react\cjs\react.development.js:2582:11)
+    at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (D:\TAM\FPTGITHUB\Viewora\app\__tests__\AdminDashboard.test.tsx:54:11)
+    at Promise.finally.completed (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1559:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1499:10)
+    at _callCircusTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1009:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:949:3)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\jestAdapterInit.js:1920:21)
+    at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-9" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EmployeesTableAdvanced.test.tsx</div><div class="suite-time">2.067s</div></summary><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeesTableAdvanced</div><div class="test-title">renders employee rows with account name</div><div class="test-status">failed</div><div class="test-duration">0.373s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'split')
     at cell (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\employees\components\employees-table-advanced.tsx:180:37)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
     at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
@@ -3106,7 +2935,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeesTableAdvanced</div><div class="test-title">filters by search input</div><div class="test-status">failed</div><div class="test-duration">0.144s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'split')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeesTableAdvanced</div><div class="test-title">filters by search input</div><div class="test-status">failed</div><div class="test-duration">0.116s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'split')
     at cell (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\employees\components\employees-table-advanced.tsx:180:37)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
     at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
@@ -3137,7 +2966,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeesTableAdvanced</div><div class="test-title">calls onView when view button clicked</div><div class="test-status">failed</div><div class="test-duration">0.106s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'split')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeesTableAdvanced</div><div class="test-title">calls onView when view button clicked</div><div class="test-status">failed</div><div class="test-duration">0.08s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'split')
     at cell (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\employees\components\employees-table-advanced.tsx:180:37)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
     at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
@@ -3168,7 +2997,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeesTableAdvanced</div><div class="test-title">selects and bulk deletes employees</div><div class="test-status">failed</div><div class="test-duration">0.081s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'split')
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeesTableAdvanced</div><div class="test-title">selects and bulk deletes employees</div><div class="test-status">failed</div><div class="test-duration">0.074s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot read properties of undefined (reading 'split')
     at cell (D:\TAM\FPTGITHUB\Viewora\app\(admin)\admin\employees\components\employees-table-advanced.tsx:180:37)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
     at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
@@ -3199,7 +3028,7 @@ Ignored nodes: comments, script, style
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-10" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EmployeesTable.test.tsx</div><div class="suite-time">2.689s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeesTable</div><div class="test-title">renders employees list</div><div class="test-status">passed</div><div class="test-duration">0.309s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeesTable</div><div class="test-title">filters employees by search</div><div class="test-status">passed</div><div class="test-duration">0.165s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeesTable</div><div class="test-title">calls onView when view button clicked</div><div class="test-status">passed</div><div class="test-duration">0.274s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeesTable</div><div class="test-title">calls updateEmployeeStatus when delete icon clicked</div><div class="test-status">failed</div><div class="test-duration">0.104s</div></div><div class="failureMessages"> <pre class="failureMsg">Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-10" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EmployeesTable.test.tsx</div><div class="suite-time">2.054s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeesTable</div><div class="test-title">renders employees list</div><div class="test-status">passed</div><div class="test-duration">0.243s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeesTable</div><div class="test-title">filters employees by search</div><div class="test-status">passed</div><div class="test-duration">0.119s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeesTable</div><div class="test-title">calls onView when view button clicked</div><div class="test-status">passed</div><div class="test-duration">0.209s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">EmployeesTable</div><div class="test-title">calls updateEmployeeStatus when delete icon clicked</div><div class="test-status">failed</div><div class="test-duration">0.086s</div></div><div class="failureMessages"> <pre class="failureMsg">Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
 
 Expected: {"id": "E001"}
 
@@ -3218,7 +3047,7 @@ Number of calls: 0
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-11" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\CreateEmployeeModal.test.tsx</div><div class="suite-time">2.792s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">renders modal when open</div><div class="test-status">passed</div><div class="test-duration">0.36s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">resets form when opened</div><div class="test-status">passed</div><div class="test-duration">0.082s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">validates empty form and shows errors</div><div class="test-status">passed</div><div class="test-duration">0.177s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">shows error for invalid email</div><div class="test-status">passed</div><div class="test-duration">0.106s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">submits valid form and calls createEmployee</div><div class="test-status">passed</div><div class="test-duration">0.138s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">toggles password visibility</div><div class="test-status">passed</div><div class="test-duration">0.044s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">calls onClose when Back clicked</div><div class="test-status">passed</div><div class="test-duration">0.077s</div></div></div></div></details><details id="suite-12" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EmployeeFormModal.test.tsx</div><div class="suite-time">2.896s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">renders add mode with empty form</div><div class="test-status">passed</div><div class="test-duration">0.374s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">renders edit mode with initialData</div><div class="test-status">passed</div><div class="test-duration">0.122s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">shows validation errors when fields are empty</div><div class="test-status">passed</div><div class="test-duration">0.13s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">shows error for invalid email</div><div class="test-status">passed</div><div class="test-duration">0.145s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">toggles password visibility</div><div class="test-status">passed</div><div class="test-duration">0.117s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">calls onClose when Back clicked</div><div class="test-status">passed</div><div class="test-duration">0.051s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">submits valid form and calls onSubmit + onClose</div><div class="test-status">passed</div><div class="test-duration">0.195s</div></div></div></div></details><details id="suite-13" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\ChangePassword.test.tsx</div><div class="suite-time">4.333s</div></summary><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">validates required fields</div><div class="test-status">failed</div><div class="test-duration">0.133s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot destructure property 'mutate' of '((cov_y16tq60pb(...).s[47]++) , (0 , _useUsers.useChangePassword)(...))' as it is undefined.
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div></div></details><details id="suite-11" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\CreateEmployeeModal.test.tsx</div><div class="suite-time">2.174s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">renders modal when open</div><div class="test-status">passed</div><div class="test-duration">0.338s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">resets form when opened</div><div class="test-status">passed</div><div class="test-duration">0.072s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">validates empty form and shows errors</div><div class="test-status">passed</div><div class="test-duration">0.109s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">shows error for invalid email</div><div class="test-status">passed</div><div class="test-duration">0.094s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">submits valid form and calls createEmployee</div><div class="test-status">passed</div><div class="test-duration">0.124s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">toggles password visibility</div><div class="test-status">passed</div><div class="test-duration">0.041s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">CreateEmployeeModal</div><div class="test-title">calls onClose when Back clicked</div><div class="test-status">passed</div><div class="test-duration">0.03s</div></div></div></div></details><details id="suite-12" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\EmployeeFormModal.test.tsx</div><div class="suite-time">2.211s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">renders add mode with empty form</div><div class="test-status">passed</div><div class="test-duration">0.311s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">renders edit mode with initialData</div><div class="test-status">passed</div><div class="test-duration">0.117s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">shows validation errors when fields are empty</div><div class="test-status">passed</div><div class="test-duration">0.116s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">shows error for invalid email</div><div class="test-status">passed</div><div class="test-duration">0.078s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">toggles password visibility</div><div class="test-status">passed</div><div class="test-duration">0.085s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">calls onClose when Back clicked</div><div class="test-status">passed</div><div class="test-duration">0.037s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">EmployeeFormModal</div><div class="test-title">submits valid form and calls onSubmit + onClose</div><div class="test-status">passed</div><div class="test-duration">0.138s</div></div></div></div></details><details id="suite-13" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">D:\TAM\FPTGITHUB\Viewora\app\__tests__\ChangePassword.test.tsx</div><div class="suite-time">3.755s</div></summary><div class="suite-tests"><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">validates required fields</div><div class="test-status">failed</div><div class="test-duration">0.109s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot destructure property 'mutate' of '((cov_y16tq60pb(...).s[47]++) , (0 , _useUsers.useChangePassword)(...))' as it is undefined.
     at changePassword (D:\TAM\FPTGITHUB\Viewora\app\(user)\user\account\components\ChangePassword.tsx:33:19)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
     at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
@@ -3249,7 +3078,7 @@ Number of calls: 0
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">shows mismatch error</div><div class="test-status">failed</div><div class="test-duration">0.013s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot destructure property 'mutate' of '((cov_y16tq60pb(...).s[47]++) , (0 , _useUsers.useChangePassword)(...))' as it is undefined.
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">shows mismatch error</div><div class="test-status">failed</div><div class="test-duration">0.018s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot destructure property 'mutate' of '((cov_y16tq60pb(...).s[47]++) , (0 , _useUsers.useChangePassword)(...))' as it is undefined.
     at changePassword (D:\TAM\FPTGITHUB\Viewora\app\(user)\user\account\components\ChangePassword.tsx:33:19)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
     at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
@@ -3280,7 +3109,7 @@ Number of calls: 0
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">toggles password visibility</div><div class="test-status">failed</div><div class="test-duration">0.011s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot destructure property 'mutate' of '((cov_y16tq60pb(...).s[47]++) , (0 , _useUsers.useChangePassword)(...))' as it is undefined.
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">toggles password visibility</div><div class="test-status">failed</div><div class="test-duration">0.02s</div></div><div class="failureMessages"> <pre class="failureMsg">TypeError: Cannot destructure property 'mutate' of '((cov_y16tq60pb(...).s[47]++) , (0 , _useUsers.useChangePassword)(...))' as it is undefined.
     at changePassword (D:\TAM\FPTGITHUB\Viewora\app\(user)\user\account\components\ChangePassword.tsx:33:19)
     at renderWithHooks (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:16305:18)
     at mountIndeterminateComponent (D:\TAM\FPTGITHUB\Viewora\node_modules\react-dom\cjs\react-dom.development.js:20074:13)
@@ -3311,7 +3140,7 @@ Number of calls: 0
     at jestAdapter (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-circus\build\runner.js:101:19)
     at runTestInternal (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:275:16)
     at runTest (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:343:7)
-    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">handles success flow</div><div class="test-status">passed</div><div class="test-duration">0.253s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">resets fields after success</div><div class="test-status">failed</div><div class="test-duration">0.114s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Unable to find a label with the text of: modal.currentPassword *
+    at Object.worker (D:\TAM\FPTGITHUB\Viewora\node_modules\jest-runner\build\testWorker.js:497:12)</pre></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">handles success flow</div><div class="test-status">passed</div><div class="test-duration">0.196s</div></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">resets fields after success</div><div class="test-status">failed</div><div class="test-duration">0.081s</div></div><div class="failureMessages"> <pre class="failureMsg">TestingLibraryElementError: Unable to find a label with the text of: modal.currentPassword *
 
 Ignored nodes: comments, script, style
 &lt;body&gt;
@@ -3355,7 +3184,7 @@ Ignored nodes: comments, script, style
     at getAllByLabelText (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\queries\label-text.js:111:38)
     at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\query-helpers.js:52:17
     at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\query-helpers.js:95:19
-    at Object.getByLabelText (D:\TAM\FPTGITHUB\Viewora\app\__tests__\ChangePassword.test.tsx:106:15)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">handles API error callback</div><div class="test-status">failed</div><div class="test-duration">1.096s</div></div><div class="failureMessages"> <pre class="failureMsg">Error: Unable to find an element by: [data-testid="alert"]
+    at Object.getByLabelText (D:\TAM\FPTGITHUB\Viewora\app\__tests__\ChangePassword.test.tsx:106:15)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">handles API error callback</div><div class="test-status">failed</div><div class="test-duration">1.073s</div></div><div class="failureMessages"> <pre class="failureMsg">Error: Unable to find an element by: [data-testid="alert"]
 
 Ignored nodes: comments, script, style
 &lt;body&gt;
@@ -3567,7 +3396,7 @@ Ignored nodes: comments, script, style
 &lt;/body&gt;
     at waitForWrapper (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\wait-for.js:163:27)
     at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\query-helpers.js:86:33
-    at Object.findByTestId (D:\TAM\FPTGITHUB\Viewora\app\__tests__\ChangePassword.test.tsx:131:25)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">handles API fail response (code !== 200)</div><div class="test-status">failed</div><div class="test-duration">1.041s</div></div><div class="failureMessages"> <pre class="failureMsg">Error: Unable to find an element with the text: Wrong password. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+    at Object.findByTestId (D:\TAM\FPTGITHUB\Viewora\app\__tests__\ChangePassword.test.tsx:131:25)</pre></div></div><div class="test-result failed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">handles API fail response (code !== 200)</div><div class="test-status">failed</div><div class="test-duration">1.04s</div></div><div class="failureMessages"> <pre class="failureMsg">Error: Unable to find an element with the text: Wrong password. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
 
 Ignored nodes: comments, script, style
 &lt;body&gt;
@@ -3779,4 +3608,4 @@ Ignored nodes: comments, script, style
 &lt;/body&gt;
     at waitForWrapper (D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\wait-for.js:163:27)
     at D:\TAM\FPTGITHUB\Viewora\node_modules\@testing-library\dom\dist\query-helpers.js:86:33
-    at Object.findByText (D:\TAM\FPTGITHUB\Viewora\app\__tests__\ChangePassword.test.tsx:159:25)</pre></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">disables button when pending</div><div class="test-status">passed</div><div class="test-duration">0.009s</div></div></div></div></details></main></body></html>
+    at Object.findByText (D:\TAM\FPTGITHUB\Viewora\app\__tests__\ChangePassword.test.tsx:159:25)</pre></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ChangePassword Component</div><div class="test-title">disables button when pending</div><div class="test-status">passed</div><div class="test-duration">0.01s</div></div></div></div></details></main></body></html>

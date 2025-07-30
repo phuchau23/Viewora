@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useUpdateMovie, useGetMovieById } from "@/hooks/useMovie";
@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Controller } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 interface EditMovieModalProps {
   movieId: string;
@@ -46,6 +46,7 @@ export const EditMovieModal = ({
   open,
   onOpenChange,
 }: EditMovieModalProps) => {
+  const { t } = useTranslation();
   const {
     movie,
     isLoading: isMovieLoading,
@@ -67,9 +68,7 @@ export const EditMovieModal = ({
   });
 
   useEffect(() => {
-    if (open) {
-      refetchMovie();
-    }
+    if (open) refetchMovie();
   }, [open, refetchMovie]);
 
   useEffect(() => {
@@ -86,7 +85,6 @@ export const EditMovieModal = ({
         Description: movie.description,
         TrailerUrl: movie.trailerUrl,
       });
-
       setSelectedTypes(movie.movieTypes?.map((type: any) => type.name) ?? []);
     }
   }, [movie, reset]);
@@ -99,21 +97,15 @@ export const EditMovieModal = ({
 
   const onSubmit = (data: FormValues) => {
     const formData = new FormData();
-
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value.toString());
     });
-
-    selectedTypes.forEach((type) => {
-      formData.append("MovieTypeNames", type);
-    });
-
+    selectedTypes.forEach((type) => formData.append("MovieTypeNames", type));
     updateMovie(
       { id: movieId, data: formData },
       { onSuccess: () => onOpenChange(false) }
     );
   };
-
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -121,33 +113,48 @@ export const EditMovieModal = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold text-center mb-4">
-              Chỉnh sửa phim
+              {t("movieedit.title")}
             </DialogTitle>
-            <DialogDescription>
-              Cập nhật thông tin chi tiết của phim.
-            </DialogDescription>
+            <DialogDescription>{t("movieedit.description")}</DialogDescription>
           </DialogHeader>
 
           {isMovieLoading ? (
-            <p>Đang tải thông tin phim...</p>
+            <p>{t("movieedit.loadingMovie")}</p>
           ) : (
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: "Tên phim", name: "Name" },
-                { label: "Đạo diễn", name: "Director" },
-                { label: "Diễn viên", name: "Actor" },
+                { label: t("movieedit.name"), name: "Name" },
+                { label: t("movieedit.director"), name: "Director" },
+                { label: t("movieedit.actor"), name: "Actor" },
                 {
-                  label: "Thời lượng (phút)",
+                  label: t("movieedit.duration"),
                   name: "Duration",
                   type: "number",
                 },
-                { label: "Đánh giá", name: "Rate", type: "number", step: 0.1 },
-                { label: "Ngày phát hành", name: "ReleaseDate", type: "date", },
-                { label: "Ngày chiếu", name: "StartShow", type: "date" },
+                {
+                  label: t("movieedit.rate"),
+                  name: "Rate",
+                  type: "number",
+                  step: 0.1,
+                },
+                {
+                  label: t("movieedit.releaseDate"),
+                  name: "ReleaseDate",
+                  type: "date",
+                },
+                {
+                  label: t("movieedit.startShow"),
+                  name: "StartShow",
+                  type: "date",
+                },
               ].map(({ label, name, ...rest }) => (
                 <div key={name}>
                   <Label htmlFor={name}>{label}</Label>
-                  <Input id={name} {...register(name as keyof FormValues)} {...rest} />
+                  <Input
+                    id={name}
+                    {...register(name as keyof FormValues)}
+                    {...rest}
+                  />
                   {errors[name as keyof FormValues] && (
                     <p className="text-red-500 text-sm">
                       {errors[name as keyof FormValues]?.message as string}
@@ -157,13 +164,13 @@ export const EditMovieModal = ({
               ))}
 
               <div>
-                <Label htmlFor="Age">Độ tuổi</Label>
+                <Label htmlFor="Age">{t("movieedit.age")}</Label>
                 <Controller
                   name="Age"
                   control={control}
                   render={({ field }) => (
                     <select {...field} className="w-full p-2 border rounded-md">
-                      <option value="">Chọn độ tuổi</option>
+                      <option value="">{t("movieedit.selectAge")}</option>
                       {["P", "K", "T13", "T16", "T18"].map((opt) => (
                         <option key={opt} value={opt}>
                           {opt}
@@ -178,7 +185,9 @@ export const EditMovieModal = ({
               </div>
 
               <div className="col-span-2">
-                <Label htmlFor="Description">Mô tả</Label>
+                <Label htmlFor="Description">
+                  {t("movieedit.descriptionField")}
+                </Label>
                 <Textarea {...register("Description")} rows={4} />
                 {errors.Description && (
                   <p className="text-red-500 text-sm">
@@ -188,7 +197,7 @@ export const EditMovieModal = ({
               </div>
 
               <div className="col-span-2">
-                <Label htmlFor="TrailerUrl">URL trailer</Label>
+                <Label htmlFor="TrailerUrl">{t("movieedit.trailer")}</Label>
                 <Input {...register("TrailerUrl")} />
                 {errors.TrailerUrl && (
                   <p className="text-red-500 text-sm">
@@ -198,10 +207,10 @@ export const EditMovieModal = ({
               </div>
 
               <div className="col-span-2">
-                <Label>Thể loại</Label>
+                <Label>{t("movieedit.types")}</Label>
                 <div className="border rounded-md p-2 max-h-[150px] overflow-y-auto">
                   {isTypesLoading ? (
-                    <p>Đang tải...</p>
+                    <p>{t("movieedit.loadingTypes")}</p>
                   ) : (
                     types?.data?.map((type: any) => (
                       <div
@@ -224,10 +233,10 @@ export const EditMovieModal = ({
 
           <DialogFooter className="mt-6 flex justify-end gap-2">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Hủy
+              {t("movieedit.cancel")}
             </Button>
             <Button type="submit" disabled={isUpdating || isMovieLoading}>
-              {isUpdating ? "Đang lưu..." : "Lưu thay đổi"}
+              {isUpdating ? t("movieedit.saving") : t("movieedit.save")}
             </Button>
           </DialogFooter>
         </form>

@@ -22,20 +22,13 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Promotion, PromotionService } from "@/lib/api/service/fetchPromotion";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface EditPromotionProps {
   promotionId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-// Utilities
-const formatVND = (amount: number): string =>
-  new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(amount);
 
 const normalizeDateTime = (dateString?: string): string => {
   if (!dateString) return "";
@@ -68,6 +61,7 @@ export function EditPromotion({
   open,
   onOpenChange,
 }: EditPromotionProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const {
@@ -134,12 +128,12 @@ export function EditPromotion({
 
   const handleSubmit = async () => {
     if (!title || !code || !discountPrice || !discountTypeEnum) {
-      toast.error("Please fill all required fields");
+      toast.error(t("proedit.errorRequired"));
       return;
     }
 
     if (endTime && startTime && new Date(endTime) <= new Date(startTime)) {
-      toast.error("End Time must be after Start Time");
+      toast.error(t("proedit.errorDate"));
       return;
     }
 
@@ -164,12 +158,14 @@ export function EditPromotion({
     try {
       setIsSubmitting(true);
       const res = await PromotionService.updatePromotion(promotionId, formData);
-      toast.success(res.message || "Promotion updated successfully");
+      toast.success(res.message || t("proedit.updateSuccess"));
       queryClient.invalidateQueries({ queryKey: ["promotions"] });
       onOpenChange(false);
     } catch (err: any) {
       toast.error(
-        err?.response?.data?.message || err?.message || "Failed to update"
+        err?.response?.data?.message ||
+          err?.message ||
+          t("proedit.updateFailed")
       );
     } finally {
       setIsSubmitting(false);
@@ -180,35 +176,35 @@ export function EditPromotion({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Promotion</DialogTitle>
+          <DialogTitle>{t("proedit.dialogTitle")}</DialogTitle>
           <DialogDescription>
-            Update the details of the promotion.
+            {t("proedit.dialogDescription")}
           </DialogDescription>
         </DialogHeader>
 
         {isLoading ? (
-          <p>Loading promotion data...</p>
+          <p>{t("proedit.loading")}</p>
         ) : isError || !promotion ? (
-          <p>Error: {error?.message || "Could not load promotion"}</p>
+          <p>{t("proedit.errorLoad", { error: error?.message || "" })}</p>
         ) : (
           <Card>
             <CardHeader>
-              <CardTitle>Promotion Form</CardTitle>
+              <CardTitle>{t("proedit.formTitle")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label>Title</Label>
+                <Label>{t("proedit.title")}</Label>
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
               </div>
               <div>
-                <Label>Code</Label>
+                <Label>{t("proedit.code")}</Label>
                 <Input value={code} onChange={(e) => setCode(e.target.value)} />
               </div>
               <div>
-                <Label>Discount Price</Label>
+                <Label>{t("proedit.discountPrice")}</Label>
                 <Input
                   type="number"
                   value={discountPrice}
@@ -216,22 +212,26 @@ export function EditPromotion({
                 />
               </div>
               <div>
-                <Label>Discount Type</Label>
+                <Label>{t("proedit.discountType")}</Label>
                 <Select
                   value={discountTypeEnum}
                   onValueChange={setDiscountTypeEnum}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select discount type" />
+                    <SelectValue
+                      placeholder={t("proedit.selectDiscountType")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Fixed">Fixed</SelectItem>
-                    <SelectItem value="Percent">Percent</SelectItem>
+                    <SelectItem value="Fixed">{t("proedit.fixed")}</SelectItem>
+                    <SelectItem value="Percent">
+                      {t("proedit.percent")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label>Start Date</Label>
+                <Label>{t("proedit.startDate")}</Label>
                 <Input
                   type="date"
                   value={startTime.slice(0, 10)}
@@ -239,7 +239,7 @@ export function EditPromotion({
                 />
               </div>
               <div>
-                <Label>End Date</Label>
+                <Label>{t("proedit.endDate")}</Label>
                 <Input
                   type="date"
                   value={endTime.slice(0, 10)}
@@ -247,7 +247,7 @@ export function EditPromotion({
                 />
               </div>
               <div>
-                <Label>Max Discount Value</Label>
+                <Label>{t("proedit.maxDiscountValue")}</Label>
                 <Input
                   type="number"
                   value={maxDiscountValue}
@@ -255,7 +255,7 @@ export function EditPromotion({
                 />
               </div>
               <div>
-                <Label>Min Order Value</Label>
+                <Label>{t("proedit.minOrderValue")}</Label>
                 <Input
                   type="number"
                   value={minOrderValue}
@@ -263,7 +263,7 @@ export function EditPromotion({
                 />
               </div>
               <div>
-                <Label>Discount User Number</Label>
+                <Label>{t("proedit.discountUserNum")}</Label>
                 <Input
                   type="number"
                   value={discountUserNum}
@@ -271,7 +271,7 @@ export function EditPromotion({
                 />
               </div>
               <div>
-                <Label>Discount Type (Optional)</Label>
+                <Label>{t("proedit.discountTypeOptional")}</Label>
                 <Select
                   value={discountTypeId}
                   onValueChange={setDiscountTypeId}
@@ -281,13 +281,13 @@ export function EditPromotion({
                     <SelectValue
                       placeholder={
                         isLoadingDiscountTypes
-                          ? "Loading..."
-                          : "Select discount type"
+                          ? t("proedit.loadingDiscountTypes")
+                          : t("proedit.selectDiscountType")
                       }
                     />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="none">{t("proedit.none")}</SelectItem>
                     {discountTypesResponse?.map((type) => (
                       <SelectItem key={type.id} value={type.id}>
                         {type.name}
@@ -297,7 +297,7 @@ export function EditPromotion({
                 </Select>
               </div>
               <div>
-                <Label>Image</Label>
+                <Label>{t("proedit.image")}</Label>
                 <Input
                   type="file"
                   accept="image/*"
@@ -312,7 +312,7 @@ export function EditPromotion({
                 {imagePreview && (
                   <img
                     src={imagePreview}
-                    alt="Promotion preview"
+                    alt={t("proedit.imagePreview")}
                     className="w-32 mt-2 rounded border cursor-pointer"
                     onClick={() => setPreviewModal(true)}
                   />
@@ -321,10 +321,10 @@ export function EditPromotion({
 
               <div className="flex gap-2 pt-4">
                 <Button onClick={handleSubmit} disabled={isSubmitting}>
-                  {isSubmitting ? "Saving..." : "Save"}
+                  {isSubmitting ? t("proedit.saving") : t("proedit.save")}
                 </Button>
                 <Button variant="outline" onClick={() => onOpenChange(false)}>
-                  Cancel
+                  {t("proedit.cancel")}
                 </Button>
               </div>
             </CardContent>
@@ -348,7 +348,7 @@ export function EditPromotion({
               </button>
               <img
                 src={imagePreview}
-                alt="Promotion preview"
+                alt={t("proedit.imagePreview")}
                 className="rounded-md object-contain max-h-[80vh] w-auto"
               />
             </div>

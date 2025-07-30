@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import { format } from "date-fns";
-import { addDays, setHours, setMinutes } from "date-fns";
+import { format, addDays, setHours, setMinutes } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useMovies } from "@/hooks/useMovie";
@@ -13,15 +12,16 @@ import { useRoomByBranchId } from "@/hooks/useRoom";
 import { useCreateShowTime } from "@/hooks/useShowTime";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CreateShowtimeDto } from "@/lib/api/service/fetchShowTime";
+import { useTranslation } from "react-i18next";
 
 export default function CreateShowtimeForm({
   onSuccess,
 }: {
   onSuccess?: () => void;
 }) {
+  const { t } = useTranslation();
   const { movies } = useMovies();
   const { branches } = useBranch();
   const [branchId, setBranchId] = useState<string | undefined>(undefined);
@@ -29,8 +29,7 @@ export default function CreateShowtimeForm({
     branchId || ""
   );
 
-  const { mutateAsync: createShowTime, error: createShowTimeError } =
-    useCreateShowTime();
+  const { mutateAsync: createShowTime } = useCreateShowTime();
 
   const {
     register,
@@ -39,7 +38,6 @@ export default function CreateShowtimeForm({
     setValue,
     formState: { errors },
   } = useForm<CreateShowtimeDto>();
-
 
   const onSubmit = async (data: CreateShowtimeDto) => {
     const formattedStart = format(
@@ -57,31 +55,29 @@ export default function CreateShowtimeForm({
       onSuccess?.();
     } catch (err: any) {
       const rawMessage =
-        err?.response?.data?.message ||
-        err?.message ||
-        "Tạo suất chiếu thất bại";
+        err?.response?.data?.message || err?.message || t("createError");
       const cleanedMessage = rawMessage.replace(/^Error:\s*/, "");
-
-      // toast.error(`❌ ${cleanedMessage}`);
-      // console.error("Lỗi tạo suất chiếu:", err);
       window.alert(cleanedMessage);
     }
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Movie selection */}
       <div className="space-y-1">
-        <Label htmlFor="movieId">🎬 Phim</Label>
+        <Label htmlFor="movieId">{t("movieLabel")}</Label>
         <select
-          {...register("movieId", { required: "Vui lòng chọn phim" })}
+          {...register("movieId", { required: t("movieRequired") })}
           className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
         >
-          <option value="">-- Chọn phim --</option>
-          {movies?.filter((movie) => movie.status === "nowShowing").map((movie) => (
-            <option key={movie.id} value={movie.id}>
-              {movie.name}
-            </option>
-          ))}
+          <option value="">{t("moviePlaceholder")}</option>
+          {movies
+            ?.filter((movie) => movie.status === "nowShowing")
+            .map((movie) => (
+              <option key={movie.id} value={movie.id}>
+                {movie.name}
+              </option>
+            ))}
         </select>
         {errors.movieId && (
           <p className="text-sm text-red-500">{errors.movieId.message}</p>
@@ -90,7 +86,7 @@ export default function CreateShowtimeForm({
 
       {/* Branch selection */}
       <div className="space-y-1">
-        <Label htmlFor="branchId">🏢 Chi nhánh</Label>
+        <Label htmlFor="branchId">{t("branchLabel")}</Label>
         <select
           value={branchId || ""}
           onChange={(e) => {
@@ -99,7 +95,7 @@ export default function CreateShowtimeForm({
           }}
           className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
         >
-          <option value="">-- Chọn chi nhánh --</option>
+          <option value="">{t("branchPlaceholder")}</option>
           {branches?.map((branch) => (
             <option key={branch.id} value={branch.id}>
               {branch.name}
@@ -110,16 +106,19 @@ export default function CreateShowtimeForm({
 
       {/* Room selection */}
       <div className="space-y-1">
-        <Label htmlFor="roomId">📽️ Phòng chiếu</Label>
+        <Label htmlFor="roomId">{t("roomLabel")}</Label>
         <select
-          {...register("roomId", { required: "Vui lòng chọn phòng" })}
+          {...register("roomId", { required: t("roomRequired") })}
           disabled={!branchId || isLoadingRooms}
           className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white disabled:opacity-50"
         >
-          <option value="">-- Chọn phòng --</option>
+          <option value="">{t("roomPlaceholder")}</option>
           {rooms?.map((room) => (
             <option key={room.id} value={room.id}>
-              Phòng {room.roomNumber} • {room.roomType?.name}
+              {t("roomOption", {
+                room: room.roomNumber,
+                type: room.roomType?.name,
+              })}
             </option>
           ))}
         </select>
@@ -129,15 +128,14 @@ export default function CreateShowtimeForm({
       </div>
 
       {/* Start time */}
-         {/* Start time */}
-         <div className="space-y-1">
-        <Label htmlFor="startTime">🕒 Thời gian bắt đầu</Label>
+      <div className="space-y-1">
+        <Label htmlFor="startTime">{t("startTimeLabel")}</Label>
         <div className="w-full">
           <DatePicker
             selected={watch("startTime") ? new Date(watch("startTime")) : null}
             onChange={(date: Date | null) => {
-              if (date) setValue("startTime", format(date, "yyyy-MM-dd HH:mm:ss"));
-
+              if (date)
+                setValue("startTime", format(date, "yyyy-MM-dd HH:mm:ss"));
             }}
             showTimeSelect
             timeIntervals={15}
@@ -148,7 +146,7 @@ export default function CreateShowtimeForm({
             minTime={setHours(setMinutes(new Date(), 0), 8)}
             maxTime={setHours(setMinutes(new Date(), 0), 22)}
             className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
-            placeholderText="dd/MM/yyyy HH:mm"
+            placeholderText={t("startTimePlaceholder")}
           />
         </div>
         {errors.startTime && (
@@ -159,7 +157,7 @@ export default function CreateShowtimeForm({
       {/* Submit */}
       <div className="pt-2">
         <Button type="submit" className="w-full">
-          Tạo suất chiếu
+          {t("submit")}
         </Button>
       </div>
     </form>

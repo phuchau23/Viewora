@@ -15,13 +15,12 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useCreateSnack } from "@/hooks/useSnacks";
 import { formatVND } from "@/utils/price/formatPrice";
+import { useTranslation } from "react-i18next";
 
 export default function AddSnackDialog() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    price: "",
-  });
+  const [formData, setFormData] = useState({ name: "", price: "" });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [previewModal, setPreviewModal] = useState(false);
@@ -43,11 +42,11 @@ export default function AddSnackDialog() {
 
   const validateForm = () => {
     if (!formData.name || !formData.price || !imageFile) {
-      setError("All fields are required.");
+      setError(t("snackadd.errorRequired"));
       return false;
     }
     if (isNaN(Number(formData.price)) || Number(formData.price) <= 0) {
-      setError("Price must be a valid positive number.");
+      setError(t("snackadd.errorInvalidPrice"));
       return false;
     }
     return true;
@@ -67,17 +66,14 @@ export default function AddSnackDialog() {
 
     createSnack(data, {
       onSuccess: () => {
-        toast.success("Snack created!");
-        setFormData({
-          name: "",
-          price: "",
-        });
+        toast.success(t("snackadd.createSuccess"));
+        setFormData({ name: "", price: "" });
         setImageFile(null);
         setImagePreview(null);
         setOpen(false);
       },
       onError: (err) => {
-        const msg = err?.message || "Create failed.";
+        const msg = err?.message || t("snackadd.createFailed");
         toast.error(msg);
         setError(msg);
       },
@@ -89,43 +85,44 @@ export default function AddSnackDialog() {
       <DialogTrigger asChild>
         <Button variant="outline">
           <Plus className="mr-2 h-4 w-4" />
-          Add Snack
+          {t("snackadd.addSnack")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Snack</DialogTitle>
+          <DialogTitle>{t("snackadd.title")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
           {error && <p className="text-red-500">{error}</p>}
 
           <div className="space-y-2">
-            <Label htmlFor="name">Name *</Label>
+            <Label htmlFor="name">{t("snackadd.name")} *</Label>
             <Input
               id="name"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Snack Name"
+              placeholder={t("snackadd.namePlaceholder")}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="price">Price (VND) *</Label>
+            <Label htmlFor="price">{t("snackadd.price")} *</Label>
             <Input
               type="number"
               name="price"
               value={formData.price}
               onChange={handleChange}
-              placeholder="Price"
+              placeholder={t("snackadd.pricePlaceholder")}
             />
             {formData.price && (
               <p className="text-sm text-gray-500 mt-1">
-                Preview: {formatVND(Number(formData.price))}
+                {t("snackadd.previewPrice")}:{" "}
+                {formatVND(Number(formData.price))}
               </p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="imageFile">Image *</Label>
+            <Label htmlFor="imageFile">{t("snackadd.image")} *</Label>
             <Input
               type="file"
               name="imageFile"
@@ -135,7 +132,7 @@ export default function AddSnackDialog() {
             {imagePreview && (
               <img
                 src={imagePreview}
-                alt="Preview"
+                alt={t("snackadd.imagePreviewAlt")}
                 className="w-32 mt-2 rounded border cursor-pointer"
                 onClick={() => setPreviewModal(true)}
               />
@@ -143,14 +140,14 @@ export default function AddSnackDialog() {
           </div>
           <div className="flex space-x-4 pt-2">
             <Button type="submit" disabled={isCreating}>
-              {isCreating ? "Creating..." : "Create"}
+              {isCreating ? t("snackadd.creating") : t("snackadd.create")}
             </Button>
             <Button
               variant="outline"
               type="button"
               onClick={() => setOpen(false)}
             >
-              Cancel
+              {t("snackadd.cancel")}
             </Button>
           </div>
         </form>
@@ -172,7 +169,7 @@ export default function AddSnackDialog() {
               </button>
               <img
                 src={imagePreview}
-                alt="Preview"
+                alt={t("snackadd.imagePreviewAlt")}
                 className="rounded-xl object-contain max-h-[80vh] w-auto"
               />
             </div>
