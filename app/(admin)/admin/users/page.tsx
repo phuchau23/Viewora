@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +15,6 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Search,
-  Plus,
   MoreHorizontal,
   Mail,
   Phone,
@@ -25,7 +25,6 @@ import {
   UserCheck,
   UserX,
   Shield,
-  Edit,
   Trash2,
   Eye,
   RotateCcw,
@@ -35,7 +34,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
   Select,
@@ -62,14 +60,14 @@ import { formatDate } from "@/utils/dates/formatDate";
 import { exportToCSV } from "@/utils/export/exportToCSV";
 
 export default function UserManagerPage() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
-  const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const { toast } = useToast();
-  const [searchParams, setSearchParams] = useState<UserSearchParams>({
+  const [searchParams] = useState<UserSearchParams>({
     pageNumber: 1,
     pageSize: 10,
   });
@@ -92,11 +90,8 @@ export default function UserManagerPage() {
         return "outline";
     }
   };
-
-  const getStatusColor = (isActive: boolean) => {
-    return isActive ? "default" : "secondary";
-  };
-
+  const getStatusColor = (isActive: boolean) =>
+    isActive ? "default" : "secondary";
   const getRoleIcon = (role: string) => {
     switch (role) {
       case "Admin":
@@ -114,114 +109,101 @@ export default function UserManagerPage() {
     setSelectedUser(user);
     setIsDetailsModalOpen(true);
   };
-
   const handleDeleteClick = (user: User) => {
     setSelectedUser(user);
     setIsDeleteDialogOpen(true);
   };
-
   const handleDeleteUser = async () => {
     if (!selectedUser) return;
     try {
-      console.log("Deleting accountId:", selectedUser.id);
       await deleteUserMutation.mutateAsync(selectedUser.id);
       setIsDeleteDialogOpen(false);
       toast({
-        title: selectedUser.isActive ? "User Deactivated" : "User Restored",
+        title: selectedUser.isActive
+          ? t("toastDeactivateTitle")
+          : t("toastRestoreTitle"),
         description: selectedUser.isActive
-          ? `${selectedUser.fullName} has been successfully deactivated.`
-          : `${selectedUser.fullName} has been successfully restored.`,
+          ? t("toastDeactivateDesc", { name: selectedUser.fullName })
+          : t("toastRestoreDesc", { name: selectedUser.fullName }),
       });
       setSelectedUser(null);
     } catch (error) {
-      console.log(error);
       toast({
-        title: "Error",
+        title: t("toastErrorTitle"),
         description: selectedUser.isActive
-          ? "Failed to deactivate user. Please try again."
-          : "Failed to restore user. Please try again.",
+          ? t("toastErrorDeactivateDesc")
+          : t("toastErrorRestoreDesc"),
         variant: "destructive",
       });
     }
   };
 
   const filteredUsers =
-    users && Array.isArray(users)
-      ? users.filter((user) => {
-          const searchTermLower = searchTerm.toLowerCase();
-          const matchesSearch =
-            user.fullName.toLowerCase().includes(searchTermLower) ||
-            user.email.toLowerCase().includes(searchTermLower) ||
-            user.phoneNumber.toLowerCase().includes(searchTermLower);
-          const matchesStatus =
-            statusFilter === "all" ||
-            (statusFilter === "Active" && user.isActive) ||
-            (statusFilter === "Inactive" && !user.isActive);
-          const matchesRole = roleFilter === "all" || user.role === roleFilter;
-
-          return matchesSearch && matchesStatus && matchesRole;
-        })
-      : [];
+    users?.filter((user) => {
+      const s = searchTerm.toLowerCase();
+      const matchesSearch =
+        user.fullName.toLowerCase().includes(s) ||
+        user.email.toLowerCase().includes(s) ||
+        user.phoneNumber.toLowerCase().includes(s);
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "Active" && user.isActive) ||
+        (statusFilter === "Inactive" && !user.isActive);
+      return matchesSearch && matchesStatus;
+    }) ?? [];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">User Manager</h1>
-          <p className="text-muted-foreground">
-            Create, read, update, and delete user accounts
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("usertitle")}
+          </h1>
+          <p className="text-muted-foreground">{t("userdescription")}</p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            onClick={() => {
-              if (!filteredUsers.length) return;
-
-              exportToCSV(
-                "users.csv",
-                [
-                  "Full Name",
-                  "Email",
-                  "Phone",
-                  "Address",
-                  "Role",
-                  "Status",
-                  "Joined Date",
-                ],
-                filteredUsers,
-                (user) => [
-                  user.fullName,
-                  user.email,
-                  user.phoneNumber,
-                  user.address,
-                  user.role?.name ?? "N/A",
-                  user.isActive ? "Active" : "Inactive",
-                  formatDate(user.createdAt?.toString() || ""),
-                ]
-              );
-            }}
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Export
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          onClick={() => {
+            if (!filteredUsers.length) return;
+            exportToCSV(
+              "users.csv",
+              [
+                "Full Name",
+                "Email",
+                "Phone",
+                "Address",
+                "Role",
+                "Status",
+                "Joined Date",
+              ],
+              filteredUsers,
+              (u) => [
+                u.fullName,
+                u.email,
+                u.phoneNumber,
+                u.address,
+                u.role?.name ?? "N/A",
+                u.isActive ? t("active") : t("inactive"),
+                formatDate(u.createdAt?.toString() || ""),
+              ]
+            );
+          }}
+        >
+          <Download className="mr-2 h-4 w-4" /> {t("export")}
+        </Button>
       </div>
 
-      {/* Search and Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Search & Filter Users</CardTitle>
-          <CardDescription>
-            Find users by name, email, department, or filter by role and status
-          </CardDescription>
+          <CardTitle>{t("usersearchTitle")}</CardTitle>
+          <CardDescription>{t("searchDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
             <div className="relative flex-1">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search users..."
+                placeholder={t("usersearchPlaceholder")}
                 className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -229,30 +211,29 @@ export default function UserManagerPage() {
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder={t("filterStatus")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Inactive">Inactive</SelectItem>
+                <SelectItem value="all">{t("allStatus")}</SelectItem>
+                <SelectItem value="Active">{t("active")}</SelectItem>
+                <SelectItem value="Inactive">{t("inactive")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </CardContent>
       </Card>
 
-      {/* Users List */}
       <Card>
         <CardContent>
-          <div className="space-y-4 mt">
-            {filteredUsers?.map((user: User) => (
+          <div className="space-y-4">
+            {filteredUsers.map((user) => (
               <div
                 key={user.id}
                 className="flex items-center justify-between p-6 border rounded-lg hover:bg-accent/50 transition-colors"
               >
                 <div className="flex items-center space-x-4">
                   <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                    <AvatarFallback>
                       {user.fullName
                         .split(" ")
                         .map((n) => n[0])
@@ -266,11 +247,11 @@ export default function UserManagerPage() {
                         variant={getRoleColor(user.role?.name)}
                         className="flex items-center space-x-1"
                       >
-                        {getRoleIcon(user.role?.name)}
+                        {getRoleIcon(user.role?.name)}{" "}
                         <span>{user.role?.name}</span>
                       </Badge>
                       <Badge variant={getStatusColor(user.isActive)}>
-                        {user.isActive ? "Active" : "Inactive"}
+                        {user.isActive ? t("active") : t("inactive")}
                       </Badge>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-muted-foreground">
@@ -289,7 +270,9 @@ export default function UserManagerPage() {
                       <div className="flex items-center space-x-1">
                         <Calendar className="h-3 w-3" />
                         <span>
-                          Joined {formatDate(user.createdAt?.toString() || "")}
+                          {t("joined", {
+                            date: formatDate(user.createdAt?.toString() || ""),
+                          })}
                         </span>
                       </div>
                     </div>
@@ -311,8 +294,7 @@ export default function UserManagerPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => handleViewDetails(user)}>
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Details
+                        <Eye className="mr-2 h-4 w-4" /> {t("viewDetails")}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handleDeleteClick(user)}
@@ -320,13 +302,13 @@ export default function UserManagerPage() {
                       >
                         {user.isActive ? (
                           <>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Deactivate User
+                            <Trash2 className="mr-2 h-4 w-4" />{" "}
+                            {t("deactivateUser")}
                           </>
                         ) : (
                           <>
-                            <RotateCcw className="mr-2 h-4 w-4" />
-                            Restore User
+                            <RotateCcw className="mr-2 h-4 w-4" />{" "}
+                            {t("restoreUser")}
                           </>
                         )}
                       </DropdownMenuItem>
@@ -339,7 +321,6 @@ export default function UserManagerPage() {
         </CardContent>
       </Card>
 
-      {/* User Details Modal */}
       <UserDetailsModal
         isOpen={isDetailsModalOpen}
         onClose={() => {
@@ -353,31 +334,30 @@ export default function UserManagerPage() {
         }}
       />
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t("confirmTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action will{" "}
-              {selectedUser?.isActive ? "deactivate" : "restore"}{" "}
-              <span className="font-semibold">{selectedUser?.fullName}</span>{" "}
-              and {selectedUser?.isActive ? "remove" : "restore"} their access
-              from the system.
+              {selectedUser?.isActive
+                ? t("confirmDescDeactivate", { name: selectedUser?.fullName })
+                : t("confirmDescRestore", { name: selectedUser?.fullName })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setSelectedUser(null)}>
-              Cancel
+              {t("cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteUser}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {selectedUser?.isActive ? "Deactivate User" : "Restore User"}
+              {selectedUser?.isActive
+                ? t("confirmDeactivate")
+                : t("confirmRestore")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

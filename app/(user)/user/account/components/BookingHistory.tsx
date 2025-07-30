@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { useBookingHistory, useUserProfile } from "@/hooks/useUsers";
+import { useBookingById } from "@/hooks/useBooking";
 
 // Ticket interface
 interface Ticket {
@@ -148,6 +149,8 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
   ticket,
   onClose,
 }) => {
+  const { booking } = useBookingById(ticket.id); // lấy QR code
+
   const formattedDate = format(
     new Date(ticket.bookingDate),
     "EEE, dd MMM yyyy"
@@ -180,18 +183,27 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
             {ticket.theater}
           </p>
         </div>
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-sm space-y-1">
-            <p>
-              <span className="font-medium">Seat: </span> {ticket.seatNumber}
-            </p>
-            <p>
-              <span className="font-medium">Seat Type: </span>
-              {ticket.seatType}
-            </p>
+
+        {/* QR code */}
+        {booking?.qrCodeUrl && (
+          <div className="flex justify-center mb-4">
+            <img
+              src={`data:image/png;base64,${booking.qrCodeUrl}`}
+              alt="QR Code"
+              className="w-40 h-40 rounded border shadow"
+            />
           </div>
-        </div>
+        )}
+
+        {/* Thông tin khác giữ nguyên */}
         <div className="text-sm space-y-1 mb-4">
+          <p>
+            <span className="font-medium">Seat: </span> {ticket.seatNumber}
+          </p>
+          <p>
+            <span className="font-medium">Seat Type: </span>
+            {ticket.seatType}
+          </p>
           <p>
             <span className="font-medium">Booked by: </span> {ticket.userName}
           </p>
@@ -203,10 +215,6 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
           </p>
           <p>
             <span className="font-medium">Time: </span> {ticket.showTime}
-          </p>
-          <p>
-            <span className="font-medium">Number of Tickets: </span>
-            {ticket.seatNumber.split(", ").length}
           </p>
         </div>
 

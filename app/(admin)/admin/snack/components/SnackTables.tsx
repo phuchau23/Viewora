@@ -19,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Download, Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Download, Search, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Snack } from "@/lib/api/service/fetchSnack";
@@ -31,8 +31,10 @@ import { useSort } from "@/hooks/useSort";
 import { formatVND } from "@/utils/price/formatPrice";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useTranslation } from "react-i18next";
 
 export default function SnacksTable() {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [pageIndex] = useState(1);
   const pageSize = 10;
@@ -73,7 +75,7 @@ export default function SnacksTable() {
     return (
       <div className="container mx-auto p-6">
         <p className="text-red-500">
-          Lỗi: {error?.message || "Không thể tải dữ liệu snack"}
+          {t("snack.errorLoad", { error: error?.message || "" })}
         </p>
       </div>
     );
@@ -82,9 +84,7 @@ export default function SnacksTable() {
   const handleDelete = (id: string) => {
     toast(
       <div>
-        <div className="font-semibold mb-2">
-          Are you sure you want to delete this snack?
-        </div>
+        <div className="font-semibold mb-2">{t("snack.confirmDelete")}</div>
         <div className="flex gap-2 mt-4">
           <Button
             size="sm"
@@ -92,21 +92,21 @@ export default function SnacksTable() {
             onClick={() => {
               deleteSnack(id, {
                 onSuccess: () => {
-                  toast.success("Snack deleted successfully!");
+                  toast.success(t("snack.deleteSuccess"));
                   queryClient.invalidateQueries({ queryKey: ["snacks"] });
                 },
                 onError: (error: any) => {
-                  toast.error(error.message || "Failed to delete snack");
+                  toast.error(error.message || t("snack.deleteFailed"));
                 },
               });
               toast.dismiss();
             }}
             disabled={isDeleting}
           >
-            Delete
+            {t("snack.delete")}
           </Button>
           <Button size="sm" variant="outline" onClick={() => toast.dismiss()}>
-            Cancel
+            {t("snack.cancel")}
           </Button>
         </div>
       </div>,
@@ -121,18 +121,18 @@ export default function SnacksTable() {
 
   const handleExport = () => {
     if (!sortedSnacks.length) {
-      toast.error("No snacks to export");
+      toast.error(t("snack.noSnackExport"));
       return;
     }
 
     exportToCSV(
       "snacks.csv",
-      ["Name", "Price", "Status"],
+      [t("snack.exportName"), t("snack.exportPrice"), t("snack.exportStatus")],
       sortedSnacks,
       (snack) => [
         snack.name,
         formatVND(snack.price),
-        snack.isAvailable ? "Available" : "Unavailable",
+        snack.isAvailable ? t("snack.available") : t("snack.unavailable"),
       ]
     );
   };
@@ -141,15 +141,15 @@ export default function SnacksTable() {
     <div className="mx-2 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Snack Management</CardTitle>
-          <CardDescription>Manage snacks for your application</CardDescription>
+          <CardTitle>{t("snack.title")}</CardTitle>
+          <CardDescription>{t("snack.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex justify-between items-center mb-6">
             <div className="relative w-72">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Tìm kiếm theo tên snack"
+                placeholder={t("snack.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value.slice(0, 28))}
                 className="pl-10"
@@ -158,7 +158,7 @@ export default function SnacksTable() {
             <div className="flex space-x-2">
               <Button variant="outline" onClick={handleExport}>
                 <Download className="mr-2 h-4 w-4" />
-                Export
+                {t("snack.export")}
               </Button>
               <AddSnackDialog />
             </div>
@@ -170,23 +170,23 @@ export default function SnacksTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Image</TableHead>
+              <TableHead>{t("snack.image")}</TableHead>
               <TableHead onClick={() => handleSort("name")}>
-                Tên{" "}
+                {t("snack.name")}{" "}
                 {sortConfig.key === "name" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
               <TableHead onClick={() => handleSort("price")}>
-                Giá{" "}
+                {t("snack.price")}{" "}
                 {sortConfig.key === "price" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
               <TableHead onClick={() => handleSort("isAvailable")}>
-                Trạng thái{" "}
+                {t("snack.status")}{" "}
                 {sortConfig.key === "isAvailable" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
-              <TableHead>Hành động</TableHead>
+              <TableHead>{t("snack.action")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -206,7 +206,9 @@ export default function SnacksTable() {
                 <TableCell className="font-bold">{snack.name}</TableCell>
                 <TableCell>{formatVND(snack.price)}</TableCell>
                 <TableCell>
-                  {snack.isAvailable ? "Available" : "Unavailable"}
+                  {snack.isAvailable
+                    ? t("snack.available")
+                    : t("snack.unavailable")}
                 </TableCell>
                 <TableCell>
                   <Button
@@ -248,7 +250,7 @@ export default function SnacksTable() {
             <div className="w-full flex justify-center">
               <Image
                 src={previewImage}
-                alt="Preview"
+                alt={t("snack.previewImage")}
                 width={600}
                 height={600}
                 className="rounded object-contain"

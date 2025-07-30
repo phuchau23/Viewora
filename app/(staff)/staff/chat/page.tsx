@@ -1,3 +1,4 @@
+
 "use client";
 import StaffChat from "./components/staff-chat";
 import { getUserIdFromToken } from "@/utils/signalr";
@@ -12,3 +13,4 @@ export default function Home() {
     </>
   );
 }
+

@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Mail,
   Phone,
@@ -18,8 +18,9 @@ import {
   MapPin,
   IdCard,
   CalendarClock,
+  Trash2,
 } from "lucide-react";
-import { Edit, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface User {
   username: string;
@@ -48,6 +49,7 @@ export function UserDetailsModal({
   user,
   onDelete,
 }: UserDetailsModalProps) {
+  const { t } = useTranslation();
   if (!user) return null;
 
   const getInitials = (fullName: string) =>
@@ -60,16 +62,16 @@ export function UserDetailsModal({
   const getGender = (gender: number) => {
     switch (gender) {
       case 0:
-        return "Male";
+        return t("gender.male");
       case 1:
-        return "Female";
+        return t("gender.female");
       default:
-        return "Other";
+        return t("gender.other");
     }
   };
 
   const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return "N/A";
+    if (!dateStr) return t("na");
     return new Date(dateStr).toLocaleDateString();
   };
 
@@ -95,7 +97,7 @@ export function UserDetailsModal({
           {label}
         </p>
         <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-          {value || "N/A"}
+          {value || t("na")}
         </p>
       </div>
     </div>
@@ -106,10 +108,10 @@ export function UserDetailsModal({
       <DialogContent className="sm:max-w-[600px] rounded-lg shadow-lg bg-white dark:bg-black">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold dark:text-white">
-            User Details
+            {t("UserDetailstitle")}
           </DialogTitle>
           <DialogDescription className="text-gray-500 dark:text-gray-400">
-            Complete personal information of the user.
+            {t("UserDetailsdescription")}
           </DialogDescription>
         </DialogHeader>
 
@@ -129,39 +131,39 @@ export function UserDetailsModal({
         <div className="grid grid-cols-2 gap-3">
           <InfoItem
             icon={<Mail className="h-4 w-4" />}
-            label="Email"
+            label={t("email")}
             value={user.email}
           />
           <InfoItem
             icon={<Phone className="h-4 w-4" />}
-            label="Phone"
+            label={t("phone")}
             value={user.phoneNumber}
           />
           <InfoItem
             icon={<Calendar className="h-4 w-4" />}
-            label="Date of Birth"
+            label={t("dob")}
             value={formatDate(user.dateOfBirth)}
           />
           <InfoItem
             icon={<User className="h-4 w-4" />}
-            label="Gender"
+            label={t("gender.title")}
             value={getGender(user.gender)}
           />
           <InfoItem
             icon={<IdCard className="h-4 w-4" />}
-            label="Identity Card"
+            label={t("identityCard")}
             value={user.identityCard}
             fullWidth
           />
           <InfoItem
             icon={<MapPin className="h-4 w-4" />}
-            label="Address"
+            label={t("address")}
             value={user.address}
             fullWidth
           />
           <InfoItem
             icon={<CalendarClock className="h-4 w-4" />}
-            label="Created At"
+            label={t("createdAt")}
             value={formatDate(user.createdAt)}
             fullWidth
           />
@@ -171,11 +173,11 @@ export function UserDetailsModal({
           <div className="flex space-x-2">
             <Button variant="destructive" onClick={onDelete} size="sm">
               <Trash2 className="mr-1 h-3.5 w-3.5" />
-              Delete
+              {t("delete")}
             </Button>
           </div>
           <Button variant="outline" onClick={onClose} size="sm">
-            Close
+            {t("close")}
           </Button>
         </DialogFooter>
       </DialogContent>

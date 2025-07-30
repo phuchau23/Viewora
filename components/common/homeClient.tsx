@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import Header from "@/components/header";
 import Footer from "@/components/footer";
@@ -11,6 +12,7 @@ import { motion } from "framer-motion";
 
 export default function HomeClient() {
   const [searchTerm, setSearchTerm] = useState("");
+  const { t } = useTranslation();
 
   const heroRef = useRef(null);
   const titleRef = useRef(null);
@@ -39,11 +41,9 @@ export default function HomeClient() {
             ease: "easeInOut",
           }}
         >
-          <h3 className="text-2xl md:text-4xl font-bold">
-            Tìm kiếm phim bạn yêu thích!
-          </h3>
+          <h3 className="text-2xl md:text-4xl font-bold">{t("searchTitle")}</h3>
           <p className="mt-3 text-sm md:text-base text-black dark:text-white">
-            &quot;Không bỏ lỡ khoảnh khắc – Bắt trọn từng thước phim!&quot;
+            {t("searchSubtitle")}
           </p>
         </motion.div>
 
@@ -55,7 +55,7 @@ export default function HomeClient() {
           transition={{
             duration: 1.4,
             ease: "easeInOut",
-            delay: 0.4, // Delay sau title
+            delay: 0.4,
           }}
         >
           <MovieSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
@@ -63,7 +63,7 @@ export default function HomeClient() {
       </section>
       <div className="mt-12" ref={comingRef}>
         <h2 className="text-3xl font-semibold text-black dark:text-white border-l-4 border-orange-500 pl-4 mb-4">
-          Coming Soon
+          {t("comingSoon")}
         </h2>
         <CinemaCard
           movies={movies?.filter((movie) => movie.status === "inComing")}
@@ -71,7 +71,7 @@ export default function HomeClient() {
       </div>
       <div className="mt-12" ref={showingRef}>
         <h2 className="text-3xl font-semibold text-black dark:text-white border-l-4 border-red-500 pl-4 mb-4">
-          Now Showing
+          {t("nowShowing")}
         </h2>
         <CinemaCard
           movies={movies?.filter((movie) => movie.status === "nowShowing")}

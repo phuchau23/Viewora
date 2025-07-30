@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   selectedCode: string;
@@ -24,6 +25,7 @@ export default function PromoCodeSelector({
   onSelect,
   totalPrice,
 }: Props) {
+  const { t } = useTranslation();
   const { data: promoData } = usePromotions();
   const [open, setOpen] = useState(false);
 
@@ -31,15 +33,17 @@ export default function PromoCodeSelector({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div className="flex justify-between items-center border p-2 rounded-md cursor-pointer hover:bg-muted transition">
-          <span>{selectedCode || "Chọn mã giảm giá"}</span>
+          <span>{selectedCode || t("promo.select")}</span>
         </div>
       </DialogTrigger>
 
       <DialogContent className="max-w-md">
         <DialogHeader className="flex flex-row justify-between items-center">
-          <DialogTitle>Chọn mã giảm giá</DialogTitle>
+          <DialogTitle>{t("promo.title")}</DialogTitle>
           <DialogClose asChild>
-        
+            <button>
+              <X className="w-5 h-5" />
+            </button>
           </DialogClose>
         </DialogHeader>
 
@@ -77,15 +81,18 @@ export default function PromoCodeSelector({
                     <div className="font-semibold">{promo.code}</div>
                     <div className="text-sm text-gray-600">
                       {promo.discountPrice}
-                      {promo.discountTypeEnum === "Percent" ? "%" : "đ"}
+                      {promo.discountTypeEnum === "Percent"
+                        ? "%"
+                        : t("currency")}
                     </div>
                     <div className="text-xs text-gray-400">
-                      HSD: {promo.endTime}
+                      {t("promo.expire")}: {promo.endTime}
                     </div>
                     {notEnough && (
                       <div className="text-xs text-red-500 mt-1">
-                        Cần tối thiểu{" "}
-                        {promo.minOrderValue.toLocaleString()}đ để áp dụng
+                        {t("promo.minOrder", {
+                          value: promo.minOrderValue.toLocaleString(),
+                        })}
                       </div>
                     )}
                   </div>

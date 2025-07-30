@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Employee } from "@/lib/api/service/fetchEmployees";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -28,8 +28,6 @@ interface EmployeeFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: any) => void;
-  title: string;
-  submitText: string;
   mode: "add" | "edit";
   initialData?: Employee | null;
 }
@@ -38,11 +36,10 @@ export function EmployeeFormModal({
   isOpen,
   onClose,
   onSubmit,
-  title,
-  submitText,
   mode,
   initialData,
 }: EmployeeFormModalProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     Position: "",
     Department: "",
@@ -57,7 +54,6 @@ export function EmployeeFormModal({
       Password: "",
     },
   });
-
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
 
@@ -84,36 +80,36 @@ export function EmployeeFormModal({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // Validate các trường bắt buộc
-    if (!formData.Position.trim()) newErrors.Position = "Position is required";
-    if (!formData.Department.trim()) newErrors.Department = "Department is required";
-    if (!formData.WorkLocation.trim()) newErrors.WorkLocation = "Work Location is required";
-    if (formData.BaseSalary <= 0) newErrors.BaseSalary = "Base Salary must be positive";
-    if (!formData.Account.Email.trim()) newErrors["Account.Email"] = "Email is required";
-    if (!formData.Account.FullName.trim()) newErrors["Account.FullName"] = "Full Name is required";
-    if (!formData.Account.DateOfBirth) newErrors["Account.DateOfBirth"] = "Date of Birth is required";
-    if (!formData.Account.Gender.trim()) newErrors["Account.Gender"] = "Gender is required";
-    if (!formData.Account.PhoneNumber.trim()) newErrors["Account.PhoneNumber"] = "Phone Number is required";
-
-    // Validate các trường chỉ bắt buộc ở chế độ "add"
-    if (mode === "add") {
-      if (!formData.Account.Password.trim()) newErrors["Account.Password"] = "Password is required";
-    }
-
-    // Validate định dạng email
-    if (formData.Account.Email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Account.Email)) {
-      newErrors["Account.Email"] = "Please enter a valid email address";
-    }
-
-    // Validate độ dài tối đa (28 ký tự)
-    const maxLength = 28;
-    if (formData.Position.length > maxLength) newErrors.Position = `Position must be ${maxLength} characters or less`;
-    if (formData.Department.length > maxLength) newErrors.Department = `Department must be ${maxLength} characters or less`;
-    if (formData.WorkLocation.length > maxLength) newErrors.WorkLocation = `Work Location must be ${maxLength} characters or less`;
-    if (formData.Account.Email.length > maxLength) newErrors["Account.Email"] = `Email must be ${maxLength} characters or less`;
-    if (formData.Account.FullName.length > maxLength) newErrors["Account.FullName"] = `Full Name must be ${maxLength} characters or less`;
-    if (formData.Account.PhoneNumber.length > maxLength) newErrors["Account.PhoneNumber"] = `Phone must be ${maxLength} characters or less`;
-    if (formData.Account.Password.length > maxLength) newErrors["Account.Password"] = `Password must be ${maxLength} characters or less`;
+    if (!formData.Position.trim())
+      newErrors.Position = t("employeeInformation.errors.positionRequired");
+    if (!formData.Department.trim())
+      newErrors.Department = t("employeeInformation.errors.departmentRequired");
+    if (!formData.WorkLocation.trim())
+      newErrors.WorkLocation = t(
+        "employeeInformation.errors.workLocationRequired"
+      );
+    if (formData.BaseSalary <= 0)
+      newErrors.BaseSalary = t("employeeInformation.errors.baseSalaryPositive");
+    if (!formData.Account.Email.trim())
+      newErrors["Account.Email"] = t(
+        "employeeInformation.errors.emailRequired"
+      );
+    if (!formData.Account.FullName.trim())
+      newErrors["Account.FullName"] = t(
+        "employeeInformation.errors.fullNameRequired"
+      );
+    if (!formData.Account.DateOfBirth)
+      newErrors["Account.DateOfBirth"] = t(
+        "employeeInformation.errors.dobRequired"
+      );
+    if (!formData.Account.PhoneNumber.trim())
+      newErrors["Account.PhoneNumber"] = t(
+        "employeeInformation.errors.phoneRequired"
+      );
+    if (mode === "add" && !formData.Account.Password.trim())
+      newErrors["Account.Password"] = t(
+        "employeeInformation.errors.passwordRequired"
+      );
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -123,7 +119,6 @@ export function EmployeeFormModal({
     e.preventDefault();
     if (validateForm()) {
       onSubmit(formData);
-      console.log(formData);
       onClose();
     }
   };
@@ -143,19 +138,19 @@ export function EmployeeFormModal({
     }
   };
 
-  const handleBack = () => {
-    onClose();
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>
+            {mode === "add"
+              ? t("employeeInformation.addTitle")
+              : t("employeeInformation.editTitle")}
+          </DialogTitle>
           <DialogDescription>
             {mode === "add"
-              ? "Enter employee personal and account details to add them to the system."
-              : "Update employee information. Account field cannot be modified."}
+              ? t("employeeInformation.addDescription")
+              : t("employeeInformation.editDescription")}
           </DialogDescription>
         </DialogHeader>
 
@@ -163,16 +158,20 @@ export function EmployeeFormModal({
           {/* Employee Information */}
           <div className="space-y-4">
             <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
-              Employee Information
+              {t("employeeInformation.sections.employeeInfo")}
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="position">Position *</Label>
+                <Label htmlFor="position">
+                  {t("employeeInformation.fields.position")} *
+                </Label>
                 <Input
                   id="position"
                   value={formData.Position}
-                  onChange={(e) => handleInputChange("Position", e.target.value)}
-                  placeholder="Enter position"
+                  onChange={(e) =>
+                    handleInputChange("Position", e.target.value)
+                  }
+                  placeholder={t("employeeInformation.placeholders.position")}
                   maxLength={28}
                   className={errors.Position ? "border-destructive" : ""}
                 />
@@ -181,151 +180,224 @@ export function EmployeeFormModal({
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="department">Department *</Label>
+                <Label htmlFor="department">
+                  {t("employeeInformation.fields.department")} *
+                </Label>
                 <Input
                   id="department"
                   value={formData.Department}
-                  onChange={(e) => handleInputChange("Department", e.target.value)}
-                  placeholder="Enter department"
+                  onChange={(e) =>
+                    handleInputChange("Department", e.target.value)
+                  }
+                  placeholder={t("employeeInformation.placeholders.department")}
                   maxLength={28}
                   className={errors.Department ? "border-destructive" : ""}
                 />
                 {errors.Department && (
-                  <p className="text-sm text-destructive">{errors.Department}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.Department}
+                  </p>
                 )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="workLocation">Work Location *</Label>
+                <Label htmlFor="workLocation">
+                  {t("employeeInformation.fields.workLocation")} *
+                </Label>
                 <Input
                   id="workLocation"
                   value={formData.WorkLocation}
-                  onChange={(e) => handleInputChange("WorkLocation", e.target.value)}
-                  placeholder="Enter work location"
+                  onChange={(e) =>
+                    handleInputChange("WorkLocation", e.target.value)
+                  }
+                  placeholder={t(
+                    "employeeInformation.placeholders.workLocation"
+                  )}
                   maxLength={28}
                   className={errors.WorkLocation ? "border-destructive" : ""}
                 />
                 {errors.WorkLocation && (
-                  <p className="text-sm text-destructive">{errors.WorkLocation}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.WorkLocation}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="baseSalary">Base Salary *</Label>
+                <Label htmlFor="baseSalary">
+                  {t("employeeInformation.fields.baseSalary")} *
+                </Label>
                 <Input
                   id="baseSalary"
                   type="number"
                   value={formData.BaseSalary}
-                  onChange={(e) => handleInputChange("BaseSalary", parseFloat(e.target.value) || 0)}
-                  placeholder="Enter base salary"
+                  onChange={(e) =>
+                    handleInputChange(
+                      "BaseSalary",
+                      parseFloat(e.target.value) || 0
+                    )
+                  }
+                  placeholder={t("employeeInformation.placeholders.baseSalary")}
                   className={errors.BaseSalary ? "border-destructive" : ""}
                 />
                 {errors.BaseSalary && (
-                  <p className="text-sm text-destructive">{errors.BaseSalary}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.BaseSalary}
+                  </p>
                 )}
               </div>
             </div>
-
-
           </div>
 
           {/* Account Information */}
           <div className="space-y-4">
             <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
-              Account Information
+              {t("employeeInformation.sections.accountInfo")}
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="Account.Email">Email *</Label>
+                <Label htmlFor="Account.Email">
+                  {t("employeeInformation.fields.email")} *
+                </Label>
                 <Input
                   id="Account.Email"
                   value={formData.Account.Email}
-                  onChange={(e) => handleInputChange("Account.Email", e.target.value)}
-                  placeholder="Enter email"
+                  onChange={(e) =>
+                    handleInputChange("Account.Email", e.target.value)
+                  }
+                  placeholder={t("employeeInformation.placeholders.email")}
                   maxLength={28}
-                  className={errors["Account.Email"] ? "border-destructive" : ""}
+                  className={
+                    errors["Account.Email"] ? "border-destructive" : ""
+                  }
                 />
                 {errors["Account.Email"] && (
-                  <p className="text-sm text-destructive">{errors["Account.Email"]}</p>
+                  <p className="text-sm text-destructive">
+                    {errors["Account.Email"]}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="  Account.FullName">Full Name *</Label>
+                <Label htmlFor="Account.FullName">
+                  {t("employeeInformation.fields.fullName")} *
+                </Label>
                 <Input
                   id="Account.FullName"
                   value={formData.Account.FullName}
-                  onChange={(e) => handleInputChange("Account.FullName", e.target.value)}
-                  placeholder="Enter full name"
+                  onChange={(e) =>
+                    handleInputChange("Account.FullName", e.target.value)
+                  }
+                  placeholder={t("employeeInformation.placeholders.fullName")}
                   maxLength={28}
-                  className={errors["Account.FullName"] ? "border-destructive" : ""}
+                  className={
+                    errors["Account.FullName"] ? "border-destructive" : ""
+                  }
                 />
                 {errors["Account.FullName"] && (
-                  <p className="text-sm text-destructive">{errors["Account.FullName"]}</p>
+                  <p className="text-sm text-destructive">
+                    {errors["Account.FullName"]}
+                  </p>
                 )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="Account.DateOfBirth">Date of Birth *</Label>
+                <Label htmlFor="Account.DateOfBirth">
+                  {t("employeeInformation.fields.dateOfBirth")} *
+                </Label>
                 <Input
                   id="Account.DateOfBirth"
                   type="date"
                   value={formData.Account.DateOfBirth}
-                  onChange={(e) => handleInputChange("Account.DateOfBirth", e.target.value)}
-                  className={errors["Account.DateOfBirth"] ? "border-destructive" : ""}
+                  onChange={(e) =>
+                    handleInputChange("Account.DateOfBirth", e.target.value)
+                  }
+                  className={
+                    errors["Account.DateOfBirth"] ? "border-destructive" : ""
+                  }
                 />
                 {errors["Account.DateOfBirth"] && (
-                  <p className="text-sm text-destructive">{errors["Account.DateOfBirth"]}</p>
+                  <p className="text-sm text-destructive">
+                    {errors["Account.DateOfBirth"]}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="Account.Gender">Gender *</Label>
+                <Label htmlFor="Account.Gender">
+                  {t("employeeInformation.fields.gender")} *
+                </Label>
                 <Select
                   value={formData.Account.Gender}
-                  onValueChange={(value) => handleInputChange("Account.Gender", value)}
+                  onValueChange={(value) =>
+                    handleInputChange("Account.Gender", value)
+                  }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select gender" />
+                    <SelectValue
+                      placeholder={t("employeeInformation.placeholders.gender")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Male">Male</SelectItem>
-                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Male">
+                      {t("employeeInformation.gender.male")}
+                    </SelectItem>
+                    <SelectItem value="Female">
+                      {t("employeeInformation.gender.female")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 {errors["Account.Gender"] && (
-                  <p className="text-sm text-destructive">{errors["Account.Gender"]}</p>
+                  <p className="text-sm text-destructive">
+                    {errors["Account.Gender"]}
+                  </p>
                 )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="Account.PhoneNumber">Phone Number *</Label>
+                <Label htmlFor="Account.PhoneNumber">
+                  {t("employeeInformation.fields.phoneNumber")} *
+                </Label>
                 <Input
                   id="Account.PhoneNumber"
                   value={formData.Account.PhoneNumber}
-                  onChange={(e) => handleInputChange("Account.PhoneNumber", e.target.value)}
-                  placeholder="Enter phone number"
+                  onChange={(e) =>
+                    handleInputChange("Account.PhoneNumber", e.target.value)
+                  }
+                  placeholder={t(
+                    "employeeInformation.placeholders.phoneNumber"
+                  )}
                   maxLength={28}
-                  className={errors["Account.PhoneNumber"] ? "border-destructive" : ""}
+                  className={
+                    errors["Account.PhoneNumber"] ? "border-destructive" : ""
+                  }
                 />
                 {errors["Account.PhoneNumber"] && (
-                  <p className="text-sm text-destructive">{errors["Account.PhoneNumber"]}</p>
+                  <p className="text-sm text-destructive">
+                    {errors["Account.PhoneNumber"]}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="Account.Password">Password *</Label>
+                <Label htmlFor="Account.Password">
+                  {t("employeeInformation.fields.password")} *
+                </Label>
                 <div className="relative">
                   <Input
                     id="Account.Password"
                     type={showPassword ? "text" : "password"}
                     value={formData.Account.Password}
-                    onChange={(e) => handleInputChange("Account.Password", e.target.value)}
-                    placeholder="Enter password"
+                    onChange={(e) =>
+                      handleInputChange("Account.Password", e.target.value)
+                    }
+                    placeholder={t("employeeInformation.placeholders.password")}
                     maxLength={28}
-                    className={errors["Account.Password"] ? "border-destructive" : ""}
+                    className={
+                      errors["Account.Password"] ? "border-destructive" : ""
+                    }
                   />
                   <Button
                     type="button"
@@ -334,21 +406,31 @@ export function EmployeeFormModal({
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
                 {errors["Account.Password"] && (
-                  <p className="text-sm text-destructive">{errors["Account.Password"]}</p>
+                  <p className="text-sm text-destructive">
+                    {errors["Account.Password"]}
+                  </p>
                 )}
               </div>
             </div>
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleBack}>
-              Back
+            <Button type="button" variant="outline" onClick={onClose}>
+              {t("employeeInformation.buttons.back")}
             </Button>
-            <Button type="submit">{submitText}</Button>
+            <Button type="submit">
+              {mode === "add"
+                ? t("employeeInformation.buttons.add")
+                : t("employeeInformation.buttons.update")}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

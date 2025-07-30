@@ -4,12 +4,14 @@ import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Clock, Search, Star } from "lucide-react";
 import { useShowTimeByMovieId } from "@/hooks/useShowTime";
 import RoomSeatingChart from "./seatChart";
+import { useTranslation } from "react-i18next";
 
 interface MovieShowtimeProps {
   movieId: string;
 }
 
 const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
+  const { t } = useTranslation(); // namespace movie.json
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
   const [expandedShowId, setExpandedShowId] = useState<string | null>(null);
@@ -18,9 +20,9 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
     isLoading,
     error: showTimeError,
   } = useShowTimeByMovieId(movieId);
+
   const todayStr = new Date().toISOString().split("T")[0];
 
-  // 1. Lấy danh sách ngày có suất chiếu
   const showTimeDates = Array.isArray(showTime)
     ? Array.from(
         new Set(
@@ -35,32 +37,29 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
     ? showTimeDates.includes(selectedDate)
     : false;
 
-  // 2. Tự động chọn ngày gần nhất có suất chiếu
   useEffect(() => {
     if (!selectedDate && showTimeDates.length > 0) {
-      if (showTimeDates.includes(todayStr)) {
-        setSelectedDate(todayStr);
-      }
-      // nếu không có thì chờ người dùng bấm nút
+      if (showTimeDates.includes(todayStr)) setSelectedDate(todayStr);
     }
   }, [showTimeDates, selectedDate, todayStr]);
 
   const generateDates = () => {
+    const dayNames = [
+      t("showtime.week.sunday"),
+      t("showtime.week.monday"),
+      t("showtime.week.tuesday"),
+      t("showtime.week.wednesday"),
+      t("showtime.week.thursday"),
+      t("showtime.week.friday"),
+      t("showtime.week.saturday"),
+    ];
+
     const dates = [];
     const today = new Date();
     for (let i = 0; i < 9; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      const dayNames = [
-        "CN",
-        "Thứ 2",
-        "Thứ 3",
-        "Thứ 4",
-        "Thứ 5",
-        "Thứ 6",
-        "Thứ 7",
-      ];
-      const dayName = i === 0 ? "Hôm nay" : dayNames[date.getDay()];
+      const dayName = i === 0 ? t("showtime.today") : dayNames[date.getDay()];
       dates.push({
         date: date.toISOString().split("T")[0],
         day: date.getDate(),
@@ -70,6 +69,7 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
     }
     return dates;
   };
+
   const formatTime = (dateString: string) =>
     new Date(dateString).toLocaleTimeString("vi-VN", {
       hour: "2-digit",
@@ -118,7 +118,7 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mx-auto mb-4" />
           <p className="text-muted-foreground text-sm">
-            Đang tải lịch chiếu...
+            {t("showtime.loading")}
           </p>
         </div>
       </div>
@@ -131,7 +131,7 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
         <div className="text-center">
           <div className="text-red-500 text-4xl mb-2">⚠️</div>
           <h2 className="text-md font-semibold text-foreground mb-1">
-            Có lỗi xảy ra
+            {t("showtime.error.title")}
           </h2>
           <p className="text-muted-foreground text-sm mb-3">
             {showTimeError.message}
@@ -140,7 +140,7 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
           >
-            Thử lại
+            {t("showtime.error.retry")}
           </button>
         </div>
       </div>
@@ -151,7 +151,7 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
     <div className="min-h-[auto] bg-background border border-border">
       <div className="max-w-7xl mx-auto py-6 px-4">
         <h1 className="text-2xl font-bold text-center mb-6 text-foreground">
-          Lịch chiếu phim
+          {t("showtime.title")}
         </h1>
 
         {/* Date Selector */}
@@ -186,11 +186,28 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
               })}
             </div>
           </div>
-
           <button className="p-2 hover:bg-muted rounded-full shrink-0">
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
+
+        {/* No showtime */}
+        {selectedDate && !isSelectedDateHasShowTime && (
+          <div className="p-4 rounded-xl shadow-sm border border-border">
+            <div className="my-6 text-center space-y-3">
+              <p className="text-foreground">{t("showtime.noShowtime")}</p>
+              {showTimeDates.length > 0 && (
+                <button
+                  onClick={() => setSelectedDate(showTimeDates[0])}
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition flex gap-2 items-center justify-center"
+                >
+                  <Search className="w-5 h-5" />
+                  {t("showtime.findNearest")}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Branch Selector */}
         {selectedDate &&
@@ -220,24 +237,6 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
               ))}
             </div>
           )}
-        {selectedDate && !isSelectedDateHasShowTime && (
-          <div className="p-4 rounded-xl shadow-sm border border-border">
-            <div className="my-6 text-center space-y-3">
-              <p className="text-foreground">
-                Không có suất chiếu vào ngày này.
-              </p>
-              {showTimeDates.length > 0 && (
-                <button
-                  onClick={() => setSelectedDate(showTimeDates[0])}
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
-                >
-                  <Search className="w-5 h-5 center" />
-                  Tìm ngày gần nhất có suất chiếu
-                </button>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* Showtime Cards */}
         {Object.entries(
@@ -259,8 +258,8 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
             >
               <div className="flex justify-between mb-2">
                 <h2 className="font-semibold text-lg text-foreground">
-                  {firstShow.movie.name} – Phòng {firstShow.room.roomNumber} (
-                  {firstShow.room.roomType.name})
+                  {firstShow.movie.name} – {t("showtime.room")}{" "}
+                  {firstShow.room.roomNumber} ({firstShow.room.roomType.name})
                 </h2>
                 <div className="flex items-center text-yellow-500 gap-1">
                   <Star className="w-4 h-4" />
