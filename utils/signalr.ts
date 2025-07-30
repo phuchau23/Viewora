@@ -34,7 +34,7 @@ export function useSeatSignalR(
     if (!showTimeId) return;
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7014/hub/cinema", {
+      .withUrl("https://viewora.io.vn/hub/cinema", {
         accessTokenFactory: getTokenFromCookie,
       })
       .withAutomaticReconnect()
