@@ -67,7 +67,12 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
       .withUrl(
-        `${process.env.NEXT_PUBLIC_SIGNALR_CHAT}/chathub?role=Employee&userId=${staffId}`
+        `${process.env.NEXT_PUBLIC_SIGNALR_CHAT}/chathub?role=Employee&userId=${staffId}`,
+        {
+          accessTokenFactory: () => {
+            return Cookies.get("auth-token") || "";
+          },
+        }
       )
       .withAutomaticReconnect()
       .configureLogging(LogLevel.Information)
