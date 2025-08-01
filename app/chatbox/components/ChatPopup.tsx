@@ -36,12 +36,18 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
   const customerId = userId || generateCustomerId();
 
   // const customerName = useUserProfile().data?.data?.fullName;
+  useEffect(() => {
+    console.log(
+      "NEXT_PUBLIC_SIGNALR_CHAT:",
+      process.env.NEXT_PUBLIC_SIGNALR_CHAT
+    );
+  }, []);
 
   // Kết nối SignalR
   useEffect(() => {
     const conn = new signalR.HubConnectionBuilder()
       .withUrl(
-        `${process.env.NEXT_PUBLIC_SIGNALR_CHAT}/chatHub?userId=${customerId}&role=Customer`
+        `${process.env.NEXT_PUBLIC_SIGNALR_CHAT}/chathub?userId=${customerId}&role=Customer`
       )
       .withAutomaticReconnect()
       .build();
