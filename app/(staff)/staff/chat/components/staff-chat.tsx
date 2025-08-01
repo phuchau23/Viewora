@@ -85,9 +85,16 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
           setIsConnected(true);
 
           // Listen for customer list
-          connection.on("AllCustomersChatted", (customerList: Customer[]) => {
-            console.log("Received customer list:", customerList);
-            setCustomers(customerList);
+          connection.on("NewCustomerAssigned", (data: Customer) => {
+            console.log("New customer assigned:", data);
+
+            setCustomers((prev) => {
+              const exists = prev.some((cus) => cus.userId === data.userId);
+              if (!exists) {
+                return [...prev, data]; // add if not exists
+              }
+              return prev;
+            });
           });
 
           // Listen for incoming messages
