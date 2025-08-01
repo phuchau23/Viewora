@@ -143,23 +143,24 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
 
   const handleCustomerSelect = async (customer: Customer) => {
     if (!connection || !isConnected) return;
+    if (selectedCustomer?.userId === customer.userId) return; // Bỏ nếu chọn lại cùng 1 customer
 
     setIsLoading(true);
 
     try {
-      // Nếu đang có customer cũ -> kết thúc phiên chat đó
+      // ✅ Kết thúc phiên cũ
       if (selectedCustomer) {
-        await connection.invoke("EndChat");
+        await connection.invoke("EndChat"); // BE sẽ tự tìm mapping
       }
 
-      // Gán customer mới
+      // ✅ Reset UI
+      setMessages([]);
       setSelectedCustomer(customer);
-      setMessages([]); // Clear current messages
 
-      // Switch to the selected customer's room
+      // ✅ Chuyển vào phòng mới
       await connection.invoke("SwitchCustomerRoom", customer.userId);
     } catch (err) {
-      console.error("Error switching customer room:", err);
+      console.error("Switch room error:", err);
     } finally {
       setIsLoading(false);
     }
