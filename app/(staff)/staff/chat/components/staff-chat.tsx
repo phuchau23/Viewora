@@ -84,20 +84,23 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
           console.log("Connected to SignalR hub");
           setIsConnected(true);
 
-          // Listen for customer list
+          // Nhận danh sách khách cũ
+          connection.on("AllCustomersChatted", (customerList: Customer[]) => {
+            console.log("Received customer list:", customerList);
+            setCustomers(customerList);
+          });
+
+          // ✅ Nhận khách mới
           connection.on("NewCustomerAssigned", (data: Customer) => {
             console.log("New customer assigned:", data);
-
             setCustomers((prev) => {
-              const exists = prev.some((cus) => cus.userId === data.userId);
-              if (!exists) {
-                return [...prev, data]; // add if not exists
-              }
+              const exists = prev.some((c) => c.userId === data.userId);
+              if (!exists) return [...prev, data];
               return prev;
             });
           });
 
-          // Listen for incoming messages
+          // Nhận tin nhắn
           connection.on(
             "Receive",
             (
@@ -117,7 +120,7 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
             }
           );
 
-          // Listen for errors
+          // Bắt lỗi
           connection.on("Error", (errorMessage: string) => {
             console.error("SignalR Error:", errorMessage);
           });
