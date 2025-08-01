@@ -145,10 +145,17 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
     if (!connection || !isConnected) return;
 
     setIsLoading(true);
-    setSelectedCustomer(customer);
-    setMessages([]); // Clear current messages
 
     try {
+      // Nếu đang có customer cũ -> kết thúc phiên chat đó
+      if (selectedCustomer) {
+        await connection.invoke("EndChat");
+      }
+
+      // Gán customer mới
+      setSelectedCustomer(customer);
+      setMessages([]); // Clear current messages
+
       // Switch to the selected customer's room
       await connection.invoke("SwitchCustomerRoom", customer.userId);
     } catch (err) {
