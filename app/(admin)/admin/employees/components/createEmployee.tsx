@@ -131,22 +131,7 @@ export function CreateEmployeeModal({
         formDataToSend.append(key, value.toString());
       });
 
-      createEmployee(formDataToSend, {
-        onSuccess: () => {
-          toast({
-            title: t("success.title"),
-            description: t("success.description"),
-          });
-          onClose();
-        },
-        onError: () => {
-          toast({
-            title: t("error.title"),
-            description: t("error.description"),
-            variant: "destructive",
-          });
-        },
-      });
+      createEmployee(formDataToSend);
     }
   };
 

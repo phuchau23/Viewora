@@ -24,7 +24,7 @@ export default function ComboSelector({
 
   return (
     <div>
-      <h3 className="text-xl font-bold mb-6 text-gray-800 dark:text-white">
+      <h3 className="text-xl font-bold mb-6 ">
         Chọn Combo
       </h3>
       <div className="space-y-4">
@@ -35,7 +35,7 @@ export default function ComboSelector({
           return (
             <div
               key={combo.id}
-              className="flex items-center gap-4 p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-sm"
+              className="flex items-center gap-4 p-4 border rounded-lg bg-white dark:bg-neutral-800 shadow-sm"
             >
               <img
                 src={combo.image}
@@ -54,7 +54,7 @@ export default function ComboSelector({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => updateComboQuantity(combo, quantity - 1)}
-                  className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-lg"
+                  className="w-8 h-8 rounded-full bg-neutral-700 hover:bg-neutral-600 flex items-center justify-center text-lg"
                   disabled={quantity <= 0}
                 >
                   -
@@ -62,7 +62,7 @@ export default function ComboSelector({
                 <div className="w-6 text-center">{quantity}</div>
                 <button
                   onClick={() => updateComboQuantity(combo, quantity + 1)}
-                  className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-lg"
+                  className="w-8 h-8 rounded-full bg-neutral-700 hover:bg-neutral-600 flex items-center justify-center text-lg"
                 >
                   +
                 </button>

@@ -12,19 +12,22 @@ const googleProvider = new GoogleAuthProvider();
 // Hàm đăng nhập với Google (hỗ trợ cả popup và redirect)
 export const signInWithGoogle = async () => {
   try {
-    // Thử đăng nhập bằng popup
     const result = await signInWithPopup(auth, googleProvider);
     return await processSignInResult(result);
   } catch (error: any) {
-    // Fallback sang redirect nếu popup bị chặn hoặc bị đóng
-    if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+    if (error.code === 'auth/popup-blocked') {
       await signInWithRedirect(auth, googleProvider);
       return null;
     }
-    // Xử lý lỗi chi tiết
+
+    if (error.code === 'auth/popup-closed-by-user') {
+      throw new Error("Người dùng đã đóng cửa sổ đăng nhập Google.");
+    }
+
     throw new Error(formatErrorMessage(error));
   }
 };
+
 
 // Hàm xử lý kết quả đăng nhập
 const processSignInResult = async (result: any) => {
