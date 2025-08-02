@@ -36,15 +36,15 @@ const queryClient = useQueryClient();
       EmployeeService.createEmployee(data), 
     onSuccess: () => {
       toast({
-        title: "Thành công",
-        description: "Tạo nhân viên thành công",
+        title: "Success",
+        description: "Employee created successfully",
       });
       queryClient.invalidateQueries({ queryKey: ["employees"] });
     },
     onError: (error) => {
       toast({
-        title: "Thất bại",
-        description: error.message || "Tạo nhân viên thất bại",
+        title: "Failed",
+        description: error.message || "Failed to create employee",
         variant: "destructive",
       });
     },
@@ -73,15 +73,15 @@ const queryClient = useQueryClient();
     }) => EmployeeService.updateEmployee(id, data),
     onSuccess: () => {
        toast({
-        title: "Thành công",
-        description: "Cập nhật thông tin nhân viên thành công",
+        title: "Success",
+        description: "Employee updated successfully",
       });
       queryClient.invalidateQueries({ queryKey: ["employees"] });
     },
     onError: (error) => {
       toast({
-        title: "Thất bại",
-        description: error.message || "Cập nhật thông tin nhân viên thất bại",
+        title: "Failed",
+        description: error.message || "Failed to update employee",
         variant: "destructive",
       });
     },
@@ -103,15 +103,15 @@ const queryClient = useQueryClient();
     mutationFn: (id: string) => EmployeeService.deleteEmployee(id),
     onSuccess: () => {
       toast({
-        title: "Thành công",
-        description: "Xóa nhân viên thành công",
+        title: "Success",
+        description: "Employee deleted successfully",
       });
       queryClient.invalidateQueries({ queryKey: ["employees"] });
     },
     onError: (error) => {
       toast({
-        title: "Thất bại",
-        description: error.message || "Xóa nhân viên thất bại",
+        title: "Failed",
+        description: error.message || "Failed to delete employee",
         variant: "destructive",
       });
     },
@@ -134,10 +134,17 @@ const queryClient = useQueryClient();
       EmployeeService.updateEmployeeStatus(id),
     onSuccess: () => {
       toast({
-        title: "Thành công",
-        description: "Cập nhật trạng thái hoạt động thành công",
+        title: "Success",
+        description: "Employee status updated successfully",
       });
       queryClient.invalidateQueries({ queryKey: ["employees"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed",
+        description: error.message || "Failed to update employee status",
+        variant: "destructive",
+      });
     },
   });
 

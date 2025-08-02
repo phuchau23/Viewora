@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Clock, Search, Star } from "lucide-react";
 import { useShowTimeByMovieId } from "@/hooks/useShowTime";
 import RoomSeatingChart from "./seatChart";
+import { useRouter } from "next/navigation";
 
 interface MovieShowtimeProps {
   movieId: string;
@@ -125,22 +126,24 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
     );
   }
 
+  const router = useRouter();
+
   if (showTimeError) {
     return (
       <div className="min-h-[300px] flex items-center justify-center rounded-xl shadow-md bg-card p-6">
         <div className="text-center">
           <div className="text-red-500 text-4xl mb-2">⚠️</div>
           <h2 className="text-md font-semibold text-foreground mb-1">
-            Có lỗi xảy ra
+            Không tìm thấy lịch chiếu gần đây
           </h2>
           <p className="text-muted-foreground text-sm mb-3">
-            {showTimeError.message}
+            Vui lòng quay lại trang chủ để tìm kiếm phim khác
           </p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => router.push("/")}
             className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
           >
-            Thử lại
+            Quay lại trang chủ
           </button>
         </div>
       </div>
@@ -175,7 +178,7 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
                       selectedDate === d.date
                         ? "bg-primary text-white shadow-md scale-105"
                         : hasShow
-                        ? "bg-card text-foreground hover:bg-muted"
+                        ? "bg-card text-foreground hover:bg-muted dark:bg-neutral-800"
                         : "bg-muted text-muted-foreground opacity-50"
                     }`}
                   >
@@ -204,10 +207,10 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
                     setSelectedBranch(branch.id);
                     setExpandedShowId(null);
                   }}
-                  className={`flex-shrink-0 flex flex-col items-center p-3 rounded-xl min-w-[80px] border transition-all ${
+                  className={`flex-shrink-0 flex flex-col items-center p-3 rounded-xl dark:bg-neutral-800 min-w-[80px] border transition-all ${
                     selectedBranch === branch.id
                       ? "bg-orange-100 dark:bg-orange-900 border-orange-500 scale-105"
-                      : "bg-card border-border hover:bg-muted"
+                      : "bg-card border-border hover:bg-muted dark:bg-neutral-600"
                   }`}
                 >
                   <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
@@ -296,17 +299,17 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
                           prev === show.id ? null : show.id
                         )
                       }
-                      className={`px-4 py-2 rounded-md bg-blue-50 text-blue-800 dark:bg-blue-900 dark:text-blue-300 border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-800 text-sm transition hover:scale-105 ${
+                      className={`px-4 py-2 rounded-md bg-blue-50 text-blue-800 dark:bg-blue-800 border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-800 text-sm transition hover:scale-105 ${
                         expandedShowId === show.id
                           ? "ring-2 ring-primary/50"
                           : ""
                       }`}
                     >
                       <span>
-                        <span className="text-base font-semibold text-black">
+                        <span className="text-base font-semibold text-black dark:text-white">
                           {formatTime(show.startTime)}
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
                           {" "}
                           ~ {formatTime(show.endTime)}
                         </span>

@@ -116,22 +116,7 @@ export function CreateEmployeeModal({ isOpen, onClose }: CreateEmployeeModalProp
       formDataToSend.append("Account.PhoneNumber", formData["Account.PhoneNumber"]);
       formDataToSend.append("Account.Password", formData["Account.Password"]);
 
-      createEmployee(formDataToSend, {
-        onSuccess: () => {
-          toast({
-            title: "Employee Added",
-            description: "New employee has been successfully added.",
-          });
-          onClose();
-        },
-        onError: (error) => {
-          toast({
-            title: "Error",
-            description: "Failed to add employee.",
-            variant: "destructive",
-          });
-        },
-      });
+      createEmployee(formDataToSend);
     }
   };
 

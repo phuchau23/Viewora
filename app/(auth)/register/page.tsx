@@ -34,7 +34,12 @@ import { toast } from "@/hooks/use-toast";
 import HeaderRegister from "./components/HeaderRegister";
 import { WelcomeSection } from "./components/WelcomSection";
 import { usePasswordStrength } from "@/hooks/usePasswordStrength";
+import DatePicker from "react-datepicker";
+import { format } from "date-fns";
+import "react-datepicker/dist/react-datepicker.css";
+
 export default function RegisterPage() {
+  const [dob, setDob] = useState<Date | null>(null);
   const { register, isLoading, error } = useRegister();
   const [showOTPForm, setShowOTPForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -212,19 +217,44 @@ export default function RegisterPage() {
                             Ngày sinh *
                           </Label>
                           <div className="relative">
-                            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                            <Input
+                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
+                          <DatePicker
                               id="DateOfBirth"
-                              type="date"
-                              value={formData.DateOfBirth}
-                              onChange={(e) =>
-                                handleInputChange("DateOfBirth", e.target.value)
+                              selected={dob}
+                              onChange={(date: Date | null) => {
+                                setDob(date);
+                                handleInputChange(
+                                  "DateOfBirth",
+                                  date ? format(date, "yyyy-MM-dd") : ""
+                                );
+                              }}
+                              maxDate={new Date()}
+                              dateFormat="dd/MM/yyyy"
+                              placeholderText="dd/MM/yyyy"
+                              className="
+                              w-full h-10 text-left pl-10 pr-3 rounded-md border
+                              border-gray-600 bg-background 
+                              placeholder-gray-500 dark:placeholder-gray-400
+                              focus-visible:outline-none
+                              focus-visible:ring-2 focus-visible:ring-orange-500
+                              focus-visible:border-orange-500
+                              transition
+                            "
+                              calendarClassName="bg-background dark:bg-black text-white dark:text-white border border-gray-600 dark:border-gray-600"
+                              dayClassName={(date) =>
+                                `text-center text-sm p-2 rounded-md hover:bg-orange-100 dark:hover:bg-orange-900 ${
+                                  date.getDate() === new Date().getDate()
+                                    ? "bg-orange-500 text-white"
+                                    : ""
+                                }`
                               }
-                              className="pl-10 border-gray-600 placeholder-gray-400 focus:border-orange-500 focus:ring-orange-500/20"
-                              required
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
                             />
                           </div>
                         </div>
+
                         <div className="space-y-2">
                           <Label htmlFor="Gender" className="font-medium">
                             Giới tính *
@@ -327,6 +357,7 @@ export default function RegisterPage() {
                               type="button"
                               variant="ghost"
                               size="sm"
+                              tabIndex={-1}
                               className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
                               onClick={() => setShowPassword(!showPassword)}
                             >
@@ -393,6 +424,7 @@ export default function RegisterPage() {
                               type="button"
                               variant="ghost"
                               size="sm"
+                              tabIndex={-1}
                               className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
                               onClick={() =>
                                 setShowConfirmPassword(!showConfirmPassword)

@@ -100,7 +100,7 @@ export function useVerifyEmail() {
     },
     onSuccess: () => {
       toast({ title: "Thành công", description: "Bạn đã xác minh OTP" });
-      router.push(" /login");
+      router.replace(" /login");
       setError(null);
     },
     onError: (err: any) => {
@@ -318,7 +318,7 @@ export function useResetPassword() {
     },
     onSuccess: () => {
       toast({ title: "Thành công", description: "Bạn đã đặt lại mật khẩu" });
-      router.push("/login");
+      router.replace("/login");
       setError(null);
     },
     onError: (err: any) => {
@@ -378,8 +378,7 @@ export function useGoogleLogin() {
       const googleResult = await signInWithGoogle();
 
       if (!googleResult) {
-        setIsRedirecting(true);
-        return null;
+        throw new Error("Đăng nhập Google bị hủy hoặc đóng cửa sổ.");
       }
 
       const { idToken } = googleResult;
@@ -436,7 +435,7 @@ export function useGoogleLogin() {
       variant: "destructive",
     });
     if (isRedirect) {
-      router.push("/login");
+      router.replace("/login");
     }
   };
 

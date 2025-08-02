@@ -12,6 +12,8 @@ import { Snack } from "@/lib/api/service/fetchSnack";
 import { useSnacks } from "@/hooks/useSnacks";
 import { useBooking } from "@/hooks/useBooking";
 import PaymentMethodSelector from "./PaymentMethodSelector";
+import { useSeatHoldingsQuery } from "@/hooks/useSeatHolding";
+import { toast } from "@/hooks/use-toast";
 interface Props {
   roomId: string;
   movie: Partial<Movies>;
@@ -32,6 +34,64 @@ function getSeatPriceByShowtime(seat: Seat, startTime: string): number {
 
   const price = seat.seatType?.prices.find((p) => p.timeInDay === timeInDay);
   return price?.amount || 0;
+}
+function getSeatViolationReason(
+  seats: Seat[],
+  selectedSeats: string[],
+  soldOrHeldSeatIds: Set<string>
+): string | null {
+  const selectedSet = new Set(selectedSeats);
+
+  const groupedByRow = seats.reduce((acc: Record<string, Seat[]>, seat) => {
+    if (!acc[seat.row]) acc[seat.row] = [];
+    acc[seat.row].push(seat);
+    return acc;
+  }, {});
+
+  for (const row of Object.values(groupedByRow)) {
+    const sortedRow = row.sort((a, b) => a.number - b.number);
+
+    for (let i = 0; i < sortedRow.length; i++) {
+      const current = sortedRow[i];
+      const left = sortedRow[i - 1];
+      const right = sortedRow[i + 1];
+
+      if (
+        !selectedSet.has(current.id) &&
+        !soldOrHeldSeatIds.has(current.id) &&
+        left &&
+        right &&
+        (selectedSet.has(left.id) || soldOrHeldSeatIds.has(left.id)) &&
+        (selectedSet.has(right.id) || soldOrHeldSeatIds.has(right.id))
+      ) {
+        return `Không được để trống 1 ghế ở giữa tại vị trí ${current.row}${current.number}`;
+      }
+
+      if (
+        i === 0 &&
+        !selectedSet.has(current.id) &&
+        !soldOrHeldSeatIds.has(current.id) &&
+        right &&
+        selectedSet.has(right.id) &&
+        !soldOrHeldSeatIds.has(right.id)
+      ) {
+        return `Không được để trống 1 ghế bên trái (vị trí đầu hàng ${current.row}${current.number})`;
+      }
+
+      if (
+        i === sortedRow.length - 1 &&
+        !selectedSet.has(current.id) &&
+        !soldOrHeldSeatIds.has(current.id) &&
+        left &&
+        selectedSet.has(left.id) &&
+        !soldOrHeldSeatIds.has(left.id)
+      ) {
+        return `Không được để trống 1 ghế bên phải (vị trí cuối hàng ${current.row}${current.number})`;
+      }
+    }
+  }
+
+  return null;
 }
 
 export default function RoomSeatingChart({
@@ -55,8 +115,15 @@ export default function RoomSeatingChart({
   const [step, setStep] = useState<"seat" | "combo" | "payment">("seat");
   const [promotionCode, setPromotionCode] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState<"vnpay" | "momo" | null>(null);
-
+  const [paymentMethod, setPaymentMethod] = useState<"vnpay" | "momo" | null>(
+    null
+  );
+  const { data: seatHoldings } = useSeatHoldingsQuery(showtimeId);
+  const soldOrHeldSeatIds = new Set(
+    seatHoldings?.data
+      ?.filter((h) => h.status === "Sold" || h.status === "Holding")
+      .map((h) => h.seatId) ?? []
+  );
 
   if (isLoading) return <div>Đang tải ghế...</div>;
   if (error || !seatsData) return <div>Lỗi khi tải ghế.</div>;
@@ -91,9 +158,28 @@ export default function RoomSeatingChart({
   const handleNext = async () => {
     if (step === "seat") {
       if (selectedSeatObjects.length === 0) {
-        alert("Bạn chưa chọn ghế. Vui lòng chọn ghế.");
+        toast({
+          title: "Lỗi",
+          description: "Bạn chưa chọn ghế. Vui lòng chọn ghế để tiếp tục",
+          variant: "destructive",
+        });
         return;
       }
+
+      const violationReason = getSeatViolationReason(
+        seats,
+        selectedSeats,
+        soldOrHeldSeatIds
+      );
+      if (violationReason) {
+        toast({
+          title: "Lỗi chọn ghế",
+          description: violationReason,
+          variant: "destructive",
+        });
+        return;
+      }
+
       onSeatClick?.(selectedSeatObjects);
       setStep("combo");
     } else if (step === "combo") {
@@ -107,13 +193,11 @@ export default function RoomSeatingChart({
         })),
         promotionCode,
         paymentMethod: paymentMethod?.toLocaleUpperCase() || "",
-        showtimeId: showtimeId,
+        showtimeId,
       };
       const res = await createBooking(bookingPayload);
       const paymentUrl = res.data.paymentUrl;
-      if (paymentUrl) {
-        window.location.href = paymentUrl;
-      }
+      if (paymentUrl) window.location.href = paymentUrl;
     }
   };
 
@@ -143,6 +227,7 @@ export default function RoomSeatingChart({
             seats={seats}
             selectedSeats={selectedSeats}
             setSelectedSeats={setSelectedSeats}
+            seatHoldings={seatHoldings?.data ?? []}
           />
         ) : step === "combo" ? (
           <ComboSelector
@@ -150,11 +235,13 @@ export default function RoomSeatingChart({
             selectedCombos={selectedCombos}
             updateComboQuantity={updateComboQuantity}
           />
-        ) : step === "payment" && (
-          <PaymentMethodSelector
-            paymentMethod={paymentMethod}
-            setPaymentMethod={setPaymentMethod}
-          />
+        ) : (
+          step === "payment" && (
+            <PaymentMethodSelector
+              paymentMethod={paymentMethod}
+              setPaymentMethod={setPaymentMethod}
+            />
+          )
         )}
       </div>
       <TicketBill

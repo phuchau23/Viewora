@@ -95,7 +95,6 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                required
                 value={loginData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 placeholder="Nhập email"
@@ -116,11 +115,11 @@ export default function LoginPage() {
                     handleInputChange("password", e.target.value)
                   }
                   placeholder="Nhập mật khẩu"
-                  required
                   className="pr-12 mt-2 text-lg"
                 />
                 <button
                   type="button"
+                  tabIndex={-1}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500"
                 >
@@ -129,16 +128,14 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-2 justify-between">
-              <div className="ml-4">
-                <Button
-                  variant="link"
-                  onClick={() => router.push("/forgot-password")}
-                  className="text-orange-600 text-sm font-semibold hover:text-orange-500 hover:underline "
-                >
-                  Quên mật khẩu
-                </Button>
-              </div>
+            <div className="text-left mb-2 py-2">
+              <button
+                type="button"
+                onClick={() => router.push("/forgot-password")}
+                className="text-orange-600 text-sm font-semibold hover:text-orange-500 hover:underline "
+              >
+                Quên mật khẩu
+              </button>
             </div>
 
             <Button type="submit" variant="default" className="text-lg w-full">
@@ -147,13 +144,13 @@ export default function LoginPage() {
 
             <div className="text-center text-lg text-gray-500">
               Chưa có tài khoản?{" "}
-              <Button
-                variant="link"
+              <button
+                type="button"
                 onClick={() => router.push("/register")}
-                className="text-primary font-semibold hover:text-primary hover:underline"
+                className="text-orange-600 font-semibold hover:text-orange-500 hover:underline"
               >
                 Đăng ký
-              </Button>
+              </button>
             </div>
 
             <div className="flex flex-col items-center">
@@ -162,7 +159,12 @@ export default function LoginPage() {
                 onGoogleClick={googleLogin}
                 isGoogleLoading={googleLoading}
               />
-              {googleLoading && <p>Đang xử lý...</p>}
+
+              {googleLoading && (
+                <p className="text-sm text-gray-400 mt-2">
+                  Đang kết nối với Google...
+                </p>
+              )}
             </div>
           </form>
         </div>

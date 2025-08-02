@@ -23,6 +23,7 @@ export const ShowtimeDetailModal: React.FC<ShowtimeDetailModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { mutateAsync: deleteShowTime } = useDeleteShowTime();
   if (!isOpen || !showtime) return null;
 
   const formatTime = (timeString: string) => {
@@ -68,7 +69,6 @@ export const ShowtimeDetailModal: React.FC<ShowtimeDetailModalProps> = ({
     }
   };
 
-  const { mutateAsync: deleteShowTime } = useDeleteShowTime();
 
   const handleDeleteShowtime = async () => {
     deleteShowTime(showtime.id);

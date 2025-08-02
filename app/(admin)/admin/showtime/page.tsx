@@ -508,7 +508,7 @@ const AdminShowtimePage: React.FC = () => {
       />
 
       {isCreateModalOpen && (
-        <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white dark:bg-gray-900 shadow-xl z-50 transform transition-transform duration-300 border-l border-gray-200 dark:border-gray-700">
+        <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white dark:bg-black shadow-xl z-50 transform transition-transform duration-300 border-l border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               Add Showtime

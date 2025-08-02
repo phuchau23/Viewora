@@ -13,7 +13,6 @@ import { useRoomByBranchId } from "@/hooks/useRoom";
 import { useCreateShowTime } from "@/hooks/useShowTime";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CreateShowtimeDto } from "@/lib/api/service/fetchShowTime";
 
@@ -40,7 +39,6 @@ export default function CreateShowtimeForm({
     formState: { errors },
   } = useForm<CreateShowtimeDto>();
 
-
   const onSubmit = async (data: CreateShowtimeDto) => {
     const formattedStart = format(
       new Date(data.startTime),
@@ -61,9 +59,6 @@ export default function CreateShowtimeForm({
         err?.message ||
         "Tạo suất chiếu thất bại";
       const cleanedMessage = rawMessage.replace(/^Error:\s*/, "");
-
-      // toast.error(`❌ ${cleanedMessage}`);
-      // console.error("Lỗi tạo suất chiếu:", err);
       window.alert(cleanedMessage);
     }
   };
@@ -74,15 +69,33 @@ export default function CreateShowtimeForm({
         <Label htmlFor="movieId">🎬 Phim</Label>
         <select
           {...register("movieId", { required: "Vui lòng chọn phim" })}
-          className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
+          className="w-full px-3 py-2 border rounded-md "
         >
           <option value="">-- Chọn phim --</option>
-          {movies?.filter((movie) => movie.status === "nowShowing").map((movie) => (
-            <option key={movie.id} value={movie.id}>
-              {movie.name}
-            </option>
-          ))}
+
+          {/* Phim đang chiếu */}
+          <optgroup label="🎬 Đang chiếu (Now Showing)">
+            {movies
+              ?.filter((movie) => movie.status === "nowShowing")
+              .map((movie) => (
+                <option key={movie.id} value={movie.id}>
+                 - {movie.name}
+                </option>
+              ))}
+          </optgroup>
+
+          {/* Phim sắp chiếu */}
+          <optgroup label="🚀 Sắp chiếu (Incoming)">
+            {movies
+              ?.filter((movie) => movie.status === "incoming")
+              .map((movie) => (
+                <option key={movie.id} value={movie.id}>
+                  {movie.name}
+                </option>
+              ))}
+          </optgroup>
         </select>
+
         {errors.movieId && (
           <p className="text-sm text-red-500">{errors.movieId.message}</p>
         )}
@@ -97,7 +110,7 @@ export default function CreateShowtimeForm({
             setBranchId(e.target.value || undefined);
             setValue("roomId", ""); // reset phòng nếu đổi chi nhánh
           }}
-          className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
+          className="w-full px-3 py-2 border rounded-md "
         >
           <option value="">-- Chọn chi nhánh --</option>
           {branches?.map((branch) => (
@@ -114,7 +127,7 @@ export default function CreateShowtimeForm({
         <select
           {...register("roomId", { required: "Vui lòng chọn phòng" })}
           disabled={!branchId || isLoadingRooms}
-          className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white disabled:opacity-50"
+          className="w-full px-3 py-2 border rounded-md disabled:opacity-50"
         >
           <option value="">-- Chọn phòng --</option>
           {rooms?.map((room) => (
@@ -129,15 +142,15 @@ export default function CreateShowtimeForm({
       </div>
 
       {/* Start time */}
-         {/* Start time */}
-         <div className="space-y-1">
+      {/* Start time */}
+      <div className="space-y-1">
         <Label htmlFor="startTime">🕒 Thời gian bắt đầu</Label>
         <div className="w-full">
           <DatePicker
             selected={watch("startTime") ? new Date(watch("startTime")) : null}
             onChange={(date: Date | null) => {
-              if (date) setValue("startTime", format(date, "yyyy-MM-dd HH:mm:ss"));
-
+              if (date)
+                setValue("startTime", format(date, "yyyy-MM-dd HH:mm:ss"));
             }}
             showTimeSelect
             timeIntervals={15}
@@ -147,7 +160,7 @@ export default function CreateShowtimeForm({
             maxDate={addDays(new Date(), 14)}
             minTime={setHours(setMinutes(new Date(), 0), 8)}
             maxTime={setHours(setMinutes(new Date(), 0), 22)}
-            className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
+            className="w-full px-3 py-2 border rounded-md "
             placeholderText="dd/MM/yyyy HH:mm"
           />
         </div>
