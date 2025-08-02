@@ -31,9 +31,10 @@ import { CreateModal } from "./CreateModal";
 import { EditMovieModal } from "./EditModal";
 import PaginationControls from "@/components/shared/PaginationControl";
 import type { Movies } from "@/lib/api/service/fetchMovies";
-import type { Type } from "@/lib/api/service/fetchTypes";
+import { useTranslation } from "react-i18next";
 
 export default function MoviesTables() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [pageSize, setPageSize] = useState(10);
   const [pageIndex, setPageIndex] = useState(1);
@@ -49,8 +50,8 @@ export default function MoviesTables() {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
-console.log(selectedMovieId);
-  const { sortConfig, handleSort, sortedData } = useSort([
+
+  const { sortConfig, handleSort } = useSort([
     "name",
     "director",
     "duration",
@@ -79,13 +80,15 @@ console.log(selectedMovieId);
   if (isError) {
     return (
       <div className="container mx-auto p-6">
-        <p>Lỗi: {error?.message || "Đã xảy ra lỗi khi tải phim."}</p>
+        <p>
+          {t("movie.error")}: {error?.message || t("movie.errorDefault")}
+        </p>
       </div>
     );
   }
 
   const handleDelete = (id: string) => {
-    if (confirm("Bạn có chắc chắn muốn xoá phim này không?")) {
+    if (confirm(t("movie.confirmDelete"))) {
       deleteMovie(id);
     }
   };
@@ -109,18 +112,17 @@ console.log(selectedMovieId);
 
   return (
     <div className="mx-2 space-y-6">
-      {/* Filter and Create */}
       <Card>
         <CardHeader>
-          <CardTitle>Movies Management</CardTitle>
-          <CardDescription>Manage movies for your application</CardDescription>
+          <CardTitle>{t("movie.managementTitle")}</CardTitle>
+          <CardDescription>{t("movie.managementDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex justify-between items-center mb-6">
             <div className="relative w-72">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Tìm kiếm theo tên"
+                placeholder={t("movie.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -131,43 +133,42 @@ console.log(selectedMovieId);
         </CardContent>
       </Card>
 
-      {/* Table */}
       <Card>
         <Table>
           <TableHeader>
             <TableRow className="text-center">
-              <TableHead>Poster</TableHead>
+              <TableHead>{t("movie.poster")}</TableHead>
               <TableHead onClick={() => handleSort("name")}>
-                Tên phim{" "}
+                {t("movie.name")}{" "}
                 {sortConfig.key === "name" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
-              <TableHead>Thể loại</TableHead>
+              <TableHead>{t("movie.type")}</TableHead>
               <TableHead onClick={() => handleSort("director")}>
-                Đạo diễn{" "}
+                {t("movie.director")}{" "}
                 {sortConfig.key === "director" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
               <TableHead onClick={() => handleSort("duration")}>
-                Thời lượng{" "}
+                {t("movie.duration")}{" "}
                 {sortConfig.key === "duration" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
               <TableHead onClick={() => handleSort("isAvailable")}>
-                isAvailable{" "}
+                {t("movie.isAvailable")}{" "}
                 {sortConfig.key === "isAvailable" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
               <TableHead onClick={() => handleSort("status")}>
-                Trạng thái{" "}
+                {t("movie.status")}{" "}
                 {sortConfig.key === "status" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
-              <TableHead>Hành động</TableHead>
+              <TableHead>{t("movie.action")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {movies?.map((movie) => (
+            {searchedMovies.map((movie) => (
               <TableRow key={movie.id} className="hover:bg-secondary">
                 <TableCell>
                   <img
@@ -183,12 +184,17 @@ console.log(selectedMovieId);
                   {movie.movieTypes.map((t) => t.name).join(", ")}
                 </TableCell>
                 <TableCell>{movie.director}</TableCell>
-                <TableCell>{movie.duration} phút</TableCell>
-                <TableCell>{movie.isAvailable ? "Có" : "Không"}</TableCell>
+                <TableCell>
+                  {movie.duration} {t("movie.minutes")}
+                </TableCell>
+                <TableCell>
+                  {movie.isAvailable
+                    ? t("movie.available")
+                    : t("movie.unavailable")}
+                </TableCell>
                 <TableCell>{movie.status}</TableCell>
                 <TableCell className="px-0">
                   <div className="w-fit mx-auto flex gap-2">
-                    {/* Edit: chỉ hiển thị nếu không phải ended */}
                     {movie.status !== "Ended" && (
                       <Button
                         variant="ghost"
@@ -198,8 +204,6 @@ console.log(selectedMovieId);
                         <Pencil className="w-4 h-4" />
                       </Button>
                     )}
-
-                    {/* Delete: luôn hiển thị */}
                     <Button
                       variant="ghost"
                       size="icon"
@@ -207,8 +211,6 @@ console.log(selectedMovieId);
                     >
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </Button>
-
-                    {/* Play: chỉ hiển thị nếu là inComing */}
                     {movie.status === "inComing" && (
                       <Button
                         variant="ghost"
@@ -218,8 +220,6 @@ console.log(selectedMovieId);
                         <Play className="w-4 h-4 text-green-500" />
                       </Button>
                     )}
-
-                    {/* Stop: chỉ hiển thị nếu là nowShowing */}
                     {movie.status === "nowShowing" && (
                       <Button
                         variant="ghost"
@@ -237,7 +237,6 @@ console.log(selectedMovieId);
         </Table>
       </Card>
 
-      {/* Pagination */}
       <PaginationControls
         currentPage={pageIndex}
         totalPages={totalPages}
@@ -249,7 +248,6 @@ console.log(selectedMovieId);
         }}
       />
 
-      {/* Modal */}
       {selectedMovieId && (
         <EditMovieModal
           movieId={selectedMovieId}

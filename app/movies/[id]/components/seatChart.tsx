@@ -14,10 +14,12 @@ import { useBooking } from "@/hooks/useBooking";
 import PaymentMethodSelector from "./PaymentMethodSelector";
 import { useSeatHoldingsQuery } from "@/hooks/useSeatHolding";
 import { toast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
+
 interface Props {
   roomId: string;
   movie: Partial<Movies>;
-  showtime: string; // ISO string datetime
+  showtime: string;
   showtimeId: string;
   roomNumber: number;
   branchName: string;
@@ -103,6 +105,7 @@ export default function RoomSeatingChart({
   branchName,
   onSeatClick,
 }: Props) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { data: seatsData, isLoading, error } = useSeatOfRoomByRoomId(roomId);
   const { data: snackRawData } = useSnacks();
@@ -125,8 +128,9 @@ export default function RoomSeatingChart({
       .map((h) => h.seatId) ?? []
   );
 
-  if (isLoading) return <div>Đang tải ghế...</div>;
-  if (error || !seatsData) return <div>Lỗi khi tải ghế.</div>;
+
+  if (isLoading) return <div>{t("loadingSeats")}</div>;
+  if (error || !seatsData) return <div>{t("errorSeats")}</div>;
 
   const seats: Seat[] = Array.isArray(seatsData) ? seatsData : [];
   const selectedSeatObjects = seats.filter((s) => selectedSeats.includes(s.id));
@@ -215,10 +219,12 @@ export default function RoomSeatingChart({
         <div className="mb-4 text-sm text-gray-600 dark:text-gray-300">
           <div className="font-bold text-base">{branchName}</div>
           <div>
-            Screen {roomNumber} - {showtime}
+            {t("screen")} {roomNumber} - {showtime}
           </div>
           <div className="text-lg font-semibold mt-1">{movie.name}</div>
-          <div className="text-xs mt-1">T18 · Phụ đề · 2D</div>
+          <div className="text-xs mt-1">
+            {t("age")} · {t("subtitle")} · {t("2d")}
+          </div>
         </div>
 
         {step === "seat" ? (

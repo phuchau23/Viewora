@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Search, Settings2, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface MovieSearchProps {
   searchTerm: string;
@@ -11,6 +12,7 @@ export default function MovieSearch({
   onSearchChange,
 }: MovieSearchProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation(); // dùng chung namespace "home"
 
   return (
     <div className="relative w-full">
@@ -21,7 +23,7 @@ export default function MovieSearch({
           </div>
           <input
             type="text"
-            placeholder="Search for movies, directors, actors..."
+            placeholder={t("searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             className="w-full pl-16 pr-16 py-5 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-800 rounded-3xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500 transition-all duration-300 shadow-xl hover:shadow-2xl text-lg font-medium"
@@ -38,11 +40,12 @@ export default function MovieSearch({
           className="w-1/12 my-auto h-6 text-gray-400 dark:text-gray-400 group-focus-within:text-amber-500 transition-colors duration-200"
         />
       </div>
+
       {/* Search suggestions hint */}
       {searchTerm && (
         <div className="absolute top-full left-0 right-0 mt-2 text-center">
           <span className="text-sm text-gray-500 bg-white px-4 py-2 rounded-full shadow-md">
-            Press Enter to search
+            {t("pressEnterHint")}
           </span>
         </div>
       )}
@@ -50,7 +53,7 @@ export default function MovieSearch({
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-2 text-center">
           <span className="text-sm text-gray-500 bg-white px-4 py-2 rounded-full shadow-md">
-            Filter
+            {t("filter")}
           </span>
         </div>
       )}

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Seat, seatType } from "@/lib/api/service/fetchSeat";
 import { useSeatSignalR, HeldSeat, getUserIdFromToken } from "@/utils/signalr";
 import { useTranslation } from "react-i18next";
+
 import { SeatHolding } from "@/lib/api/service/fetchSeatHolding";
 interface Props {
   seats: Seat[];
@@ -128,7 +129,6 @@ export default function SeatSelector({
           {t("MÀN HÌNH")}
         </div>
       </div>
-
       <div className="flex flex-col gap-4 items-center">
         {Object.entries(groupedByRow)
           .sort((a, b) => a[0].localeCompare(b[0]))

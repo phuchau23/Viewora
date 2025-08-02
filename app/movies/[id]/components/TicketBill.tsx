@@ -7,7 +7,7 @@ import PromoCodeSelector from "./Promotionbooking";
 import { Snack } from "@/lib/api/service/fetchSnack";
 import { Promotion } from "@/lib/api/service/fetchPromotion";
 import { Movies } from "@/lib/api/service/fetchMovies";
-import PaymentMethodSelector from "./PaymentMethodSelector";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   movie: Partial<Movies>;
@@ -36,6 +36,7 @@ export default function TicketBill({
   handleNext,
   handleBack,
 }: Props) {
+  const { t } = useTranslation();
   const [selectedPromotion, setSelectedPromotion] = useState<Promotion | null>(
     null
   );
@@ -113,7 +114,7 @@ export default function TicketBill({
     <div className="h-auto">
       <div className="flex flex-col h-auto p-4 md:p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-neutral-800">
         <h1 className="text-2xl md:text-2xl font-extrabold text-center mb-4 text-orange-600">
-          ĐƠN HÀNG
+          {t("orderTitle")}
         </h1>
 
         {/* Thông tin phim */}
@@ -142,7 +143,7 @@ export default function TicketBill({
           <>
             {selectedSeats.length === 0 ? (
               <div className="my-4 p-3 border-2 border-red-500 rounded-md bg-red-50 text-red-700 text-center text-sm font-medium">
-                Bạn chưa chọn ghế nào. Vui lòng chọn ghế.
+                {t("noSeatSelected")}
               </div>
             ) : (
               <>
@@ -170,7 +171,6 @@ export default function TicketBill({
         {/* Step combo */}
         {step === "combo" && (
           <div className="mb-4 space-y-4">
-            {/* Combo Section */}
             <div>
               <p className="text-base font-semibold mb-2">
                 Combo đã chọn:
@@ -205,7 +205,7 @@ export default function TicketBill({
                 htmlFor="promotionCode"
                 className="text-base font-semibold mb-2"
               >
-                Mã giảm giá:
+                {t("promoCode")}
               </label>
 
               <PromoCodeSelector
@@ -231,11 +231,10 @@ export default function TicketBill({
               {selectedPromotion && finalPrice !== originalTotal && (
                 <div className="mt-3 flex items-center justify-between bg-red-50 border border-red-300 text-red-800 px-3 py-2 rounded-md">
                   <p className="text-sm">
-                    Đã áp dụng mã <strong>{selectedPromotion.code}</strong> –
-                    Giảm{" "}
-                    <strong>
-                      {(originalTotal - finalPrice).toLocaleString()} đ
-                    </strong>
+                    {t("promoApplied", {
+                      code: selectedPromotion.code,
+                      amount: (originalTotal - finalPrice).toLocaleString(),
+                    })}
                   </p>
                   <button
                     className="ml-4 text-red-600 text-sm underline"
@@ -273,18 +272,16 @@ export default function TicketBill({
               <span>{originalTotal.toLocaleString()} đ</span>
             </div>
 
-            {/* Giảm giá (nếu có) */}
             {selectedPromotion && finalPrice !== originalTotal && (
               <div className="flex justify-between text-sm text-red-700">
-                <span>Giảm giá:</span>
+                <span>{t("discountAmount")}</span>
                 <span>- {(originalTotal - finalPrice).toLocaleString()} đ</span>
               </div>
             )}
 
-            {/* Tổng cộng */}
             <div className="flex justify-between items-center pt-2 border-t border-gray-300">
               <span className="text-lg md:text-xl font-bold text-gray-800">
-                Tạm tính
+                {t("subtotal")}
               </span>
               <span className="text-xl md:text-2xl font-bold text-orange-600">
                 {finalPrice.toLocaleString()} đ
@@ -302,10 +299,10 @@ export default function TicketBill({
             }`}
           >
             {step === "seat"
-              ? "Tiếp tục chọn combo"
+              ? t("nextToCombo")
               : step === "combo"
-              ? "Xác nhận thanh toán"
-              : "Đặt vé"}
+              ? t("confirmPayment")
+              : t("bookTicket")}
           </button>
 
           {(step === "combo" || step === "payment") && (
@@ -313,7 +310,7 @@ export default function TicketBill({
               onClick={handleBack}
               className="w-full mt-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 rounded-lg transition-colors duration-200 text-base shadow-sm"
             >
-              &larr; Quay lại
+              &larr; {t("back")}
             </button>
           )}
         </div>

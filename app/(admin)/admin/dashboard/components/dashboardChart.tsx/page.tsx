@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   LineChart,
   Line,
@@ -23,45 +23,36 @@ import {
   TrendingDown,
   Users,
   Film,
-  Calendar,
   DollarSign,
-  Clock,
   Star,
   BarChart3,
   PieChart as PieChartIcon,
   Play,
-  Pause,
   Activity,
 } from "lucide-react";
 import { useMovies } from "@/hooks/useMovie";
 import { useBookingHistory } from "@/hooks/useBooking";
+import { useTranslation } from "react-i18next";
 
+// Animated counter
 const AnimatedCounter: React.FC<{
   value: number;
-  duration?: number;
   prefix?: string;
   suffix?: string;
-}> = ({ value, duration = 2000, prefix = "", suffix = "" }) => {
+}> = ({ value, prefix = "", suffix = "" }) => {
   const [count, setCount] = useState(0);
-
   useEffect(() => {
     let startTime: number;
     const startCount = 0;
     const endCount = value;
-
-    const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
-      const progress = Math.min((currentTime - startTime) / duration, 1);
-
+    const animate = (time: number) => {
+      if (!startTime) startTime = time;
+      const progress = Math.min((time - startTime) / 2000, 1);
       setCount(Math.floor(startCount + (endCount - startCount) * progress));
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
+      if (progress < 1) requestAnimationFrame(animate);
     };
-
     requestAnimationFrame(animate);
-  }, [value, duration]);
+  }, [value]);
 
   return (
     <span>
@@ -72,6 +63,7 @@ const AnimatedCounter: React.FC<{
   );
 };
 
+// Metric card
 const MetricCard: React.FC<{
   title: string;
   value: number;
@@ -81,21 +73,12 @@ const MetricCard: React.FC<{
   prefix?: string;
   suffix?: string;
   isLoading?: boolean;
-}> = ({
-  title,
-  value,
-  change,
-  icon,
-  color,
-  prefix = "",
-  suffix = "",
-  isLoading = false,
-}) => (
+}> = ({ title, value, change, icon, color, prefix, suffix, isLoading }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5 }}
-    className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+    className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg border border-gray-100 dark:border-gray-700"
   >
     <div className="flex items-center justify-between mb-4">
       <div className={`p-3 rounded-lg ${color}`}>{icon}</div>
@@ -114,8 +97,10 @@ const MetricCard: React.FC<{
         </span>
       </div>
     </div>
-    <h3 className="text-gray-600 text-sm font-medium mb-2">{title}</h3>
-    <p className="text-2xl font-bold text-gray-900">
+    <h3 className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">
+      {title}
+    </h3>
+    <p className="text-2xl font-bold text-gray-900 dark:text-white">
       {isLoading ? (
         <div className="animate-pulse bg-neutral-200 h-8 w-20 rounded"></div>
       ) : (
@@ -127,24 +112,27 @@ const MetricCard: React.FC<{
 
 const ChartCard: React.FC<{
   title: string;
-  children: React.ReactNode;
   icon: React.ReactNode;
   isLoading?: boolean;
-}> = ({ title, children, icon, isLoading = false }) => (
+  children: React.ReactNode;
+}> = ({ title, icon, isLoading, children }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay: 0.2 }}
-    className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
+    className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg border border-gray-100 dark:border-gray-700"
   >
     <div className="flex items-center space-x-3 mb-6">
       <div className="p-2 bg-blue-100 rounded-lg">{icon}</div>
-      <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        {title}
+      </h3>
     </div>
     {isLoading ? (
       <div className="animate-pulse">
         <div className="bg-neutral-200 h-64 rounded"></div>
       </div>
+
     ) : (
       children
     )}
@@ -152,213 +140,135 @@ const ChartCard: React.FC<{
 );
 
 const Dashboard: React.FC = () => {
+  const { t } = useTranslation();
   const [timePeriod, setTimePeriod] = useState<"daily" | "monthly" | "yearly">(
     "monthly"
   );
-  const [currentPage, setCurrentPage] = useState(1);
 
-  // Fetch real data from APIs
-  const {
-    movies,
-    isLoading: moviesLoading,
-    totalPages: movieTotalPages,
-  } = useMovies(1, 100);
-  const {
-    bookings,
-    isLoading: bookingsLoading,
-    totalPages: bookingTotalPages,
-  } = useBookingHistory(currentPage, 100);
+  const { movies, isLoading: moviesLoading } = useMovies(1, 100);
+  const { bookings, isLoading: bookingsLoading } = useBookingHistory(1, 100);
 
-  // Process booking data for analytics
   const processedData = useMemo(() => {
     if (!bookings.length) return null;
-
-    // Calculate total revenue
-    const totalRevenue = bookings.reduce((sum, booking) => {
-      return sum + parseFloat(booking.totalPrice || "0");
-    }, 0);
-
-    // Group bookings by movie
-    const movieBookings = bookings.reduce((acc, booking) => {
-      const movieName = booking.showTime.movie.name;
-      const movieId = booking.showTime.movie.id;
-
-      if (!acc[movieId]) {
-        acc[movieId] = {
-          movie: movieName,
-          bookings: 0,
-          revenue: 0,
-        };
-      }
-
+    const totalRevenue = bookings.reduce(
+      (sum, b) => sum + parseFloat(b.totalPrice || "0"),
+      0
+    );
+    const movieBookings = bookings.reduce((acc, b) => {
+      const movieName = b.showTime.movie.name;
+      const movieId = b.showTime.movie.id;
+      if (!acc[movieId])
+        acc[movieId] = { movie: movieName, bookings: 0, revenue: 0 };
       acc[movieId].bookings += 1;
-      acc[movieId].revenue += parseFloat(booking.totalPrice || "0");
-
+      acc[movieId].revenue += parseFloat(b.totalPrice || "0");
       return acc;
     }, {} as Record<string, { movie: string; bookings: number; revenue: number }>);
-
-    // Convert to array and sort by bookings
     const topMovies = Object.values(movieBookings)
       .sort((a, b) => b.bookings - a.bookings)
       .slice(0, 5);
-
-    // Group bookings by date for revenue trend
-    const revenueByDate = bookings.reduce((acc, booking) => {
-      const date = new Date(booking.createdAt).toLocaleDateString();
-
-      if (!acc[date]) {
-        acc[date] = {
-          name: date,
-          revenue: 0,
-          bookings: 0,
-        };
-      }
-
-      acc[date].revenue += parseFloat(booking.totalPrice || "0");
-      acc[date].bookings += 1;
-
+    const revenueData = bookings.reduce((acc, b) => {
+      const date = new Date(b.createdAt).toLocaleDateString();
+      if (!acc[date]) acc[date] = { name: date, revenue: 0 };
+      acc[date].revenue += parseFloat(b.totalPrice || "0");
       return acc;
-    }, {} as Record<string, { name: string; revenue: number; bookings: number }>);
+    }, {} as Record<string, { name: string; revenue: number }>);
 
-    const revenueData = Object.values(revenueByDate)
-      .sort((a, b) => new Date(a.name).getTime() - new Date(b.name).getTime())
-      .slice(-30); // Last 30 days
-
-    // Calculate movie type distribution
-    const movieTypes = movies.reduce((acc, movie) => {
-      movie.movieTypes.forEach((type) => {
-        if (!acc[type.name]) {
-          acc[type.name] = 0;
-        }
-        acc[type.name] += 1;
-      });
+    const movieTypes = movies.reduce((acc, m) => {
+      m.movieTypes.forEach(
+        (type) => (acc[type.name] = (acc[type.name] || 0) + 1)
+      );
       return acc;
     }, {} as Record<string, number>);
-
-    const colors = [
-      "#3B82F6",
-      "#10B981",
-      "#F59E0B",
-      "#EF4444",
-      "#8B5CF6",
-      "#EC4899",
-      "#14B8A6",
-    ];
     const genreDistribution = Object.entries(movieTypes).map(
-      ([name, value], index) => ({
+      ([name, value], i) => ({
         name,
         value,
-        color: colors[index % colors.length],
+        color: ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"][i % 5],
       })
     );
-
     return {
       totalRevenue,
       totalBookings: bookings.length,
       topMovies,
-      revenueData,
+      revenueData: Object.values(revenueData),
       genreDistribution,
     };
   }, [bookings, movies]);
 
-  // Calculate movie statistics
   const movieStats = useMemo(() => {
-    if (!movies.length)
-      return { total: 0, nowShowing: 0, upcoming: 0, ended: 0 };
-
-    const stats = movies.reduce(
-      (acc, movie) => {
-        acc.total += 1;
-        switch (movie.status.toLowerCase()) {
-          case "nowshowing":
-            acc.nowShowing += 1;
-            break;
-          case "upcoming":
-            acc.upcoming += 1;
-            break;
-          case "ended":
-            acc.ended += 1;
-            break;
-        }
+    if (!movies.length) return { total: 0, nowShowing: 0 };
+    return movies.reduce(
+      (acc, m) => {
+        acc.total++;
+        if (m.status.toLowerCase() === "nowshowing") acc.nowShowing++;
         return acc;
       },
-      { total: 0, nowShowing: 0, upcoming: 0, ended: 0 }
+      { total: 0, nowShowing: 0 }
     );
-
-    return stats;
   }, [movies]);
 
-  // Calculate average rating
-  const averageRating = useMemo(() => {
-    if (!movies.length) return 0;
-    const totalRating = movies.reduce((sum, movie) => sum + movie.rate, 0);
-    return totalRating / movies.length;
-  }, [movies]);
-
-  // Recent activity from bookings
-  const recentActivity = useMemo(() => {
-    return bookings
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
-      .slice(0, 5)
-      .map((booking) => ({
-        time: new Date(booking.createdAt).toLocaleString(),
-        action: `New booking for ${booking.showTime.movie.name}`,
-        user: booking.user.fullName,
-        amount: `$${parseFloat(booking.totalPrice || "0").toFixed(2)}`,
-      }));
-  }, [bookings]);
+  const averageRating = useMemo(
+    () =>
+      movies.length
+        ? movies.reduce((s, m) => s + m.rate, 0) / movies.length
+        : 0,
+    [movies]
+  );
+  const recentActivity = useMemo(
+    () =>
+      bookings.slice(0, 5).map((b) => ({
+        time: new Date(b.createdAt).toLocaleString(),
+        action: `${t("recentActivity.booking")} ${b.showTime.movie.name}`,
+        user: b.user.fullName,
+        amount: `${parseFloat(b.totalPrice || "0").toLocaleString()} VND`,
+      })),
+    [bookings, t]
+  );
 
   const isLoading = moviesLoading || bookingsLoading;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-100 to-white dark:from-gray-800 dark:to-gray-900">
+      <div className="max-w-7xl w-full bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm border">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Movie Booking Dashboard
-          </h1>
-          <p className="text-gray-600">
-            Real-time analytics and insights for your cinema
+          <h1 className="text-3xl font-bold">{t("dashboardtitle")}</h1>
+          <p className="text-gray-600 dark:text-gray-300">
+            {t("dashboardsubtitle")}
           </p>
         </motion.div>
 
-        {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <MetricCard
-            title="Doanh Thu (VND)"
+            title={t("metrics.revenue")}
             value={processedData?.totalRevenue || 0}
             change={12.5}
             icon={<DollarSign className="h-6 w-6 text-white" />}
             color="bg-green-500"
+            suffix="đ"
             isLoading={isLoading}
           />
           <MetricCard
-            title="Số Lượng Đặt Vé"
+            title={t("metrics.bookings")}
             value={processedData?.totalBookings || 0}
             change={8.2}
             icon={<Users className="h-4 w-5 text-white" />}
             color="bg-blue-500"
-            suffix=""
             isLoading={isLoading}
           />
           <MetricCard
-            title="Số Phim"
+            title={t("metrics.movies")}
             value={movieStats.total}
             change={5.1}
-            icon={<Film className="h-4  w-5 text-white" />}
+            icon={<Film className="h-4 w-5 text-white" />}
             color="bg-purple-500"
             isLoading={isLoading}
           />
           <MetricCard
-            title="Đánh Giá Trung Bình"
+            title={t("metrics.rating")}
             value={averageRating}
             change={2.3}
             icon={<Star className="h-4 w-5 text-white" />}
@@ -367,7 +277,7 @@ const Dashboard: React.FC = () => {
             isLoading={isLoading}
           />
           <MetricCard
-            title="Phim Đang Chiếu"
+            title={t("metrics.nowShowing")}
             value={movieStats.nowShowing}
             change={3.2}
             icon={<Play className="h-4 w-5 text-white" />}
@@ -376,82 +286,36 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Movie Status Overview */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"></div> */}
-
-        {/* Time Period Selector */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="mb-6"
-        >
-          <div className="flex space-x-2 bg-white rounded-lg p-2 shadow-sm border border-gray-200 w-fit">
-            {(["daily", "monthly", "yearly"] as const).map((period) => (
-              <button
-                key={period}
-                onClick={() => setTimePeriod(period)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                  timePeriod === period
-                    ? "bg-blue-500 text-white shadow-md"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                {period.charAt(0).toUpperCase() + period.slice(1)}
-              </button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Revenue Trend */}
           <ChartCard
-            title="Doanh Thu (VND)"
+            title={t("charts.revenueTrend")}
             icon={<TrendingUp className="h-5 w-5 text-blue-500" />}
             isLoading={isLoading}
           >
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={processedData?.revenueData || []}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="name" stroke="#666" />
                 <YAxis stroke="#666" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                  }}
-                />
+                <Tooltip />
                 <Area
                   type="monotone"
                   dataKey="revenue"
                   stroke="#3B82F6"
-                  strokeWidth={2}
+                  fillOpacity={1}
                   fill="url(#colorRevenue)"
                 />
               </AreaChart>
             </ResponsiveContainer>
           </ChartCard>
 
-          {/* Top Movies by Bookings */}
           <ChartCard
-            title="Phim Đang Chiếu"
+            title={t("charts.topMovies")}
             icon={<BarChart3 className="h-5 w-5 text-blue-500" />}
             isLoading={isLoading}
           >
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={processedData?.topMovies || []}
-                layout="horizontal"
-              >
+              <BarChart data={processedData?.topMovies || []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis type="number" stroke="#666" />
                 <YAxis
@@ -460,25 +324,16 @@ const Dashboard: React.FC = () => {
                   stroke="#666"
                   width={120}
                 />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                  }}
-                />
+                <Tooltip />
                 <Bar dataKey="bookings" fill="#3B82F6" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </ChartCard>
         </div>
 
-        {/* Bottom Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-auto">
-          {/* Genre Distribution */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <ChartCard
-            title="Phân Loại Phim"
+            title={t("charts.genreDistribution")}
             icon={<PieChartIcon className="h-5 w-5 text-blue-500" />}
             isLoading={isLoading}
           >
@@ -495,81 +350,48 @@ const Dashboard: React.FC = () => {
                 >
                   {(processedData?.genreDistribution || []).map(
                     (entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell key={index} fill={entry.color} />
                     )
                   )}
                 </Pie>
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
-            <div className="mt-4 space-y-2">
-              {(processedData?.genreDistribution || []).map((genre, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: genre.color }}
-                    />
-                    <span className="text-sm text-gray-600">{genre.name}</span>
-                  </div>
-                  <span className="text-sm font-medium">{genre.value}</span>
-                </div>
-              ))}
-            </div>
           </ChartCard>
 
-          {/* Recent Activity */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="lg:col-span-2 bg-white rounded-xl p-6 shadow-lg border h-auto border-gray-100"
+            className="lg:col-span-2 bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg border"
           >
             <div className="flex items-center space-x-3 mb-6">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Activity className="h-5 w-5 text-blue-500" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                Hoạt Động Gần Đây
+              <h3 className="text-lg font-semibold">
+                {t("recentActivity.title")}
               </h3>
             </div>
             <div className="space-y-4">
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="animate-pulse flex items-start space-x-3 p-3"
-                  >
-                    <div className="w-2 h-2 bg-gray-200 rounded-full mt-2"></div>
-                    <div className="flex-1">
-                      <div className="bg-gray-200 h-4 w-3/4 rounded mb-2"></div>
-                      <div className="bg-gray-200 h-3 w-1/2 rounded"></div>
-                    </div>
-                  </div>
-                ))
-              ) : recentActivity.length > 0 ? (
-                recentActivity.map((activity, index) => (
+              {recentActivity.length ? (
+                recentActivity.map((a, i) => (
                   <motion.div
-                    key={index}
+                    key={i}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 + index * 0.1 }}
-                    className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg"
                   >
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2" />
                     <div className="flex-1">
-                      <p className="text-sm text-gray-900">{activity.action}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {activity.user} • {activity.amount} • {activity.time}
-                      </p>
+                      <p className="text-sm">{a.action}</p>
+                      <p className="text-xs text-gray-500">{`${a.user} • ${a.amount} • ${a.time}`}</p>
                     </div>
                   </motion.div>
                 ))
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No recent bookings found</p>
-                </div>
+                <p className="text-center py-8 text-gray-500">
+                  {t("recentActivity.empty")}
+                </p>
               )}
             </div>
           </motion.div>

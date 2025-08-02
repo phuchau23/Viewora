@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useGetTypes, useCreateType, useDeleteType } from "@/hooks/useTypes";
-import { Plus, Search, Trash2, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -32,8 +32,10 @@ import {
   AlertDialogHeader,
 } from "@/components/ui/alert-dialog";
 import { useSort } from "@/hooks/useSort";
+import { useTranslation } from "react-i18next";
 
 export function TypeMovies() {
+  const { t } = useTranslation();
   const [newType, setNewType] = useState("");
   const { sortConfig, handleSort, sortedData } = useSort(["name"]);
 
@@ -43,16 +45,8 @@ export function TypeMovies() {
     isError: isErrorTypes,
     error: errorTypes,
   } = useGetTypes();
-  const {
-    createType,
-    isLoading: isCreating,
-    error: errorCreate,
-  } = useCreateType();
-  const {
-    deleteType,
-    isLoading: isDeleting,
-    error: errorDelete,
-  } = useDeleteType();
+  const { createType, isLoading: isCreating } = useCreateType();
+  const { deleteType } = useDeleteType();
   const sortedTypes = sortedData(types?.data || []);
 
   const handleAdd = () => {
@@ -73,11 +67,11 @@ export function TypeMovies() {
   };
 
   if (isLoadingTypes) {
-    return <div>Đang tải dữ liệu...</div>;
+    return <div>{t("movietype.loading")}</div>;
   }
 
   if (isErrorTypes) {
-    return <div>Lỗi khi tải dữ liệu: {errorTypes}</div>;
+    return <div>{t("movietype.error", { error: errorTypes })}</div>;
   }
 
   return (
@@ -87,14 +81,14 @@ export function TypeMovies() {
         <div className="relative w-72 px-2">
           <Plus className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Add type..."
+            placeholder={t("movietype.addPlaceholder")}
             value={newType}
             onChange={(e) => setNewType(e.target.value)}
             className="pl-10"
           />
         </div>
         <Button variant="secondary" onClick={handleAdd}>
-          Add
+          {t("movietype.addButton")}
         </Button>
       </div>
       {/* Scrollable Table */}
@@ -103,7 +97,7 @@ export function TypeMovies() {
           <TableHeader className="text-center">
             <TableRow>
               <TableHead onClick={() => handleSort("name")}>
-                Tên Loại Phim{" "}
+                {t("movietype.nameColumn")}{" "}
                 {sortConfig.key === "name" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
@@ -127,26 +121,23 @@ export function TypeMovies() {
                     <AlertDialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg">
                       <AlertDialogHeader>
                         <AlertDialogTitle className="text-xl font-semibold text-red-600">
-                          Delete Type
+                          {t("movietype.deleteTitle")}
                         </AlertDialogTitle>
                         <AlertDialogDescription className="text-sm text-muted-foreground mt-2">
-                          Are you sure you want to delete the type{" "}
-                          <strong className="text-black">
-                            &quot;{type.name}&quot;
-                          </strong>
-                          ? <br />
-                          This action cannot be undone.
+                          {t("movietype.deleteConfirm", { name: type.name })}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter className="mt-4 flex justify-center gap-2">
                         <AlertDialogCancel asChild>
-                          <Button variant="outline">Cancel</Button>
+                          <Button variant="outline">
+                            {t("movietype.cancel")}
+                          </Button>
                         </AlertDialogCancel>
                         <Button
                           variant="destructive"
                           onClick={() => handleDelete(type.id)}
                         >
-                          Delete
+                          {t("movietype.delete")}
                         </Button>
                       </AlertDialogFooter>
                     </AlertDialogContent>

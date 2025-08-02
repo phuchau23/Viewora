@@ -1,16 +1,21 @@
 "use client";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   paymentMethod: "vnpay" | "momo" | null;
   setPaymentMethod: (method: "vnpay" | "momo") => void;
 }
 
-const PaymentMethodSelector: React.FC<Props> = ({ paymentMethod, setPaymentMethod }) => {
+const PaymentMethodSelector: React.FC<Props> = ({
+  paymentMethod,
+  setPaymentMethod,
+}) => {
+  const { t } = useTranslation(); // namespace: checkout.json
+
   return (
     <div className="mb-6">
       <h2 className="text-base font-semibold mb-3 text-center">Chọn phương thức thanh toán:</h2>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* VNPay Option */}
         <div
@@ -37,7 +42,7 @@ const PaymentMethodSelector: React.FC<Props> = ({ paymentMethod, setPaymentMetho
 
       {!paymentMethod && (
         <p className="text-sm text-red-600 mt-3 text-center">
-          Vui lòng chọn một phương thức thanh toán để tiếp tục.
+          {t("payment.required")}
         </p>
       )}
     </div>

@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import { format } from "date-fns";
-import { addDays, setHours, setMinutes } from "date-fns";
+import { format, addDays, setHours, setMinutes } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useMovies } from "@/hooks/useMovie";
@@ -15,12 +14,14 @@ import { useCreateShowTime } from "@/hooks/useShowTime";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { CreateShowtimeDto } from "@/lib/api/service/fetchShowTime";
+import { useTranslation } from "react-i18next";
 
 export default function CreateShowtimeForm({
   onSuccess,
 }: {
   onSuccess?: () => void;
 }) {
+  const { t } = useTranslation();
   const { movies } = useMovies();
   const { branches } = useBranch();
   const [branchId, setBranchId] = useState<string | undefined>(undefined);
@@ -28,8 +29,7 @@ export default function CreateShowtimeForm({
     branchId || ""
   );
 
-  const { mutateAsync: createShowTime, error: createShowTimeError } =
-    useCreateShowTime();
+  const { mutateAsync: createShowTime } = useCreateShowTime();
 
   const {
     register,
@@ -55,18 +55,17 @@ export default function CreateShowtimeForm({
       onSuccess?.();
     } catch (err: any) {
       const rawMessage =
-        err?.response?.data?.message ||
-        err?.message ||
-        "Tạo suất chiếu thất bại";
+        err?.response?.data?.message || err?.message || t("createError");
       const cleanedMessage = rawMessage.replace(/^Error:\s*/, "");
       window.alert(cleanedMessage);
     }
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Movie selection */}
       <div className="space-y-1">
-        <Label htmlFor="movieId">🎬 Phim</Label>
+        <Label htmlFor="movieId">{t("movieLabel")}</Label>
         <select
           {...register("movieId", { required: "Vui lòng chọn phim" })}
           className="w-full px-3 py-2 border rounded-md "
@@ -103,7 +102,7 @@ export default function CreateShowtimeForm({
 
       {/* Branch selection */}
       <div className="space-y-1">
-        <Label htmlFor="branchId">🏢 Chi nhánh</Label>
+        <Label htmlFor="branchId">{t("branchLabel")}</Label>
         <select
           value={branchId || ""}
           onChange={(e) => {
@@ -112,7 +111,7 @@ export default function CreateShowtimeForm({
           }}
           className="w-full px-3 py-2 border rounded-md "
         >
-          <option value="">-- Chọn chi nhánh --</option>
+          <option value="">{t("branchPlaceholder")}</option>
           {branches?.map((branch) => (
             <option key={branch.id} value={branch.id}>
               {branch.name}
@@ -123,16 +122,19 @@ export default function CreateShowtimeForm({
 
       {/* Room selection */}
       <div className="space-y-1">
-        <Label htmlFor="roomId">📽️ Phòng chiếu</Label>
+        <Label htmlFor="roomId">{t("roomLabel")}</Label>
         <select
-          {...register("roomId", { required: "Vui lòng chọn phòng" })}
+          {...register("roomId", { required: t("roomRequired") })}
           disabled={!branchId || isLoadingRooms}
           className="w-full px-3 py-2 border rounded-md disabled:opacity-50"
         >
-          <option value="">-- Chọn phòng --</option>
+          <option value="">{t("roomPlaceholder")}</option>
           {rooms?.map((room) => (
             <option key={room.id} value={room.id}>
-              Phòng {room.roomNumber} • {room.roomType?.name}
+              {t("roomOption", {
+                room: room.roomNumber,
+                type: room.roomType?.name,
+              })}
             </option>
           ))}
         </select>
@@ -172,7 +174,7 @@ export default function CreateShowtimeForm({
       {/* Submit */}
       <div className="pt-2">
         <Button type="submit" className="w-full">
-          Tạo suất chiếu
+          {t("submit")}
         </Button>
       </div>
     </form>

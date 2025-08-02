@@ -13,6 +13,7 @@ import {
   Popcorn,
   Film,
   LogOut,
+  Calendar,
 } from "lucide-react";
 
 import {
@@ -31,81 +32,37 @@ import { Button } from "../ui/button";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Calendar } from "lucide-react";
-// Admin navigation items
+import { useTranslation } from "react-i18next";
+
+// Admin navigation items (sẽ dịch bằng key i18n)
 const adminNavItems = [
-  {
-    title: "Dashboard",
-    url: "/admin/dashboard",
-    icon: Home,
-  },
-  {
-    title: "User Manager",
-    url: "/admin/users",
-    icon: Users,
-  },
-  {
-    title: "Tickets",
-    url: "/admin/tickets",
-    icon: Ticket,
-  },
-  {
-    title: "Employees",
-    url: "/admin/employees",
-    icon: ContactRound,
-  },
-  {
-    title: "Roles",
-    url: "/admin/role",
-    icon: User,
-  },
-  {
-    title: "Promotion",
-    url: "/admin/promotion",
-    icon: TicketPercent,
-  },
-  {
-    title: "Snack",
-    url: "/admin/snack",
-    icon: Popcorn,
-  },
-  {
-    title: "Movies",
-    url: "/admin/movies",
-    icon: Film,
-  },
-  {
-    title: "Rooms",
-    url: "/admin/rooms",
-    icon: Home,
-  },
-  {
-    title: "Showtime",
-    url: "/admin/showtime",
-    icon: Calendar,
-  },
-  {
-    title: "Bookings",
-    url: "/admin/bookings",
-    icon: Ticket,
-  },
-  {
-    title: "Settings",
-    url: "/admin/settings",
-    icon: Settings,
-  },
+  { titleKey: "dashboard", url: "/admin/dashboard", icon: Home },
+  { titleKey: "userManager", url: "/admin/users", icon: Users },
+  { titleKey: "tickets", url: "/admin/tickets", icon: Ticket },
+  { titleKey: "employees", url: "/admin/employees", icon: ContactRound },
+  { titleKey: "roles", url: "/admin/role", icon: User },
+  { titleKey: "promotion", url: "/admin/promotion", icon: TicketPercent },
+  { titleKey: "snack", url: "/admin/snack", icon: Popcorn },
+  { titleKey: "movies", url: "/admin/movies", icon: Film },
+  { titleKey: "rooms", url: "/admin/rooms", icon: Home },
+  { titleKey: "showtime", url: "/admin/showtime", icon: Calendar },
+  { titleKey: "bookings", url: "/admin/bookings", icon: Ticket },
+  { titleKey: "settings", url: "/admin/settings", icon: Settings },
 ];
 
 export function AdminSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
+
   const handleLogout = () => {
     Cookies.remove("auth-token");
     setToken(null);
     router.push("/login");
   };
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -117,8 +74,8 @@ export function AdminSidebar({
                   <BarChart3 className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Admin Panel</span>
-                  <span className="text-xs">Management Dashboard</span>
+                  <span className="font-semibold">{t("panelTitle")}</span>
+                  <span className="text-xs">{t("panelSubtitle")}</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -127,15 +84,15 @@ export function AdminSidebar({
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Administration</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("groupLabel")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {adminNavItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.titleKey}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
                       <item.icon />
-                      <span>{item.title}</span>
+                      <span>{t(`menu.${item.titleKey}`)}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -151,7 +108,7 @@ export function AdminSidebar({
         variant="outline"
       >
         <LogOut className="h-4 w-4 mr-1" />
-        Sign Out
+        {t("signOut")}
       </Button>
     </Sidebar>
   );

@@ -5,6 +5,7 @@ import MovieTabs from "./components/MovieInfor";
 import MovieShowtime from "./components/MovieShowtime";
 import { notFound, useParams } from "next/navigation";
 import { useMovies } from "@/hooks/useMovie";
+import { useTranslation } from "react-i18next";
 
 interface MovieDetailProps {
   params: {
@@ -16,8 +17,12 @@ export default function MovieDetail({ params }: MovieDetailProps) {
   const { movies, isLoading } = useMovies(); // 👈 nếu có trạng thái loading
   const movieId = params.id;
 
+  const { t } = useTranslation();
+
   if (isLoading || movies?.length === 0) {
-    return <div className="text-white p-10">Đang tải dữ liệu phim...</div>;
+    return (
+      <div className="text-white p-10"> {t("cinemas.loadingMovies")} </div>
+    );
   }
 
   const movie = movies?.find((m) => m.id.toString() === params.id);

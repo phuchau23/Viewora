@@ -9,12 +9,15 @@ import {
   useLikeReview,
 } from "@/hooks/useReview";
 import { CreateMovieReviewRequest } from "@/lib/api/service/fetchReview";
+import { useTranslation } from "react-i18next";
+
 
 interface Props {
   movieId: string;
 }
 
 const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
+  const { t } = useTranslation(); // dùng namespace movie
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
 
@@ -51,6 +54,7 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
       movieId,
       comment: replyText,
       parentReviewId,
+
     });
   };
 
@@ -79,7 +83,7 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
         <textarea
           className="w-full bg-[#2a2a2a] text-white border border-gray-600 rounded-lg px-4 py-2 text-sm resize-none focus:outline-none focus:ring"
           rows={3}
-          placeholder="Viết đánh giá..."
+          placeholder={t("rating.placeholder") || ""}
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />
@@ -87,7 +91,7 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
           onClick={handleSubmit}
           className="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 text-sm"
         >
-          Gửi đánh giá
+          {t("rating.submit")}
         </button>
       </div>
 
@@ -166,9 +170,11 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
   );
 };
 
-const ReplyInput: React.FC<{ onReply: (text: string) => void }> = ({
-  onReply,
-}) => {
+const ReplyInput: React.FC<{
+  onReply: (text: string) => void;
+  placeholder: string;
+  submitLabel: string;
+}> = ({ onReply, placeholder, submitLabel }) => {
   const [reply, setReply] = useState("");
   const handle = () => {
     if (!reply.trim()) return;
@@ -182,6 +188,7 @@ const ReplyInput: React.FC<{ onReply: (text: string) => void }> = ({
         type="text"
         className="flex-1 bg-[#2a2a2a] text-white border border-gray-600 rounded px-3 py-1 text-sm focus:outline-none"
         placeholder="Phản hồi..."
+
         value={reply}
         onChange={(e) => setReply(e.target.value)}
       />
@@ -189,7 +196,7 @@ const ReplyInput: React.FC<{ onReply: (text: string) => void }> = ({
         onClick={handle}
         className="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 text-sm"
       >
-        Gửi
+        {submitLabel}
       </button>
     </div>
   );
