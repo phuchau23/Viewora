@@ -9,9 +9,9 @@ const Booking = ({ params }: { params: { id: string } }) => {
   const [isQRModalOpen, setQRModalOpen] = useState(false);
   const [posterError, setPosterError] = useState(false);
 
-  const posterUrl = !posterError
-    ? booking.booking?.showTime.movie.posterUrl
-    : undefined;
+  // const posterUrl = !posterError
+  //   ? booking.booking?.showTime.movie.posterUrl
+  //   : undefined;
 
   return (
     <div className="min-h-screen bg-orange-200 px-4 py-6 text-sm text-gray-800">
@@ -31,7 +31,6 @@ const Booking = ({ params }: { params: { id: string } }) => {
             <div className="mt-3">
               <Image
                 src={
-                  posterUrl ||
                   "https://i.ytimg.com/vi/_v3IxO84IUk/hq720.jpg?sqp=-oaymwE7CK4FEIIDSFryq4qpAy0IARUAAAAAGAElAADIQj0AgKJD8AEB-AH-CYAC0AWKAgwIABABGGUgZShlMA8=&rs=AOn4CLBXVvvhQEIlQEs_i3Cqmd_DfJP7Ow"
                 }
                 width={600}
