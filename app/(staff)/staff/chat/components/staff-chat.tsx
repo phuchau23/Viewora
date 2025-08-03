@@ -23,10 +23,11 @@ import {
 } from "@/components/ui/popover";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { getUserIdFromToken } from "@/utils/signalr";
 
 interface Customer {
-  userId: string;
-  name: string;
+  customerId: string;
+  customerName: string;
 }
 
 interface Message {
@@ -96,14 +97,14 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
           });
 
           // ✅ Nhận khách mới
-          connection.on("NewCustomerAssigned", (data: Customer) => {
-            console.log("New customer assigned:", data);
-            setCustomers((prev) => {
-              const exists = prev.some((c) => c.userId === data.userId);
-              if (!exists) return [...prev, data];
-              return prev;
-            });
-          });
+          // connection.on("NewCustomerAssigned", (data: Customer) => {
+          //   console.log("New customer assigned:", data);
+          //   setCustomers((prev) => {
+          //     const exists = prev.some((c) => c.customerId === data.customerId);
+          //     if (!exists) return [...prev, data];
+          //     return prev;
+          //   });
+          // });
 
           // Nhận tin nhắn
           connection.on(
@@ -122,6 +123,26 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
                 type: senderId === "system" ? "system" : "user",
               };
               setMessages((prev) => [...prev, message]);
+
+              // ✅ Nếu là user mới mà chưa có trong danh sách, thêm vào đầu
+              if (senderId !== "system") {
+                if (senderId === staffId) {
+                  return;
+                }
+                setCustomers((prev) => {
+                  const exists = prev.find((c) => c.customerId === senderId);
+                  const newCustomer = {
+                    customerId: senderId,
+                    customerName: senderName || "Khách chưa đặt tên",
+                  };
+
+                  // ✅ Nếu đã có, đưa lên đầu (ưu tiên theo active chat)
+                  if (!exists) {
+                    return [newCustomer, ...prev];
+                  }
+                  return prev;
+                });
+              }
             }
           );
 
@@ -143,7 +164,7 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
 
   const handleCustomerSelect = async (customer: Customer) => {
     if (!connection || !isConnected) return;
-    if (selectedCustomer?.userId === customer.userId) return; // Bỏ nếu chọn lại cùng 1 customer
+    if (selectedCustomer?.customerId === customer.customerId) return; // Bỏ nếu chọn lại cùng 1 customer
 
     setIsLoading(true);
 
@@ -158,7 +179,7 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
       setSelectedCustomer(customer);
 
       // ✅ Chuyển vào phòng mới
-      await connection.invoke("SwitchCustomerRoom", customer.userId);
+      await connection.invoke("SwitchCustomerRoom", customer.customerId);
     } catch (err) {
       console.error("Switch room error:", err);
     } finally {
@@ -173,7 +194,7 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
     try {
       await connection.invoke(
         "SendMessageToCustomerAsync",
-        selectedCustomer.userId,
+        selectedCustomer.customerId,
         newMessage.trim()
       );
       setNewMessage("");
@@ -252,47 +273,53 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
 
           <ScrollArea className="flex-1">
             {customers.length === 0 ? (
-              <div className="p-4 text-center text-gray-500">
-                <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">No customer conversations yet</p>
-              </div>
+              (console.log("No customers yet"),
+              (
+                <div className="p-4 text-center text-gray-500">
+                  <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No customer conversations yet</p>
+                </div>
+              ))
             ) : (
               <div className="p-2">
-                {customers.map((customer) => (
-                  <div
-                    key={customer.userId}
-                    onClick={() => handleCustomerSelect(customer)}
-                    className={cn(
-                      "flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors",
-                      "hover:bg-gray-50",
-                      selectedCustomer?.userId === customer.userId
-                        ? "bg-orange-50 border border-orange-200"
-                        : "border border-transparent"
-                    )}
-                  >
-                    <Avatar className="w-10 h-10">
-                      <AvatarFallback className="bg-gray-200 text-gray-700">
-                        {getInitials(customer.name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 truncate">
-                        {customer.name}
-                      </p>
-                      <p className="text-sm text-gray-500 truncate">
-                        Customer ID: {customer.userId}
-                      </p>
-                    </div>
-                    {selectedCustomer?.userId === customer.userId && (
-                      <Badge
-                        variant="secondary"
-                        className="bg-orange-100 text-orange-700"
+                {customers?.map(
+                  (customer) => (
+                    console.log(customer),
+                    (
+                      <div
+                        key={customer.customerId}
+                        onClick={() => handleCustomerSelect(customer)}
+                        className={cn(
+                          "flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors",
+                          "hover:bg-gray-50",
+                          selectedCustomer?.customerId === customer.customerId
+                            ? "bg-orange-50 border border-orange-200"
+                            : "border border-transparent"
+                        )}
                       >
-                        Active
-                      </Badge>
-                    )}
-                  </div>
-                ))}
+                        <Avatar className="w-10 h-10">
+                          <AvatarFallback className="bg-gray-200 text-gray-700">
+                            {getInitials(customer.customerName)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 truncate">
+                            {customer.customerName}
+                          </p>
+                        </div>
+                        {selectedCustomer?.customerId ===
+                          customer.customerId && (
+                          <Badge
+                            variant="secondary"
+                            className="bg-orange-100 text-orange-700"
+                          >
+                            Active
+                          </Badge>
+                        )}
+                      </div>
+                    )
+                  )
+                )}
               </div>
             )}
           </ScrollArea>
@@ -308,12 +335,12 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
               <div className="flex items-center gap-3">
                 <Avatar>
                   <AvatarFallback className="bg-gray-200 text-gray-700">
-                    {getInitials(selectedCustomer.name)}
+                    {getInitials(selectedCustomer.customerName)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <h3 className="font-semibold text-gray-900">
-                    {selectedCustomer.name}
+                    {selectedCustomer.customerName}
                   </h3>
                   <p className="text-sm text-gray-500">Customer Support Chat</p>
                 </div>

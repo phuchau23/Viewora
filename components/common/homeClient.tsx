@@ -9,6 +9,7 @@ import { useMovies } from "@/hooks/useMovie";
 import MovieSearch from "@/app/movies/components/MovieSearch";
 import PageIntroReveal from "./IntroPage";
 import { motion } from "framer-motion";
+import PromotionsSection from "./promotion-section";
 
 export default function HomeClient() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -77,6 +78,7 @@ export default function HomeClient() {
           movies={movies?.filter((movie) => movie.status === "nowShowing")}
         />
       </div>
+      <PromotionsSection />
       <Footer />
     </div>
   );
