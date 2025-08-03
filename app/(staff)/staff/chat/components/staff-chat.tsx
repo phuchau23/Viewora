@@ -160,7 +160,7 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
         connection.stop();
       };
     }
-  }, [connection]);
+  }, [connection, staffId]);
 
   const handleCustomerSelect = async (customer: Customer) => {
     if (!connection || !isConnected) return;
