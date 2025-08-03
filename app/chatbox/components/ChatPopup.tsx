@@ -7,7 +7,7 @@ import { getUserIdFromToken } from "@/utils/signalr";
 import { Send, X, MessageCircle, User } from "lucide-react";
 import { useUserProfile } from "@/hooks/useUsers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import Cookies from "js-cookie";
 interface ChatMessage {
   sender: string;
   content: string;
@@ -35,13 +35,24 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
 
   const customerId = userId || generateCustomerId();
 
-  const customerName = useUserProfile().data?.data?.fullName;
+  // const customerName = useUserProfile().data?.data?.fullName;
+  useEffect(() => {
+    console.log(
+      "NEXT_PUBLIC_SIGNALR_CHAT:",
+      process.env.NEXT_PUBLIC_SIGNALR_CHAT
+    );
+  }, []);
 
   // Kết nối SignalR
   useEffect(() => {
     const conn = new signalR.HubConnectionBuilder()
       .withUrl(
-        `https://localhost:7014/chatHub?userId=${customerId}&role=Customer`
+        `${process.env.NEXT_PUBLIC_SIGNALR_CHAT}/chathub?userId=${customerId}&role=Customer`,
+        {
+          accessTokenFactory: () => {
+            return Cookies.get("auth-token") || "";
+          },
+        }
       )
       .withAutomaticReconnect()
       .build();
