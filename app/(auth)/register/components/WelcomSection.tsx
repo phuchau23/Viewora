@@ -3,8 +3,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { SocialAuthButtons } from "@/components/shared/SocialAuthButtons";
 import { Check } from "lucide-react";
+import { useGoogleLogin } from "@/hooks/useAuth";
+
 
 export function WelcomeSection() {
+  const { googleLogin } = useGoogleLogin();
   return (
     <div className="space-y-8">
       <div className="space-y-6">
@@ -26,7 +29,7 @@ export function WelcomeSection() {
           </Link>
         </div>
       </div>
-      <SocialAuthButtons label="Hoặc đăng ký bằng" onGoogleClick={() => console.log("Google clicked")} />
+      <SocialAuthButtons label="Hoặc đăng ký bằng" onGoogleClick={() => googleLogin()} />
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Lợi ích khi đăng ký:</h3>
         <div className="space-y-2 text-bold text-gray-500">

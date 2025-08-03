@@ -102,7 +102,7 @@ const MetricCard: React.FC<{
     </h3>
     <p className="text-2xl font-bold text-gray-900 dark:text-white">
       {isLoading ? (
-        <div className="animate-pulse bg-gray-200 h-8 w-20 rounded"></div>
+        <div className="animate-pulse bg-neutral-200 h-8 w-20 rounded"></div>
       ) : (
         <AnimatedCounter value={value} prefix={prefix} suffix={suffix} />
       )}
@@ -129,7 +129,10 @@ const ChartCard: React.FC<{
       </h3>
     </div>
     {isLoading ? (
-      <div className="animate-pulse bg-gray-200 h-64 rounded" />
+      <div className="animate-pulse">
+        <div className="bg-neutral-200 h-64 rounded"></div>
+      </div>
+
     ) : (
       children
     )}

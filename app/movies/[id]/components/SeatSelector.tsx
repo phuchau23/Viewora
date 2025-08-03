@@ -1,15 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Seat, seatType } from "@/lib/api/service/fetchSeat";
 import { useSeatSignalR, HeldSeat, getUserIdFromToken } from "@/utils/signalr";
 import { useTranslation } from "react-i18next";
 
+import { SeatHolding } from "@/lib/api/service/fetchSeatHolding";
 interface Props {
   seats: Seat[];
   showTimeId: string;
   selectedSeats: string[];
   setSelectedSeats: React.Dispatch<React.SetStateAction<string[]>>;
+  seatHoldings: SeatHolding[];
 }
 
 export default function SeatSelector({
@@ -17,12 +19,18 @@ export default function SeatSelector({
   showTimeId,
   selectedSeats,
   setSelectedSeats,
+  seatHoldings,
 }: Props) {
   const { t } = useTranslation();
   const userId = useMemo(() => getUserIdFromToken(), []);
   const [myHeldSeats, setMyHeldSeats] = useState<string[]>([]);
   const [othersHeldSeats, setOthersHeldSeats] = useState<string[]>([]);
 
+  const soldSeatIds = useMemo(() => {
+    if (!seatHoldings) return [];
+    return seatHoldings.filter((h) => h.status === "Sold").map((h) => h.seatId); // ✅ vì seatId giờ là string
+  }, [seatHoldings]);
+  console.log("soldSeatIds", soldSeatIds);
   const { holdSeats, releaseSeat } = useSeatSignalR(
     showTimeId,
     (seatInfos) => {
@@ -63,7 +71,8 @@ export default function SeatSelector({
   );
 
   const toggleSeat = (seatId: string) => {
-    if (othersHeldSeats.includes(seatId)) return;
+    if (soldSeatIds.includes(seatId) || othersHeldSeats.includes(seatId))
+      return;
     setSelectedSeats((prev) => {
       const isSelected = prev.includes(seatId);
       if (isSelected) {
@@ -75,6 +84,15 @@ export default function SeatSelector({
       }
     });
   };
+  useEffect(() => {
+    if (!seatHoldings) return;
+    const soldIds = seatHoldings
+      .filter((h) => h.status === "Sold")
+      .map((h) => h.seatId);
+    setSelectedSeats((prev) =>
+      prev.filter((seatId) => !soldIds.includes(seatId))
+    );
+  }, [seatHoldings]);
 
   const groupedByRow = useMemo(() => {
     return seats.reduce((acc: Record<string, Seat[]>, seat) => {
@@ -85,6 +103,7 @@ export default function SeatSelector({
   }, [seats]);
 
   const getSeatColor = (seatId: string, type: string) => {
+    if (soldSeatIds.includes(seatId)) return "bg-red-200 cursor-not-allowed";
     if (selectedSeats.includes(seatId)) return "bg-yellow-500";
     if (othersHeldSeats.includes(seatId))
       return "bg-gray-400 cursor-not-allowed";
@@ -95,7 +114,30 @@ export default function SeatSelector({
 
   return (
     <div className="text-center">
-      <div className="text-center mb-4 font-bold">{t("screenLabel")}</div>
+      <div className="flex flex-col items-center my-6 w-full">
+        {/* Đường cong biểu tượng màn hình */}
+        <div className="w-[75%] max-w-[500px] h-[40px] drop-shadow-md">
+          <svg
+            viewBox="0 0 200 40"
+            preserveAspectRatio="none"
+            className="w-full h-full"
+          >
+            <path
+              d="M0,30 Q100,0 200,30"
+              stroke="#ff2e91"
+              strokeWidth="6"
+              strokeLinecap="butt"
+              fill="transparent"
+              className="shadow-md"
+            />
+          </svg>
+        </div>
+
+        {/* Dòng chữ MÀN HÌNH */}
+        <div className="mt-1 text-sm font-semibold tracking-widest">
+          {t("MÀN HÌNH")}
+        </div>
+      </div>
       <div className="flex flex-col gap-4 items-center">
         {Object.entries(groupedByRow)
           .sort((a, b) => a[0].localeCompare(b[0]))
@@ -116,7 +158,10 @@ export default function SeatSelector({
                         key={seat.id}
                         onClick={() => toggleSeat(seat.id)}
                         title={seat.seatType.name}
-                        disabled={othersHeldSeats.includes(seat.id)}
+                        disabled={
+                          soldSeatIds.includes(seat.id) ||
+                          othersHeldSeats.includes(seat.id)
+                        }
                         className={`rounded-md border border-white font-semibold overflow-hidden
                           ${seatColor}
                           hover:brightness-110 hover:scale-105 transition-all duration-150
@@ -124,7 +169,11 @@ export default function SeatSelector({
                             isCouple ? "w-20" : "w-10"
                           } h-10 flex items-center justify-center text-sm`}
                       >
-                        {isCouple ? "❤️" : seat.row + seat.number}
+                        {soldSeatIds.includes(seat.id)
+                          ? "❌"
+                          : isCouple
+                          ? "❤️"
+                          : seat.row + seat.number}
                       </button>
                     );
                   })}
@@ -134,11 +183,12 @@ export default function SeatSelector({
       </div>
 
       <div className="mt-6 flex justify-center gap-4 text-sm flex-wrap">
-        <Legend color="bg-blue-400" label={t("normalSeat")} />
-        <Legend color="bg-red-400" label={t("vipSeat")} />
-        <Legend color="bg-pink-300" label={t("coupleSeat")} />
-        <Legend color="bg-yellow-500" label={t("yourSelected")} />
-        <Legend color="bg-gray-400" label={t("othersHeld")} />
+        <Legend color="bg-blue-400" label={t("Ghế Thường")} />
+        <Legend color="bg-red-400" label={t("Ghế Vip")} />
+        <Legend color="bg-pink-300" label={t("Ghế Đôi")} />
+        <Legend color="bg-yellow-500" label={t("Đã Chọn")} />
+        <Legend color="bg-gray-400" label={t("Đang được giữ")} />
+        <Legend color="bg-red-200" label={t("Đã Bán")} />
       </div>
     </div>
   );

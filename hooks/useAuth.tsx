@@ -29,6 +29,28 @@ import {
 } from "@/lib/firebase/auth";
 import { logEvent } from "firebase/analytics";
 import { getAnalytics } from "firebase/analytics";
+import { cleanExpiredTokenOnLoad } from "@/utils/cookies";
+import Cookies from "js-cookie";
+import { getToken } from "@/utils/cookies";
+
+export function useAuth() {
+  const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    cleanExpiredTokenOnLoad();
+    setToken(getToken());
+  }, []);
+
+  const logout = () => {
+    Cookies.remove("auth-token");
+    setToken(null);
+    router.push("/login");
+  };
+
+  return { token, isLoggedIn: !!token, logout };
+}
+
 
 // Hook: useRegister
 export function useRegister() {
@@ -100,7 +122,7 @@ export function useVerifyEmail() {
     },
     onSuccess: () => {
       toast({ title: "Thành công", description: "Bạn đã xác minh OTP" });
-      router.push(" /login");
+      router.replace(" /login");
       setError(null);
     },
     onError: (err: any) => {
@@ -318,7 +340,7 @@ export function useResetPassword() {
     },
     onSuccess: () => {
       toast({ title: "Thành công", description: "Bạn đã đặt lại mật khẩu" });
-      router.push("/login");
+      router.replace("/login");
       setError(null);
     },
     onError: (err: any) => {
@@ -378,8 +400,7 @@ export function useGoogleLogin() {
       const googleResult = await signInWithGoogle();
 
       if (!googleResult) {
-        setIsRedirecting(true);
-        return null;
+        throw new Error("Đăng nhập Google bị hủy hoặc đóng cửa sổ.");
       }
 
       const { idToken } = googleResult;
@@ -436,7 +457,7 @@ export function useGoogleLogin() {
       variant: "destructive",
     });
     if (isRedirect) {
-      router.push("/login");
+      router.replace("/login");
     }
   };
 

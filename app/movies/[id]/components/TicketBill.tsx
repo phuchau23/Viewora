@@ -42,6 +42,7 @@ export default function TicketBill({
   );
   const [finalPrice, setFinalPrice] = useState(0);
   const [promotionError, setPromotionError] = useState<React.ReactNode>("");
+  const [countdown, setCountdown] = useState(5 * 60); // 5 phút (tính bằng giây)
 
   const originalTotal = useMemo(() => {
     const seatTotal = selectedSeats.reduce(
@@ -68,9 +69,9 @@ export default function TicketBill({
       setFinalPrice(originalTotal);
       setPromotionError(
         <>
-          {t("minOrderRequired")}{" "}
+          Đơn hàng cần tối thiểu{" "}
           <strong>{selectedPromotion.minOrderValue.toLocaleString()}đ</strong>{" "}
-          {t("toApplyPromo", { code: selectedPromotion.code })}
+          để áp dụng mã <strong>{selectedPromotion.code}</strong>
         </>
       );
       return;
@@ -92,6 +93,18 @@ export default function TicketBill({
     const final = originalTotal - discountAmount;
     setFinalPrice(final > 0 ? final : 0);
   };
+  useEffect(() => {
+    if (countdown <= 0) {
+      console.log("Hết thời gian thanh toán");
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [countdown]);
 
   useEffect(() => {
     applyDiscount();
@@ -99,7 +112,7 @@ export default function TicketBill({
 
   return (
     <div className="h-auto">
-      <div className="flex flex-col h-auto p-4 md:p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+      <div className="flex flex-col h-auto p-4 md:p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-neutral-800">
         <h1 className="text-2xl md:text-2xl font-extrabold text-center mb-4 text-orange-600">
           {t("orderTitle")}
         </h1>
@@ -107,21 +120,19 @@ export default function TicketBill({
         {/* Thông tin phim */}
         <div className="mb-4 pb-4 border-b border-spacing-1 border-gray-300">
           <div className="flex text-xl font-extrabold mb-1 gap-3 pb-4">
-            <span className="text-foreground">{movie.name?.toUpperCase()}</span>
+            <span className="">{movie.name?.toUpperCase()}</span>
           </div>
           <div className="flex text-base mb-1 gap-3">
-            <MapPin className="w-6 h-6 text-foreground font-mono" />
-            <span className="text-foreground font-mono">
-              {branchName.toUpperCase()}
-            </span>
+            <MapPin className="w-6 h-6 font-mono" />
+            <span className="font-mono">{branchName.toUpperCase()}</span>
           </div>
           <div className="flex text-base mb-1 gap-3">
-            <Clock className="w-6 h-6 text-foreground font-mono" />
-            <span className="text-gray-900 font-mono">{showtime}</span>
+            <Clock className="w-6 h-6 font-mono" />
+            <span className="font-mono">{showtime}</span>
           </div>
           <div className="flex text-base mb-1 gap-3">
-            <Monitor className="w-6 h-6 text-foreground font-mono" />
-            <span className="text-gray-900 font-mono">Screen {roomNumber}</span>
+            <Monitor className="w-6 h-6 font-mono" />
+            <span className="font-mono">Screen {roomNumber}</span>
           </div>
         </div>
 
@@ -134,18 +145,17 @@ export default function TicketBill({
               </div>
             ) : (
               <>
-                <p className="text-base font-semibold mb-2 text-gray-800">
-                  {t("selectedSeats")}
-                </p>
+                <p className="text-base font-semibold mb-2">Ghế đã chọn:</p>
                 {selectedSeats.map((s) => (
                   <div key={s.id} className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-700">
-                      {s.row + s.number} - {s.seatType.name}
+                    <span className="">
+                      {s.row + s.number} -{" "}
+                      {s.seatType?.name || "Không rõ loại ghế"}
                     </span>
-                    <span className="font-medium text-gray-800">
-                      {s.seatType.prices
-                        .find((p) => p.timeInDay === "Morning")
-                        ?.amount.toLocaleString()}
+                    <span className="font-medium">
+                      {s.seatType?.prices
+                        ?.find((p) => p.timeInDay === "Morning")
+                        ?.amount?.toLocaleString() || "0"}{" "}
                       đ
                     </span>
                   </div>
@@ -159,9 +169,7 @@ export default function TicketBill({
         {step === "combo" && (
           <div className="mb-4 space-y-4">
             <div>
-              <p className="text-base font-semibold mb-2 text-gray-800">
-                {t("selectedCombos")}
-              </p>
+              <p className="text-base font-semibold mb-2">Combo đã chọn:</p>
               {selectedCombos.length > 0 ? (
                 <div className="space-y-2">
                   {selectedCombos.map((c) => (
@@ -169,10 +177,10 @@ export default function TicketBill({
                       key={c.id}
                       className="flex justify-between text-sm border-b border-gray-100 pb-1"
                     >
-                      <span className="text-gray-700">
+                      <span className="">
                         {c.name} × {c.quantity}
                       </span>
-                      <span className="font-medium text-gray-800">
+                      <span className="font-medium">
                         {(c.price * (c.quantity || 0)).toLocaleString()} đ
                       </span>
                     </div>
@@ -180,7 +188,8 @@ export default function TicketBill({
                 </div>
               ) : (
                 <div className="p-3 text-sm text-gray-500 border border-dashed border-gray-300 rounded-md">
-                  {t("noComboSelected")}
+                  Chưa chọn combo nào. Bạn có thể bỏ qua hoặc chọn để được
+                  khuyến mãi tốt hơn
                 </div>
               )}
             </div>
@@ -189,7 +198,7 @@ export default function TicketBill({
             <div className="pt-4 border-t border-gray-300">
               <label
                 htmlFor="promotionCode"
-                className="text-base font-semibold mb-2 text-gray-800"
+                className="text-base font-semibold mb-2"
               >
                 {t("promoCode")}
               </label>
@@ -241,17 +250,20 @@ export default function TicketBill({
 
         {/* Step payment */}
         {step === "payment" && (
-          <div className="text-sm text-gray-700 mb-4">
-            <p className="mb-2">{t("readyForPayment")}</p>
-            <p>{t("paymentMethodInfo")}</p>
-          </div>
+          <>
+            <div className="text-sm mb-4">
+              <p className="mb-2">Bạn đã sẵn sàng thanh toán.</p>
+              <p>Phương thức thanh toán được chọn ở bên trái.</p>
+            </div>
+          </>
         )}
 
         {/* Tổng tiền + nút điều hướng */}
         <div className="mt-4 pt-4 border-t border-spacing-1 border-gray-300">
           <div className="space-y-2 mb-4">
-            <div className="flex justify-between text-sm text-gray-600">
-              <span>{t("total")}</span>
+            {/* Tạm tính */}
+            <div className="flex justify-between text-sm">
+              <span>Tổng tiền:</span>
               <span>{originalTotal.toLocaleString()} đ</span>
             </div>
 
@@ -296,6 +308,13 @@ export default function TicketBill({
               &larr; {t("back")}
             </button>
           )}
+        </div>
+        <div className="mt-4 text-center text-base font-medium text-gray-600">
+          Còn lại:{" "}
+          <span className="text-lg font-extrabold text-red-600">
+            {Math.floor(countdown / 60)}:
+            {(countdown % 60).toString().padStart(2, "0")}
+          </span>
         </div>
       </div>
     </div>

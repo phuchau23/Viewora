@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSeatOfRoomByRoomId } from "@/hooks/useSeat";
 import { Seat } from "@/lib/api/service/fetchSeat";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,10 @@ import { Snack } from "@/lib/api/service/fetchSnack";
 import { useSnacks } from "@/hooks/useSnacks";
 import { useBooking } from "@/hooks/useBooking";
 import PaymentMethodSelector from "./PaymentMethodSelector";
+import { useSeatHoldingsQuery } from "@/hooks/useSeatHolding";
+import { toast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { getUserIdFromToken } from "@/utils/signalr";
 
 interface Props {
   roomId: string;
@@ -34,6 +37,64 @@ function getSeatPriceByShowtime(seat: Seat, startTime: string): number {
 
   const price = seat.seatType?.prices.find((p) => p.timeInDay === timeInDay);
   return price?.amount || 0;
+}
+function getSeatViolationReason(
+  seats: Seat[],
+  selectedSeats: string[],
+  soldOrHeldSeatIds: Set<string>
+): string | null {
+  const selectedSet = new Set(selectedSeats);
+
+  const groupedByRow = seats.reduce((acc: Record<string, Seat[]>, seat) => {
+    if (!acc[seat.row]) acc[seat.row] = [];
+    acc[seat.row].push(seat);
+    return acc;
+  }, {});
+
+  for (const row of Object.values(groupedByRow)) {
+    const sortedRow = row.sort((a, b) => a.number - b.number);
+
+    for (let i = 0; i < sortedRow.length; i++) {
+      const current = sortedRow[i];
+      const left = sortedRow[i - 1];
+      const right = sortedRow[i + 1];
+
+      if (
+        !selectedSet.has(current.id) &&
+        !soldOrHeldSeatIds.has(current.id) &&
+        left &&
+        right &&
+        (selectedSet.has(left.id) || soldOrHeldSeatIds.has(left.id)) &&
+        (selectedSet.has(right.id) || soldOrHeldSeatIds.has(right.id))
+      ) {
+        return `Không được để trống 1 ghế ở giữa tại vị trí ${current.row}${current.number}`;
+      }
+
+      if (
+        i === 0 &&
+        !selectedSet.has(current.id) &&
+        !soldOrHeldSeatIds.has(current.id) &&
+        right &&
+        selectedSet.has(right.id) &&
+        !soldOrHeldSeatIds.has(right.id)
+      ) {
+        return `Không được để trống 1 ghế bên trái (vị trí đầu hàng ${current.row}${current.number})`;
+      }
+
+      if (
+        i === sortedRow.length - 1 &&
+        !selectedSet.has(current.id) &&
+        !soldOrHeldSeatIds.has(current.id) &&
+        left &&
+        selectedSet.has(left.id) &&
+        !soldOrHeldSeatIds.has(left.id)
+      ) {
+        return `Không được để trống 1 ghế bên phải (vị trí cuối hàng ${current.row}${current.number})`;
+      }
+    }
+  }
+
+  return null;
 }
 
 export default function RoomSeatingChart({
@@ -62,6 +123,20 @@ export default function RoomSeatingChart({
     null
   );
 
+  const { data: seatHoldings } = useSeatHoldingsQuery(showtimeId);
+  const userId = useMemo(() => getUserIdFromToken(), []);
+// danh sách ghế đã bán
+const soldIds = seatHoldings?.data
+  .filter(h => h.status === "Sold")
+  .map(h => h.seatId);
+
+// chỉ chặn ghế Holding của NGƯỜI KHÁC
+const heldByOthers = seatHoldings?.data
+  .filter(h => h.status === "Holding" && h.userId !== userId)
+  .map(h => h.seatId);
+
+  const soldOrHeldIds = new Set([...(soldIds ?? []), ...(heldByOthers ?? [])]);
+
   if (isLoading) return <div>{t("loadingSeats")}</div>;
   if (error || !seatsData) return <div>{t("errorSeats")}</div>;
 
@@ -79,7 +154,9 @@ export default function RoomSeatingChart({
   );
 
   const finalPrice = totalSeatPrice + totalComboPrice - discountAmount;
-
+  const validSeatObjects = selectedSeatObjects.filter(
+    (s) => !soldOrHeldIds.has(s.id)
+  );
   const updateComboQuantity = (combo: Snack, quantity: number) => {
     setSelectedCombos((prev) => {
       if (quantity <= 0) return prev.filter((c) => c.id !== combo.id);
@@ -95,29 +172,47 @@ export default function RoomSeatingChart({
   const handleNext = async () => {
     if (step === "seat") {
       if (selectedSeatObjects.length === 0) {
-        alert(t("noSeatSelected"));
+        toast({
+          title: "Lỗi",
+          description: "Bạn chưa chọn ghế. Vui lòng chọn ghế để tiếp tục",
+          variant: "destructive",
+        });
         return;
       }
-      onSeatClick?.(selectedSeatObjects);
+
+      const violationReason = getSeatViolationReason(
+        seats,
+        selectedSeats,
+        soldOrHeldIds
+      );
+      if (violationReason) {
+        toast({
+          title: "Lỗi chọn ghế",
+          description: violationReason,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      onSeatClick?.(validSeatObjects);
       setStep("combo");
     } else if (step === "combo") {
       setStep("payment");
     } else if (step === "payment") {
       const bookingPayload = {
-        seatIds: selectedSeatObjects.map((s) => s.id),
+        seatIds: validSeatObjects.map((s) => s.id),
         snackSelection: selectedCombos.map((c) => ({
           snackId: c.id,
           quantity: c.quantity || 0,
         })),
         promotionCode,
         paymentMethod: paymentMethod?.toLocaleUpperCase() || "",
-        showtimeId: showtimeId,
+        showtimeId,
       };
+      console.log("bookingPayload", bookingPayload);
       const res = await createBooking(bookingPayload);
       const paymentUrl = res.data.paymentUrl;
-      if (paymentUrl) {
-        window.location.href = paymentUrl;
-      }
+      if (paymentUrl) window.location.href = paymentUrl;
     }
   };
 
@@ -149,6 +244,7 @@ export default function RoomSeatingChart({
             seats={seats}
             selectedSeats={selectedSeats}
             setSelectedSeats={setSelectedSeats}
+            seatHoldings={seatHoldings?.data ?? []}
           />
         ) : step === "combo" ? (
           <ComboSelector
@@ -170,7 +266,7 @@ export default function RoomSeatingChart({
         showtime={showtime}
         roomNumber={roomNumber}
         branchName={branchName}
-        selectedSeats={selectedSeatObjects}
+        selectedSeats={validSeatObjects}
         selectedCombos={selectedCombos}
         promotionCode={promotionCode}
         setPromotionCode={setPromotionCode}

@@ -13,6 +13,7 @@ import { cn } from "@/utils/utils";
 import { ThemeToggle } from "./common/ThemeToggle";
 import Image from "next/image";
 import { LanguageSelector } from "./language-selector";
+import { useAuth } from "@/hooks/useAuth";
 
 const NAVIGATION = [
   { name: "Home", href: "/" },
@@ -24,10 +25,10 @@ const NAVIGATION = [
 
 export default function Header() {
   const { t } = useTranslation();
+  const { token, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
 
   // Effect để xử lý sự kiện cuộn
   useEffect(() => {
@@ -36,17 +37,6 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Effect để cập nhật token dựa trên pathname
-  useEffect(() => {
-    const authToken = Cookies.get("auth-token");
-    setToken(authToken || null);
-  }, [pathname]);
-
-  const handleLogout = () => {
-    Cookies.remove("auth-token");
-    setToken(null);
-    router.push("/login");
-  };
 
   const renderNavLinks = () =>
     NAVIGATION.map(({ name, href }) => (
@@ -95,7 +85,7 @@ export default function Header() {
               </div>
               <nav className="mt-6 flex flex-col gap-4">
                 {renderNavLinks()}
-                {!token ? (
+                {token ? (
                   <Button
                     variant="outline"
                     onClick={() => router.push("/login")}
@@ -103,7 +93,7 @@ export default function Header() {
                     {t("header.signIn")}
                   </Button>
                 ) : (
-                  <Button variant="outline" onClick={handleLogout}>
+                  <Button variant="outline" onClick={logout}>
                     {t("header.signOut")}
                   </Button>
                 )}
@@ -126,7 +116,7 @@ export default function Header() {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
             {renderNavLinks()}
-          </nav>
+            </nav>
         </div>
 
         {/* Right section */}
@@ -156,7 +146,7 @@ export default function Header() {
             </Button>
           ) : (
             <Button
-              onClick={handleLogout}
+              onClick={logout}
               className="hidden md:flex"
               variant="outline"
             >

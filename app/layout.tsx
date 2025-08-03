@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/lib/providers/queryProvider";
-import { Toaster } from "@/components/ui/toaster"; // ✅ Đúng thư viện
+import { Toaster } from "@/components/ui/toaster";
 import { I18nextProvider } from "@/components/i18next-provider";
+import AuthInitProvider from "@/lib/providers/AuthInitProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -25,14 +26,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <QueryProvider>
-          <I18nextProvider>
-            <ThemeProvider attribute="class" defaultTheme="system">
-              <div className="flex min-h-screen flex-col">
-                <main className="flex-1">{children}</main>
-                <Toaster /> {/* ✅ Đặt ở đây */}
-              </div>
-            </ThemeProvider>
-          </I18nextProvider>
+          <AuthInitProvider>
+            <I18nextProvider>
+              <ThemeProvider attribute="class" defaultTheme="system">
+                <div className="flex min-h-screen flex-col">
+                  <main className="flex-1">{children}</main>
+                  <Toaster />
+                </div>
+              </ThemeProvider>
+            </I18nextProvider>
+          </AuthInitProvider>
         </QueryProvider>
       </body>
     </html>

@@ -67,18 +67,34 @@ export default function CreateShowtimeForm({
       <div className="space-y-1">
         <Label htmlFor="movieId">{t("movieLabel")}</Label>
         <select
-          {...register("movieId", { required: t("movieRequired") })}
-          className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
+          {...register("movieId", { required: "Vui lòng chọn phim" })}
+          className="w-full px-3 py-2 border rounded-md "
         >
-          <option value="">{t("moviePlaceholder")}</option>
-          {movies
-            ?.filter((movie) => movie.status === "nowShowing")
-            .map((movie) => (
-              <option key={movie.id} value={movie.id}>
-                {movie.name}
-              </option>
-            ))}
+          <option value="">-- Chọn phim --</option>
+
+          {/* Phim đang chiếu */}
+          <optgroup label="🎬 Đang chiếu (Now Showing)">
+            {movies
+              ?.filter((movie) => movie.status === "nowShowing")
+              .map((movie) => (
+                <option key={movie.id} value={movie.id}>
+                 - {movie.name}
+                </option>
+              ))}
+          </optgroup>
+
+          {/* Phim sắp chiếu */}
+          <optgroup label="🚀 Sắp chiếu (Incoming)">
+            {movies
+              ?.filter((movie) => movie.status === "incoming")
+              .map((movie) => (
+                <option key={movie.id} value={movie.id}>
+                  {movie.name}
+                </option>
+              ))}
+          </optgroup>
         </select>
+
         {errors.movieId && (
           <p className="text-sm text-red-500">{errors.movieId.message}</p>
         )}
@@ -93,7 +109,7 @@ export default function CreateShowtimeForm({
             setBranchId(e.target.value || undefined);
             setValue("roomId", ""); // reset phòng nếu đổi chi nhánh
           }}
-          className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
+          className="w-full px-3 py-2 border rounded-md "
         >
           <option value="">{t("branchPlaceholder")}</option>
           {branches?.map((branch) => (
@@ -110,7 +126,7 @@ export default function CreateShowtimeForm({
         <select
           {...register("roomId", { required: t("roomRequired") })}
           disabled={!branchId || isLoadingRooms}
-          className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white disabled:opacity-50"
+          className="w-full px-3 py-2 border rounded-md disabled:opacity-50"
         >
           <option value="">{t("roomPlaceholder")}</option>
           {rooms?.map((room) => (
@@ -128,8 +144,9 @@ export default function CreateShowtimeForm({
       </div>
 
       {/* Start time */}
+      {/* Start time */}
       <div className="space-y-1">
-        <Label htmlFor="startTime">{t("startTimeLabel")}</Label>
+        <Label htmlFor="startTime">🕒 Thời gian bắt đầu</Label>
         <div className="w-full">
           <DatePicker
             selected={watch("startTime") ? new Date(watch("startTime")) : null}
@@ -145,8 +162,8 @@ export default function CreateShowtimeForm({
             maxDate={addDays(new Date(), 14)}
             minTime={setHours(setMinutes(new Date(), 0), 8)}
             maxTime={setHours(setMinutes(new Date(), 0), 22)}
-            className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800 dark:text-white"
-            placeholderText={t("startTimePlaceholder")}
+            className="w-full px-3 py-2 border rounded-md "
+            placeholderText="dd/MM/yyyy HH:mm"
           />
         </div>
         {errors.startTime && (
