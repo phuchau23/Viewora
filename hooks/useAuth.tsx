@@ -29,6 +29,28 @@ import {
 } from "@/lib/firebase/auth";
 import { logEvent } from "firebase/analytics";
 import { getAnalytics } from "firebase/analytics";
+import { cleanExpiredTokenOnLoad } from "@/utils/cookies";
+import Cookies from "js-cookie";
+import { getToken } from "@/utils/cookies";
+
+export function useAuth() {
+  const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    cleanExpiredTokenOnLoad();
+    setToken(getToken());
+  }, []);
+
+  const logout = () => {
+    Cookies.remove("auth-token");
+    setToken(null);
+    router.push("/login");
+  };
+
+  return { token, isLoggedIn: !!token, logout };
+}
+
 
 // Hook: useRegister
 export function useRegister() {

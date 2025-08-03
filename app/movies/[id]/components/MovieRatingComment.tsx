@@ -65,8 +65,8 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
   return (
     <div className="space-y-6">
       {/* Form đánh giá */}
-      <div className="bg-[#1e1e1e] p-4 rounded-xl shadow-md">
-        <h2 className="text-lg font-semibold text-white mb-3">
+      <div className="bg-gray-200 dark:bg-neutral-800 p-4 rounded-xl shadow-md">
+        <h2 className="text-lg font-semibold mb-3">
           Đánh giá của bạn
         </h2>
         <div className="flex items-center gap-2 mb-3">
@@ -81,7 +81,7 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
           ))}
         </div>
         <textarea
-          className="w-full bg-[#2a2a2a] text-white border border-gray-600 rounded-lg px-4 py-2 text-sm resize-none focus:outline-none focus:ring"
+          className="w-full bg-gray-200 dark:bg-neutral-600 border border-gray-400 dark:border-neutral-400 rounded-lg px-4 py-2 text-sm resize-none focus:outline-none focus:ring"
           rows={3}
           placeholder={t("rating.placeholder") || ""}
           value={comment}
@@ -89,7 +89,7 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
         />
         <button
           onClick={handleSubmit}
-          className="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 text-sm"
+          className="mt-3 bg-blue-600 dark:bg-neutral-600 border border-gray-400 dark:border-neutral-400 px-4 py-2 rounded hover:bg-blue-500 text-sm"
         >
           {t("rating.submit")}
         </button>
@@ -97,25 +97,25 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
 
       {/* Danh sách bình luận */}
       <div>
-        <h2 className="text-base font-semibold mb-4 text-white">
+        <h2 className="text-base font-semibold mb-4 ">
           Bình luận gần đây
         </h2>
         {isLoading ? (
           <p className="text-sm text-gray-400">Đang tải đánh giá...</p>
         ) : review && review.data.length > 0 ? (
           review.data.map((c) => (
-            <div key={c.id} className="mb-4 bg-[#1e1e1e] p-4 rounded-xl shadow">
+            <div key={c.id} className="mb-4 bg-gray-100 dark:bg-neutral-800 p-4 rounded-xl shadow">
               <div className="flex gap-3">
-                <div className="w-9 h-9 bg-gray-500 rounded-full text-white text-xs flex items-center justify-center">
+                <div className="w-9 h-9 bg-gray-200 dark:bg-neutral-600 rounded-full border border-gray-400 dark:border-neutral-400 text-xs flex items-center justify-center">
                   {c.userId.slice(0, 1).toUpperCase()}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm text-white">
+                    <span className="font-semibold text-sm ">
                       {c.userId}
                     </span>
                   </div>
-                  <p className="text-sm text-white mt-1">{c.comment}</p>
+                  <p className="text-sm mt-1">{c.comment}</p>
 
                   <div className="flex gap-4 mt-2 text-xs text-gray-400">
                     <button
@@ -148,12 +148,12 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
                     </span>
                   </div>
 
-                  <ReplyInput onReply={(text) => handleReply(c.id, text)} />
+                  <ReplyInput onReply={(text) => handleReply(c.id, text)} placeholder="Nhập phản hồi" submitLabel="Gửi" />
 
                   {c.replies.map((r) => (
                     <div
                       key={r.id}
-                      className="ml-10 mt-2 p-2 bg-[#2c2c2c] rounded-lg text-sm text-white"
+                      className="ml-10 mt-2 p-2 bg-gray-200 dark:bg-neutral-600 border border-gray-400 dark:border-neutral-400 rounded-lg text-sm "
                     >
                       <strong>{r.userId}</strong>: {r.comment}
                     </div>
@@ -186,15 +186,15 @@ const ReplyInput: React.FC<{
     <div className="flex gap-2 mt-2">
       <input
         type="text"
-        className="flex-1 bg-[#2a2a2a] text-white border border-gray-600 rounded px-3 py-1 text-sm focus:outline-none"
-        placeholder="Phản hồi..."
+        className="flex-1 bg-gray-200 dark:bg-neutral-600 border border-gray-400 dark:border-neutral-400 rounded px-3 py-1 text-sm focus:outline-none"
+        placeholder={placeholder}
 
         value={reply}
         onChange={(e) => setReply(e.target.value)}
       />
       <button
         onClick={handle}
-        className="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 text-sm"
+        className="px-3 py-1 bg-gray-700 dark:bg-neutral-600 border border-gray-400 dark:border-neutral-400 text-white rounded hover:bg-gray-600 text-sm"
       >
         {submitLabel}
       </button>

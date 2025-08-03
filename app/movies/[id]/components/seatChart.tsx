@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSeatOfRoomByRoomId } from "@/hooks/useSeat";
 import { Seat } from "@/lib/api/service/fetchSeat";
 import { useRouter } from "next/navigation";
@@ -15,6 +15,7 @@ import PaymentMethodSelector from "./PaymentMethodSelector";
 import { useSeatHoldingsQuery } from "@/hooks/useSeatHolding";
 import { toast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { getUserIdFromToken } from "@/utils/signalr";
 
 interface Props {
   roomId: string;
@@ -121,13 +122,20 @@ export default function RoomSeatingChart({
   const [paymentMethod, setPaymentMethod] = useState<"vnpay" | "momo" | null>(
     null
   );
-  const { data: seatHoldings } = useSeatHoldingsQuery(showtimeId);
-  const soldOrHeldSeatIds = new Set(
-    seatHoldings?.data
-      ?.filter((h) => h.status === "Sold" || h.status === "Holding")
-      .map((h) => h.seatId) ?? []
-  );
 
+  const { data: seatHoldings } = useSeatHoldingsQuery(showtimeId);
+  const userId = useMemo(() => getUserIdFromToken(), []);
+// danh sách ghế đã bán
+const soldIds = seatHoldings?.data
+  .filter(h => h.status === "Sold")
+  .map(h => h.seatId);
+
+// chỉ chặn ghế Holding của NGƯỜI KHÁC
+const heldByOthers = seatHoldings?.data
+  .filter(h => h.status === "Holding" && h.userId !== userId)
+  .map(h => h.seatId);
+
+  const soldOrHeldIds = new Set([...(soldIds ?? []), ...(heldByOthers ?? [])]);
 
   if (isLoading) return <div>{t("loadingSeats")}</div>;
   if (error || !seatsData) return <div>{t("errorSeats")}</div>;
@@ -146,7 +154,9 @@ export default function RoomSeatingChart({
   );
 
   const finalPrice = totalSeatPrice + totalComboPrice - discountAmount;
-
+  const validSeatObjects = selectedSeatObjects.filter(
+    (s) => !soldOrHeldIds.has(s.id)
+  );
   const updateComboQuantity = (combo: Snack, quantity: number) => {
     setSelectedCombos((prev) => {
       if (quantity <= 0) return prev.filter((c) => c.id !== combo.id);
@@ -173,7 +183,7 @@ export default function RoomSeatingChart({
       const violationReason = getSeatViolationReason(
         seats,
         selectedSeats,
-        soldOrHeldSeatIds
+        soldOrHeldIds
       );
       if (violationReason) {
         toast({
@@ -184,13 +194,13 @@ export default function RoomSeatingChart({
         return;
       }
 
-      onSeatClick?.(selectedSeatObjects);
+      onSeatClick?.(validSeatObjects);
       setStep("combo");
     } else if (step === "combo") {
       setStep("payment");
     } else if (step === "payment") {
       const bookingPayload = {
-        seatIds: selectedSeatObjects.map((s) => s.id),
+        seatIds: validSeatObjects.map((s) => s.id),
         snackSelection: selectedCombos.map((c) => ({
           snackId: c.id,
           quantity: c.quantity || 0,
@@ -199,6 +209,7 @@ export default function RoomSeatingChart({
         paymentMethod: paymentMethod?.toLocaleUpperCase() || "",
         showtimeId,
       };
+      console.log("bookingPayload", bookingPayload);
       const res = await createBooking(bookingPayload);
       const paymentUrl = res.data.paymentUrl;
       if (paymentUrl) window.location.href = paymentUrl;
@@ -255,7 +266,7 @@ export default function RoomSeatingChart({
         showtime={showtime}
         roomNumber={roomNumber}
         branchName={branchName}
-        selectedSeats={selectedSeatObjects}
+        selectedSeats={validSeatObjects}
         selectedCombos={selectedCombos}
         promotionCode={promotionCode}
         setPromotionCode={setPromotionCode}

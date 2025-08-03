@@ -12,6 +12,7 @@ export interface SeatHolding {
   id: string;
   showTimeId: string;
   seatId: string;
+  userId: string;
   status: "Holding" | "Sold";
 }
 

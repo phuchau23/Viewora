@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Clock, Search, Star } from "lucide-react";
@@ -6,7 +6,7 @@ import { useShowTimeByMovieId } from "@/hooks/useShowTime";
 import RoomSeatingChart from "./seatChart";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-
+import { useAuth } from "@/hooks/useAuth";
 
 interface MovieShowtimeProps {
   movieId: string;
@@ -14,6 +14,8 @@ interface MovieShowtimeProps {
 
 const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
   const { t } = useTranslation(); // namespace movie.json
+  const { token } = useAuth();
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
   const [expandedShowId, setExpandedShowId] = useState<string | null>(null);
@@ -127,8 +129,6 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
     );
   }
 
-  const router = useRouter();
-
   if (showTimeError) {
     return (
       <div className="min-h-[300px] flex items-center justify-center rounded-xl shadow-md bg-card p-6">
@@ -145,6 +145,24 @@ const MovieShowtime: React.FC<MovieShowtimeProps> = ({ movieId }) => {
             className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
           >
             Quay lại trang chủ
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!token) {
+    return (
+      <div className="min-h-[300px] flex items-center justify-center rounded-xl shadow-md bg-card p-6">
+        <div className="text-center py-8">
+          <p className="text-lg text-muted-foreground">
+            Bạn cần đăng nhập để xem lịch chiếu.
+          </p>
+          <button
+            onClick={() => router.push("/login")}
+            className="mt-4 px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
+          >
+            Đăng nhập ngay
           </button>
         </div>
       </div>

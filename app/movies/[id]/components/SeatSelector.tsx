@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Seat, seatType } from "@/lib/api/service/fetchSeat";
 import { useSeatSignalR, HeldSeat, getUserIdFromToken } from "@/utils/signalr";
 import { useTranslation } from "react-i18next";
@@ -84,6 +84,15 @@ export default function SeatSelector({
       }
     });
   };
+  useEffect(() => {
+    if (!seatHoldings) return;
+    const soldIds = seatHoldings
+      .filter((h) => h.status === "Sold")
+      .map((h) => h.seatId);
+    setSelectedSeats((prev) =>
+      prev.filter((seatId) => !soldIds.includes(seatId))
+    );
+  }, [seatHoldings]);
 
   const groupedByRow = useMemo(() => {
     return seats.reduce((acc: Record<string, Seat[]>, seat) => {

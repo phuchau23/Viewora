@@ -124,9 +124,7 @@ export default function TicketBill({
           </div>
           <div className="flex text-base mb-1 gap-3">
             <MapPin className="w-6 h-6 font-mono" />
-            <span className="font-mono">
-              {branchName.toUpperCase()}
-            </span>
+            <span className="font-mono">{branchName.toUpperCase()}</span>
           </div>
           <div className="flex text-base mb-1 gap-3">
             <Clock className="w-6 h-6 font-mono" />
@@ -147,18 +145,17 @@ export default function TicketBill({
               </div>
             ) : (
               <>
-                  <p className="text-base font-semibold mb-2">
-                  Ghế đã chọn:
-                </p>
+                <p className="text-base font-semibold mb-2">Ghế đã chọn:</p>
                 {selectedSeats.map((s) => (
                   <div key={s.id} className="flex justify-between text-sm mb-1">
                     <span className="">
-                      {s.row + s.number} - {s.seatType.name}
+                      {s.row + s.number} -{" "}
+                      {s.seatType?.name || "Không rõ loại ghế"}
                     </span>
                     <span className="font-medium">
-                      {s.seatType.prices
-                        .find((p) => p.timeInDay === "Morning")
-                        ?.amount.toLocaleString()}
+                      {s.seatType?.prices
+                        ?.find((p) => p.timeInDay === "Morning")
+                        ?.amount?.toLocaleString() || "0"}{" "}
                       đ
                     </span>
                   </div>
@@ -172,9 +169,7 @@ export default function TicketBill({
         {step === "combo" && (
           <div className="mb-4 space-y-4">
             <div>
-              <p className="text-base font-semibold mb-2">
-                Combo đã chọn:
-              </p>
+              <p className="text-base font-semibold mb-2">Combo đã chọn:</p>
               {selectedCombos.length > 0 ? (
                 <div className="space-y-2">
                   {selectedCombos.map((c) => (
@@ -317,7 +312,8 @@ export default function TicketBill({
         <div className="mt-4 text-center text-base font-medium text-gray-600">
           Còn lại:{" "}
           <span className="text-lg font-extrabold text-red-600">
-            {Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, "0")}
+            {Math.floor(countdown / 60)}:
+            {(countdown % 60).toString().padStart(2, "0")}
           </span>
         </div>
       </div>
