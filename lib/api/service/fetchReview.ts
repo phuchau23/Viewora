@@ -4,6 +4,8 @@ export interface Review {
     id: string;
     movieId: string;
     userId: string;
+    fullName: string;
+    avatar: string;
     rating: number;
     comment: string;
     createdAt: string;
@@ -39,7 +41,7 @@ export interface APIResponse<T> {
 
 export const ReviewService = {
     createMovieReview: async (data: CreateMovieReviewRequest) => {
-        const response = await apiService.post<APIResponse<Review>>("/moviereview", data, true);
+        const response = await apiService.post<APIResponse<Review>>("/moviereview/create", data, true);
         return response.data;
       },
       createReply: async (data: CreateReplyRequest) => {

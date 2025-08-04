@@ -2,12 +2,15 @@ import React from "react";
 import { Star, Clock, Calendar, Users } from "lucide-react";
 import Image from "next/image";
 import { Movies } from "@/lib/api/service/fetchMovies";
+import { useGetAverageRating } from "@/hooks/useReview";
 
 interface MovieHeaderProps {
   movie: Movies;
 }
 
 export default function MovieHeader({ movie }: MovieHeaderProps) {
+  const { averageRating } = useGetAverageRating(movie.id);
+
   const getStatusBadge = (status: Movies["status"]) => {
     const styles = {
       nowShowing: "bg-green-500 text-white",
@@ -28,7 +31,7 @@ export default function MovieHeader({ movie }: MovieHeaderProps) {
         }`}
       >
         {labels[status as keyof typeof labels]}
-      </span>
+              </span>
     );
   };
 
@@ -92,7 +95,7 @@ export default function MovieHeader({ movie }: MovieHeaderProps) {
                 {movie.rate > 0 && (
                   <div className="flex items-center gap-2">
                     <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold">{movie.rate}/5</span>
+                    <span className="font-semibold">{averageRating?.data.toFixed(1)}/5</span>
                   </div>
                 )}
 

@@ -122,7 +122,6 @@ export function useVerifyEmail() {
     },
     onSuccess: () => {
       toast({ title: "Thành công", description: "Bạn đã xác minh OTP" });
-      router.replace(" /login");
       setError(null);
     },
     onError: (err: any) => {

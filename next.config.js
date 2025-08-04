@@ -42,8 +42,9 @@ const nextConfig = {
       'images.pexels.com',
 
      'firebasestorage.googleapis.com', 
-     'storage.googleapis.com'
-
+     'storage.googleapis.com',
+     'image.tmdb.org',
+     'i.ytimg.com'
     ]
   }
 }

@@ -11,7 +11,6 @@ import {
 import { CreateMovieReviewRequest } from "@/lib/api/service/fetchReview";
 import { useTranslation } from "react-i18next";
 
-
 interface Props {
   movieId: string;
 }
@@ -26,6 +25,9 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
   const { createReview } = useCreateReview();
   const { createReply } = useCreateReply();
   const { likeReview } = useLikeReview();
+  const [replyVisible, setReplyVisible] = useState<{ [key: string]: boolean }>(
+    {}
+  );
 
   const handleSubmit = () => {
     if (!comment || rating === 0) {
@@ -54,7 +56,6 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
       movieId,
       comment: replyText,
       parentReviewId,
-
     });
   };
 
@@ -62,13 +63,18 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
     likeReview(reviewId);
   };
 
+  const toggleReplyInput = (id: string) => {
+    setReplyVisible((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   return (
     <div className="space-y-6">
       {/* Form đánh giá */}
       <div className="bg-gray-200 dark:bg-neutral-800 p-4 rounded-xl shadow-md">
-        <h2 className="text-lg font-semibold mb-3">
-          Đánh giá của bạn
-        </h2>
+        <h2 className="text-lg font-semibold mb-3">Đánh giá của bạn</h2>
         <div className="flex items-center gap-2 mb-3">
           {[1, 2, 3, 4, 5].map((i) => (
             <Star
@@ -97,23 +103,30 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
 
       {/* Danh sách bình luận */}
       <div>
-        <h2 className="text-base font-semibold mb-4 ">
-          Bình luận gần đây
-        </h2>
+        <h2 className="text-base font-semibold mb-4 ">Bình luận gần đây</h2>
         {isLoading ? (
           <p className="text-sm text-gray-400">Đang tải đánh giá...</p>
         ) : review && review.data.length > 0 ? (
           review.data.map((c) => (
-            <div key={c.id} className="mb-4 bg-gray-100 dark:bg-neutral-800 p-4 rounded-xl shadow">
+            <div
+              key={c.id}
+              className="mb-4 bg-gray-100 dark:bg-neutral-800 p-4 rounded-xl shadow"
+            >
               <div className="flex gap-3">
                 <div className="w-9 h-9 bg-gray-200 dark:bg-neutral-600 rounded-full border border-gray-400 dark:border-neutral-400 text-xs flex items-center justify-center">
-                  {c.userId.slice(0, 1).toUpperCase()}
+                  {c.avatar ? (
+                    <img
+                      src={c.avatar}
+                      alt={c.fullName}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  ) : (
+                    c.fullName.slice(0, 1).toUpperCase()
+                  )}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm ">
-                      {c.userId}
-                    </span>
+                    <span className="font-semibold text-sm ">{c.fullName}</span>
                   </div>
                   <p className="text-sm mt-1">{c.comment}</p>
 
@@ -143,21 +156,30 @@ const MovieRatingComment: React.FC<Props> = ({ movieId }) => {
                     </button>
 
                     <span>|</span>
-                    <span className="hover:underline cursor-pointer">
+                    <span
+                      className="hover:underline cursor-pointer"
+                      onClick={() => toggleReplyInput(c.id)}
+                    >
                       Phản hồi
                     </span>
                   </div>
-
-                  <ReplyInput onReply={(text) => handleReply(c.id, text)} placeholder="Nhập phản hồi" submitLabel="Gửi" />
 
                   {c.replies.map((r) => (
                     <div
                       key={r.id}
                       className="ml-10 mt-2 p-2 bg-gray-200 dark:bg-neutral-600 border border-gray-400 dark:border-neutral-400 rounded-lg text-sm "
                     >
-                      <strong>{r.userId}</strong>: {r.comment}
+                      <strong>{r.fullName}</strong>: {r.comment}
                     </div>
                   ))}
+                  
+                  {replyVisible[c.id] && (
+                    <ReplyInput
+                      onReply={(text) => handleReply(c.id, text)}
+                      placeholder="Nhập phản hồi"
+                      submitLabel="Gửi"
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -188,7 +210,6 @@ const ReplyInput: React.FC<{
         type="text"
         className="flex-1 bg-gray-200 dark:bg-neutral-600 border border-gray-400 dark:border-neutral-400 rounded px-3 py-1 text-sm focus:outline-none"
         placeholder={placeholder}
-
         value={reply}
         onChange={(e) => setReply(e.target.value)}
       />

@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useState, useEffect, useRef } from "react";
-import {
+import signalR, {
   HubConnectionBuilder,
   type HubConnection,
   LogLevel,
@@ -73,6 +73,7 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
           accessTokenFactory: () => {
             return Cookies.get("auth-token") || "";
           },
+          transport: signalR.HttpTransportType.WebSockets,
         }
       )
       .withAutomaticReconnect()
@@ -160,7 +161,7 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
         connection.stop();
       };
     }
-  }, [connection]);
+  }, [connection, staffId]);
 
   const handleCustomerSelect = async (customer: Customer) => {
     if (!connection || !isConnected) return;
@@ -287,7 +288,7 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
                     console.log(customer),
                     (
                       <div
-                        key={customer.customerId}
+                        key={customer.customerId + "_" + customer.customerName}
                         onClick={() => handleCustomerSelect(customer)}
                         className={cn(
                           "flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors",

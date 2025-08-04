@@ -43,3 +43,17 @@ export const useSeatHolding = () => {
 
   return { createSeatHolding, isPending, isError, isSuccess, data };
 };
+
+export const useDeleteSeatHolding = () => {
+  const {
+    mutate: deleteSeatHolding,
+    isPending,
+    data,
+  } = useMutation({
+    mutationFn: ({ showtimeId, userId }: { showtimeId: string; userId: string }) =>
+      SeatHoldingService.deleteSeatHolding(showtimeId, userId),
+  });
+
+  return { deleteSeatHolding, isPending, data };
+};
+
