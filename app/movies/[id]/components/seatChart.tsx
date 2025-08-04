@@ -51,7 +51,9 @@ function getSeatViolationReason(
   }, {});
 
   for (const row of Object.values(groupedByRow)) {
-    const sortedRow = row.sort((a, b) => a.number - b.number);
+    const sortedRow = row
+      .filter((seat) => seat.seatType?.name !== "Couple Seat") // 👈 Bỏ ghế đôi
+      .sort((a, b) => a.number - b.number);
 
     for (let i = 0; i < sortedRow.length; i++) {
       const current = sortedRow[i];
@@ -123,15 +125,15 @@ export default function RoomSeatingChart({
 
   const { data: seatHoldings } = useSeatHoldingsQuery(showtimeId);
   const userId = useMemo(() => getUserIdFromToken(), []);
-// danh sách ghế đã bán
-const soldIds = seatHoldings?.data
-  .filter(h => h.status === "Sold")
-  .map(h => h.seatId);
+  // danh sách ghế đã bán
+  const soldIds = seatHoldings?.data
+    .filter((h) => h.status === "Sold")
+    .map((h) => h.seatId);
 
-// chỉ chặn ghế Holding của NGƯỜI KHÁC
-const heldByOthers = seatHoldings?.data
-  .filter(h => h.status === "Holding" && h.userId !== userId)
-  .map(h => h.seatId);
+  // chỉ chặn ghế Holding của NGƯỜI KHÁC
+  const heldByOthers = seatHoldings?.data
+    .filter((h) => h.status === "Holding" && h.userId !== userId)
+    .map((h) => h.seatId);
 
   const soldOrHeldIds = new Set([...(soldIds ?? []), ...(heldByOthers ?? [])]);
 
@@ -209,6 +211,7 @@ const heldByOthers = seatHoldings?.data
       };
       console.log("bookingPayload", bookingPayload);
       const res = await createBooking(bookingPayload);
+      localStorage.removeItem(`seatHoldStart-${showtimeId}`);
       const paymentUrl = res.data.paymentUrl;
       if (paymentUrl) window.location.href = paymentUrl;
     }

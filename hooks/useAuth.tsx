@@ -51,7 +51,6 @@ export function useAuth() {
   return { token, isLoggedIn: !!token, logout };
 }
 
-
 // Hook: useRegister
 export function useRegister() {
   const router = useRouter();
@@ -122,6 +121,7 @@ export function useVerifyEmail() {
     },
     onSuccess: () => {
       toast({ title: "Thành công", description: "Bạn đã xác minh OTP" });
+      router.replace(" /login");
       setError(null);
     },
     onError: (err: any) => {
@@ -217,8 +217,7 @@ export function useLogin() {
       setError(null);
     },
     onError: (err: any) => {
-      const errorMessage =
-        err.response?.data?.message || err.message || "Đăng nhập thất bại.";
+      const errorMessage = "Đăng nhập thất bại.";
       setError(errorMessage);
       toast({
         title: "Thất bại",
