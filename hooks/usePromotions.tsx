@@ -101,3 +101,29 @@ export function useDeletePromotion() {
     deleteError,
   };
 }
+
+export function useGetPromotionsAvailable(userId: string) {
+  const {
+    data,
+    isLoading,
+    error: queryError,
+  } = useQuery({
+    queryKey: ["promotions"],
+    queryFn: () => PromotionService.getPromotionsAvailable(userId),
+    select: (data: PromotionListResponse) => ({
+      promotions: data.data.items,
+      total: data.data.totalItems,
+      currentPage: data.data.currentPage,
+      totalPages: data.data.totalPages,
+      status: data.statusCode,
+      message: data.message,
+    }),
+  });
+
+  return {
+    data,
+    isLoading,
+    isError: !!queryError,
+    error: queryError,
+  };
+}

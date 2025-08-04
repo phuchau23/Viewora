@@ -34,7 +34,7 @@ export function useSeatSignalR(
     if (!showTimeId) return;
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(process.env.NEXT_PUBLIC_SIGNALR_HOLDSEAT + "/hub/cinema", {
+      .withUrl("https://localhost:7014/hub/cinema", {
         accessTokenFactory: getTokenFromCookie,
       })
       .withAutomaticReconnect()

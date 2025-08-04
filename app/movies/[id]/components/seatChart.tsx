@@ -31,7 +31,6 @@ function getSeatPriceByShowtime(seat: Seat, startTime: string): number {
   const date = new Date(startTime);
   const hourVN = date.getUTCHours() + 7;
   const hour = hourVN >= 24 ? hourVN - 24 : hourVN;
-
   const timeInDay: "Morning" | "Night" =
     hour >= 6 && hour < 22 ? "Morning" : "Night";
 
@@ -111,7 +110,6 @@ export default function RoomSeatingChart({
   const { data: seatsData, isLoading, error } = useSeatOfRoomByRoomId(roomId);
   const { data: snackRawData } = useSnacks();
   const { createBooking } = useBooking();
-
   const availableCombos: Snack[] = snackRawData?.snacks ?? [];
 
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
@@ -262,8 +260,10 @@ const heldByOthers = seatHoldings?.data
         )}
       </div>
       <TicketBill
+        userId={userId!}
         movie={movie}
         showtime={showtime}
+        showtimeId={showtimeId}
         roomNumber={roomNumber}
         branchName={branchName}
         selectedSeats={validSeatObjects}
