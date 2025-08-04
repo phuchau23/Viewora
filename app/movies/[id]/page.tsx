@@ -3,15 +3,17 @@
 import React from "react";
 import MovieDetailWrapper from "./components/MovieDetailWrapper";
 
-export default function MovieDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function MovieDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   return <MovieDetailWrapper id={params.id} />;
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   return {
     title: `Movie ${params.id}`,
   };

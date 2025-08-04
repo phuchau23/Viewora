@@ -2,11 +2,13 @@
 
 import PromotionDetailPage from "./components/PromotionDetailPage";
 
-export default function PromotionPage({ params }: { params: { id: string } }) {
+export default async function PromotionPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   return <PromotionDetailPage params={params} />;
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   return {
     title: `Promotion ${params.id}`,
   };
