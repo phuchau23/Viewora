@@ -34,7 +34,7 @@ export function useSeatSignalR(
     if (!showTimeId) return;
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7014/hub/cinema", {
+      .withUrl(process.env.NEXT_PUBLIC_SIGNALR_HOLDSEAT + "/hub/cinema", {
         accessTokenFactory: getTokenFromCookie,
       })
       .withAutomaticReconnect()
@@ -45,29 +45,41 @@ export function useSeatSignalR(
 
     const startConnection = async () => {
       try {
-        connection.on("CurrentHeldSeats", (receivedShowTimeId: string, seatInfos: HeldSeat[]) => {
-          if (receivedShowTimeId === showTimeId) {
-            console.log("📥 CurrentHeldSeats:", seatInfos);
-            onSeatsHeld(seatInfos); // ✅ Dùng chung handler
+        connection.on(
+          "CurrentHeldSeats",
+          (receivedShowTimeId: string, seatInfos: HeldSeat[]) => {
+            if (receivedShowTimeId === showTimeId) {
+              console.log("📥 CurrentHeldSeats:", seatInfos);
+              onSeatsHeld(seatInfos); // ✅ Dùng chung handler
+            }
           }
-        });
+        );
 
-        connection.on("SeatsHeld", (receivedShowTimeId: string, seatInfos: HeldSeat[]) => {
-          if (receivedShowTimeId === showTimeId) {
-            console.log("🪑 SeatsHeld:", seatInfos); // ✅ in log ở B
-            onSeatsHeld(seatInfos);
+        connection.on(
+          "SeatsHeld",
+          (receivedShowTimeId: string, seatInfos: HeldSeat[]) => {
+            if (receivedShowTimeId === showTimeId) {
+              console.log("🪑 SeatsHeld:", seatInfos); // ✅ in log ở B
+              onSeatsHeld(seatInfos);
+            }
           }
-        });
+        );
 
-        connection.on("SeatReleased", (receivedShowTimeId: string, seatId: string, releasedBy: string) => {
-          if (receivedShowTimeId === showTimeId) {
-            console.log("🎟 SeatReleased:", seatId, "by", releasedBy);
-            onSeatsReleased([seatId], releasedBy);
+        connection.on(
+          "SeatReleased",
+          (receivedShowTimeId: string, seatId: string, releasedBy: string) => {
+            if (receivedShowTimeId === showTimeId) {
+              console.log("🎟 SeatReleased:", seatId, "by", releasedBy);
+              onSeatsReleased([seatId], releasedBy);
+            }
           }
-        });
+        );
 
         connection.on("JoinedGroup", (receivedShowTimeId: string) => {
-          console.log("✅ JoinedGroup confirmed from server:", receivedShowTimeId);
+          console.log(
+            "✅ JoinedGroup confirmed from server:",
+            receivedShowTimeId
+          );
         });
 
         await connection.start();
