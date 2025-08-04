@@ -52,6 +52,7 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
           accessTokenFactory: () => {
             return Cookies.get("auth-token") || "";
           },
+          transport: signalR.HttpTransportType.WebSockets,
         }
       )
       .withAutomaticReconnect()
@@ -60,11 +61,13 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
     conn.on(
       "Receive",
       (sender: string, content: string, time: string, fromUserId: string) => {
+        console.log("[Receive] Message:", { sender, content });
         setMessages((prev) => [...prev, { sender, content, time, fromUserId }]);
       }
     );
 
     conn.on("ReceiveChatHistory", (chatHistory: ChatMessage[]) => {
+      console.log("[ReceiveChatHistory] Message:", { chatHistory });
       setMessages(chatHistory);
     });
 
