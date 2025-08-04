@@ -9,7 +9,11 @@ import MovieShowtime from "./MovieShowtime";
 import { useMovies } from "@/hooks/useMovie";
 import { useTranslation } from "react-i18next";
 
-export default function MovieDetailWrapper({ id }: { id: string }) {
+type MovieDetailWrapperProps = {
+  id: string;
+};
+
+export default function MovieDetailWrapper({ id }: MovieDetailWrapperProps) {
   const { movies, isLoading } = useMovies();
   const { t } = useTranslation();
 

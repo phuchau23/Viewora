@@ -15,11 +15,13 @@ import { toast } from "sonner";
 import { formatVND } from "@/utils/price/formatPrice";
 import { useTranslation } from "react-i18next";
 
-export default function PromotionDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+type PromotionPageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default function PromotionDetailPage({ params }: PromotionPageProps) {
   const { id } = params;
   const { data, isLoading, isError, error } = usePromotion(id);
   const router = useRouter();

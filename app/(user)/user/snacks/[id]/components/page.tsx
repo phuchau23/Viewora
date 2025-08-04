@@ -14,11 +14,15 @@ import { useSnack } from "@/hooks/useSnacks";
 import { formatVND } from "@/utils/price/formatPrice";
 import { useTranslation } from "react-i18next";
 
+type SnackPageProps = {
+    params: {
+      id: string;
+    };
+  };
+
 export default function SnackDetailPage({
   params,
-}: {
-  params: { id: string };
-}) {
+}: SnackPageProps) {
   const { t } = useTranslation();
   const { id } = params;
   const { data, isLoading, isError, error } = useSnack(id);

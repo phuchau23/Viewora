@@ -4,10 +4,12 @@
 import React from "react";
 import MovieDetailWrapper from "./components/MovieDetailWrapper";
 
-export default function MovieDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default function MovieDetailPage({ params }: PageProps) {
   return <MovieDetailWrapper id={params.id} />;
 }
