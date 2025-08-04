@@ -1,5 +1,4 @@
 // app/(user)/user/movies/[id]/page.tsx
-"use client";
 
 import React from "react";
 import MovieDetailWrapper from "./components/MovieDetailWrapper";
