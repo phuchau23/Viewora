@@ -3,9 +3,11 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useBookingById } from "@/hooks/useBooking";
+import { useParams } from "next/navigation";
 
-const Booking = ({ params }: { params: { id: string } }) => {
-  const booking = useBookingById(params.id);
+const Booking = () => {
+  const params = useParams();
+  const booking = useBookingById(params.id as string);
   const [isQRModalOpen, setQRModalOpen] = useState(false);
   const [posterError, setPosterError] = useState(false);
 
@@ -47,12 +49,15 @@ const Booking = ({ params }: { params: { id: string } }) => {
             <div className="flex justify-between items-center">
               <div>
                 <div className="text-sm text-gray-500">Mã đặt vé:</div>
-                <div className="text-xl font-bold">556475</div>
+                <div className="text-xl font-bold">{booking.booking?.id}</div>
                 <div className="mt-1 text-sm text-gray-500">Thời gian:</div>
                 <div className="text-orange-600 font-semibold">
-                  22:15 - 00:26
+                  {booking.booking?.showTime.startTime} -{" "}
+                  {booking.booking?.showTime.endTime}
                 </div>
-                <div className="text-sm">CN, 11/05/2025</div>
+                {/* <div className="text-sm">
+                  {booking.booking?.showTime.}
+                </div> */}
               </div>
 
               {/* QR code clickable */}

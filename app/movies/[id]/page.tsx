@@ -1,37 +1,22 @@
 "use client";
+
 import React from "react";
 import MovieHeader from "./components/MovieHeader";
 import MovieTabs from "./components/MovieInfor";
 import MovieShowtime from "./components/MovieShowtime";
-import { notFound, useParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import { useMovies } from "@/hooks/useMovie";
 import { useTranslation } from "react-i18next";
 
-interface MovieDetailProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function MovieDetail({ params }: MovieDetailProps) {
-  const { movies, isLoading } = useMovies(); // 👈 nếu có trạng thái loading
-  const movieId = params.id;
-
+export default function MovieDetail({ params }: { params: { id: string } }) {
+  const { movies, isLoading } = useMovies();
   const { t } = useTranslation();
 
   if (isLoading || movies?.length === 0) {
-    return (
-      <div className="text-white p-10"> {t("cinemas.loadingMovies")} </div>
-    );
+    return <div className="text-white p-10">{t("cinemas.loadingMovies")}</div>;
   }
 
-  const movie = movies?.find((m) => m.id.toString() === params.id);
-  // console.log("params.id:", params.id);
-  // movies.forEach((m) => {
-  //   const rawId = m.id;
-  //   const idStr = typeof rawId === "string" ? rawId : rawId?.toString();
-  //   console.log("movie id:", rawId, "as string:", idStr);
-  // });
+  const movie = movies.find((m) => m.id.toString() === params.id);
 
   if (!movie) {
     console.log("Không tìm thấy phim với id:", params.id);
@@ -42,7 +27,7 @@ export default function MovieDetail({ params }: MovieDetailProps) {
     <div className="min-h-screen bg-gray-900">
       <MovieHeader movie={movie} />
       <MovieTabs movie={movie} />
-      <MovieShowtime movieId={movie?.id.toString()} />
+      <MovieShowtime movieId={movie.id.toString()} />
     </div>
   );
 }
