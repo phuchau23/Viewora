@@ -143,8 +143,7 @@ export default function UserManagerPage() {
       const s = searchTerm.toLowerCase();
       const matchesSearch =
         user.fullName.toLowerCase().includes(s) ||
-        user.email.toLowerCase().includes(s) ||
-        user.phoneNumber.toLowerCase().includes(s);
+        user.email.toLowerCase().includes(s);
       const matchesStatus =
         statusFilter === "all" ||
         (statusFilter === "Active" && user.isActive) ||
@@ -170,7 +169,6 @@ export default function UserManagerPage() {
               [
                 "Full Name",
                 "Email",
-                "Phone",
                 "Address",
                 "Role",
                 "Status",
@@ -180,7 +178,6 @@ export default function UserManagerPage() {
               (u) => [
                 u.fullName,
                 u.email,
-                u.phoneNumber,
                 u.address,
                 u.role?.name ?? "N/A",
                 u.isActive ? t("active") : t("inactive"),

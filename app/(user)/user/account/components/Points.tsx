@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import { ProfileDataResponse, ScoreRecord } from "@/lib/api/service/fetchUser";
 import { useScoreHistory } from "@/hooks/useUsers";
+import { useTranslation } from "react-i18next";
 
 interface PointsProps {
   user: ProfileDataResponse;
 }
 
 export default function Points({ user }: PointsProps) {
+  const { t } = useTranslation();
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [historyType, setHistoryType] = useState<"Added" | "Used" | "all">(
@@ -73,11 +75,11 @@ export default function Points({ user }: PointsProps) {
   };
 
   const formatDate = (dateStr: string) => {
-    if (!dateStr) return "No date";
+    if (!dateStr) return t("point.noDate");
     const date = new Date(dateStr);
     return !isNaN(date.getTime())
       ? date.toLocaleDateString("en-GB")
-      : "Invalid Date";
+      : t("point.invalidDate");
   };
 
   return (
@@ -86,7 +88,7 @@ export default function Points({ user }: PointsProps) {
         {/* Balance Section */}
         <div className="mb-6 p-6 rounded-xl bg-gradient-to-br from-orange-400 via-orange-500 to-red-500 shadow-xl text-white flex justify-between items-center">
           <div>
-            <div className="text-lg font-semibold">Total Score</div>
+            <div className="text-lg font-semibold">{t("point.totalScore")}</div>
             <div className="mt-2 text-3xl font-bold drop-shadow-md">
               {user.rewardPoint || 150}
             </div>
@@ -98,7 +100,7 @@ export default function Points({ user }: PointsProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div>
               <label className="text-sm text-gray-700 dark:text-gray-300">
-                From
+                {t("point.from")}
               </label>
               <input
                 type="date"
@@ -109,7 +111,7 @@ export default function Points({ user }: PointsProps) {
             </div>
             <div>
               <label className="text-sm text-gray-700 dark:text-gray-300">
-                To
+                {t("point.to")}
               </label>
               <input
                 type="date"
@@ -123,7 +125,7 @@ export default function Points({ user }: PointsProps) {
                 onClick={handleClearFilters}
                 className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all"
               >
-                Clear
+                {t("point.clear")}
               </button>
             </div>
           </div>
@@ -144,10 +146,10 @@ export default function Points({ user }: PointsProps) {
                 />
                 <span className="text-sm dark:text-white capitalize">
                   {type === "all"
-                    ? "All"
+                    ? t("point.all")
                     : type === "Added"
-                    ? "Score Added"
-                    : "Score Used"}
+                    ? t("point.scoreAdded")
+                    : t("point.scoreUsed")}
                 </span>
               </label>
             ))}
@@ -158,11 +160,11 @@ export default function Points({ user }: PointsProps) {
         <div className="relative border-l-2 border-orange-500 pl-6 space-y-8">
           {isLoading ? (
             <div className="p-6 text-center text-gray-500 dark:text-gray-400">
-              Loading score history...
+              {t("point.loading")}
             </div>
           ) : isError ? (
             <div className="p-6 text-center text-red-500 dark:text-red-400">
-              Error loading score history: {error?.message || "Unknown error"}
+              {t("point.error")}: {error?.message || t("point.unknownError")}
             </div>
           ) : filteredRecords.length > 0 ? (
             filteredRecords.map((record) => (
@@ -193,8 +195,7 @@ export default function Points({ user }: PointsProps) {
             ))
           ) : (
             <div className="p-6 text-center text-gray-500 dark:text-gray-400">
-              {data?.message ||
-                "No score history found for the selected period."}
+              {data?.message || t("point.noHistory")}
             </div>
           )}
         </div>

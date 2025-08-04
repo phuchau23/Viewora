@@ -297,6 +297,7 @@ export default function EditProfileModal({
               <Input
                 id="email"
                 type="email"
+                disabled
                 value={formData.email}
                 onChange={(e) => handleChange("email", e.target.value)}
                 className={errors.email ? "border-red-500" : ""}

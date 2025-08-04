@@ -26,9 +26,9 @@ export const SeatHoldingService = {
     return response.data;
   },
 
-  deleteSeatHolding: async (seatHoldingId: string) => {
+  deleteSeatHolding: async (showtimeId: string, userId: string) => {
     const response = await apiService.delete<APIResponse<SeatHolding>>(
-      `/seatHoldings/${seatHoldingId}`
+      `/seatholding/user?showTimeId=${showtimeId}&userId=${userId}`,
     );
     return response.data;
   },

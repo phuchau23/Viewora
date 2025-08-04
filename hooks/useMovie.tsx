@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { MovieRequest } from "@/lib/api/service/fetchMovies";
 
 // Hook lấy danh sách phim
-export const useMovies = (pageIndex = 1, pageSize = 10) => {
+export const useMovies = (pageIndex = 1, pageSize = 100) => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["movies", pageIndex, pageSize],
     queryFn: () => MovieService.getAllMovies(pageIndex, pageSize),

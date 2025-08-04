@@ -35,7 +35,7 @@ export function useCreateRole() {
 }
 export function useDeleteRole() {
   const { mutate, isError, isSuccess, data } = useMutation({
-    mutationFn: (roleId: number) => RoleService.deleteRole(roleId),
+    mutationFn: (roleId: string) => RoleService.deleteRole(roleId),
   });
   
   return {

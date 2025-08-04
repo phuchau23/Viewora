@@ -212,11 +212,11 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Input */}
-      <div className="p-4 bg-white border-t border-gray-200">
+      <div className="p-4 bg-white  border-t border-gray-200">
         <div className="flex items-end gap-3">
           <div className="flex-1">
             <textarea
-              className="w-full resize-none border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Nhập tin nhắn của bạn..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -230,6 +230,7 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
                 const target = e.target as HTMLTextAreaElement;
                 target.style.height = "44px";
                 target.style.height = Math.min(target.scrollHeight, 100) + "px";
+                target.style.backgroundColor = "white";
               }}
             />
           </div>

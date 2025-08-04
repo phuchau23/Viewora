@@ -62,7 +62,7 @@ export interface MovieRequest {
 
 export const MovieService = {
   // Lấy danh sách phim
-  getAllMovies: async (pageIndex = 1, pageSize = 10) => {
+  getAllMovies: async (pageIndex = 1, pageSize = 100) => {
     const response = await apiService.get<APIResponse<MovieResponse>>(`/movies`, {
       pageIndex,
       pageSize,

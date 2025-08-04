@@ -38,11 +38,16 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!loginData.email || !loginData.password) {
-      return; // tránh gọi login nếu thiếu dữ liệu
+      return;
     }
     await login(loginData);
+    // ===> thêm dòng dưới để đánh dấu provider
+    localStorage.setItem("auth-provider", "local");
   };
-
+  const handleGoogleLogin = async () => {
+    await googleLogin(); // chờ xử lý xong
+    localStorage.setItem("auth-provider", "google");
+  };
   const handleInputChange = (field: string, value: string) => {
     setLoginData((prev) => ({ ...prev, [field]: value }));
   };
@@ -156,10 +161,9 @@ export default function LoginPage() {
             <div className="flex flex-col items-center">
               <SocialAuthButtons
                 label="Hoặc đăng nhập bằng"
-                onGoogleClick={googleLogin}
+                onGoogleClick={handleGoogleLogin}
                 isGoogleLoading={googleLoading}
               />
-
               {googleLoading && (
                 <p className="text-sm text-gray-400 mt-2">
                   Đang kết nối với Google...

@@ -5,8 +5,8 @@ import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { useBookingHistory, useUserProfile } from "@/hooks/useUsers";
 import { useBookingById } from "@/hooks/useBooking";
+import { useTranslation } from "react-i18next";
 
-// Ticket interface
 interface Ticket {
   id: string;
   movieName: string;
@@ -18,15 +18,11 @@ interface Ticket {
   seatNumber: string;
   ticketPrice: number;
   seatType?: string;
-  screen?: string;
-  dressCircle?: string;
-  bookingId?: string;
   promotion?: {
     title: string;
     code: string;
     discountPrice: number;
   };
-
   snacks?: {
     name: string;
     quantity: number;
@@ -35,11 +31,12 @@ interface Ticket {
   }[];
 }
 
-// Ticket Card Component (unchanged)
+// Ticket Card
 const TicketCard: React.FC<{ ticket: Ticket; onClick: () => void }> = ({
   ticket,
   onClick,
 }) => {
+  const { t } = useTranslation();
   const formattedDate = format(new Date(ticket.bookingDate), "MMM dd, yyyy");
 
   return (
@@ -49,94 +46,40 @@ const TicketCard: React.FC<{ ticket: Ticket; onClick: () => void }> = ({
       whileHover={{ scale: 1.02 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
-      className="relative bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 text-gray-800 dark:text-gray-100 p-3 rounded-lg shadow-md border-t-4 border-b-4 border-dashed border-orange-400 dark:border-orange-500/70 w-full max-w-2xl mx-auto overflow-hidden cursor-pointer"
+      className="relative bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-3 rounded-lg shadow-md border-t-4 border-b-4 border-dashed border-orange-400 dark:border-orange-500/70 w-full max-w-2xl mx-auto cursor-pointer"
       onClick={onClick}
     >
-      <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-5 h-5 bg-white dark:bg-gray-700 rounded-full shadow-inner" />
-      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-5 h-5 bg-white dark:bg-gray-700 rounded-full shadow-inner" />
-      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-        <div className="w-5 h-10 flex flex-col gap-[1px]">
-          {[...Array(8)].map((_, i) => (
-            <div
-              key={i}
-              className="h-1 bg-gray-800 dark:bg-gray-200"
-              style={{ width: `${Math.random() * 6 + 3}px` }}
-            />
-          ))}
-        </div>
-      </div>
       <div className="space-y-3 pr-10">
-        {/* Hàng riêng cho tên phim */}
-        <div>
-          <h3 className="text-base font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wide">
-            {ticket.movieName}
-          </h3>
-        </div>
-
-        {/* Phần grid chia 3 cột như cũ */}
+        <h3 className="text-base font-bold text-orange-500 uppercase tracking-wide">
+          {ticket.movieName}
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="space-y-1.5">
-            <div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Name</p>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                {ticket.userName}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Email</p>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
-                {ticket.userEmail}
-              </p>
-            </div>
+          <div>
+            <p className="text-xs text-gray-600">{t("book.name")}</p>
+            <p className="text-sm font-medium">{ticket.userName}</p>
+            <p className="text-xs text-gray-600">{t("book.email")}</p>
+            <p className="text-sm font-medium">{ticket.userEmail}</p>
           </div>
-
-          <div className="space-y-1.5">
-            <div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Date</p>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                {formattedDate}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Time</p>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                {ticket.showTime}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Theater
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                {ticket.theater}
-              </p>
-            </div>
+          <div>
+            <p className="text-xs text-gray-600">{t("book.date")}</p>
+            <p className="text-sm font-medium">{formattedDate}</p>
+            <p className="text-xs text-gray-600">{t("book.time")}</p>
+            <p className="text-sm font-medium">{ticket.showTime}</p>
+            <p className="text-xs text-gray-600">{t("book.theater")}</p>
+            <p className="text-sm font-medium">{ticket.theater}</p>
           </div>
-
-          <div className="space-y-1.5 text-right">
-            <div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Seat</p>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                {ticket.seatNumber}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Seat Type
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                {ticket.seatType}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Price</p>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                {ticket.ticketPrice.toLocaleString("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                })}
-              </p>
-            </div>
+          <div className="text-right">
+            <p className="text-xs text-gray-600">{t("book.seat")}</p>
+            <p className="text-sm font-medium">{ticket.seatNumber}</p>
+            <p className="text-xs text-gray-600">{t("book.seatType")}</p>
+            <p className="text-sm font-medium">{ticket.seatType}</p>
+            <p className="text-xs text-gray-600">{t("book.price")}</p>
+            <p className="text-sm font-medium">
+              {ticket.ticketPrice.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </p>
           </div>
         </div>
       </div>
@@ -144,13 +87,13 @@ const TicketCard: React.FC<{ ticket: Ticket; onClick: () => void }> = ({
   );
 };
 
-// Detailed Ticket View Component (updated for API data)
+// Ticket Detail
 const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
   ticket,
   onClose,
 }) => {
-  const { booking } = useBookingById(ticket.id); // lấy QR code
-
+  const { t } = useTranslation();
+  const { booking } = useBookingById(ticket.id);
   const formattedDate = format(
     new Date(ticket.bookingDate),
     "EEE, dd MMM yyyy"
@@ -172,49 +115,44 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
         initial={{ y: 50, scale: 0.9 }}
         animate={{ y: 0, scale: 1 }}
         exit={{ y: 50, scale: 0.9 }}
-        className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md relative"
+        className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="text-center mb-4">
-          <h3 className="text-xl font-bold text-orange-500 dark:text-orange-400">
-            {ticket.movieName} (U)
+          <h3 className="text-xl font-bold text-orange-500">
+            {ticket.movieName}
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {ticket.theater}
-          </p>
+          <p className="text-sm text-gray-600">{ticket.theater}</p>
         </div>
 
-        {/* QR code */}
         {booking?.qrCodeUrl && (
           <div className="flex justify-center mb-4">
             <img
               src={`data:image/png;base64,${booking.qrCodeUrl}`}
-              alt="QR Code"
+              alt={t("book.qr")}
               className="w-40 h-40 rounded border shadow"
             />
           </div>
         )}
 
-        {/* Thông tin khác giữ nguyên */}
-        <div className="text-sm space-y-1 mb-4">
+        <div className="text-sm mb-4">
           <p>
-            <span className="font-medium">Seat: </span> {ticket.seatNumber}
+            <b>{t("book.seat")}:</b> {ticket.seatNumber}
           </p>
           <p>
-            <span className="font-medium">Seat Type: </span>
-            {ticket.seatType}
+            <b>{t("book.seatType")}:</b> {ticket.seatType}
           </p>
           <p>
-            <span className="font-medium">Booked by: </span> {ticket.userName}
+            <b>{t("book.bookedBy")}:</b> {ticket.userName}
           </p>
           <p>
-            <span className="font-medium">Email: </span> {ticket.userEmail}
+            <b>{t("book.email")}:</b> {ticket.userEmail}
           </p>
           <p>
-            <span className="font-medium">Date: </span> {formattedDate}
+            <b>{t("book.date")}:</b> {formattedDate}
           </p>
           <p>
-            <span className="font-medium">Time: </span> {ticket.showTime}
+            <b>{t("book.time")}:</b> {ticket.showTime}
           </p>
         </div>
 
@@ -243,15 +181,16 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
             ))}
           </div>
         )}
-        {/* Promotion section */}
+
         {ticket.promotion && (
           <div className="mb-4 text-sm">
-            <h4 className="font-semibold">Promotion:</h4>
+            <h4 className="font-semibold">{t("book.promotion")}:</h4>
             <p className="text-orange-500">
-              {ticket.promotion.title} (Code: {ticket.promotion.code})
+              {ticket.promotion.title} ({t("book.code")}:{" "}
+              {ticket.promotion.code})
             </p>
             <p className="text-green-600">
-              Discount: -
+              {t("book.discount")}: -
               {ticket.promotion.discountPrice.toLocaleString("vi-VN", {
                 style: "currency",
                 currency: "VND",
@@ -260,13 +199,10 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
           </div>
         )}
 
-        <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-          A confirmation is sent on e-mail/SMS/WhatsApp within 15 minutes of
-          booking.
-        </p>
+        <p className="text-xs text-gray-500 mb-4">{t("book.confirmation")}</p>
 
         <div className="text-right">
-          <p className="text-sm">Total Amount</p>
+          <p className="text-sm">{t("book.totalAmount")}</p>
           <p className="text-lg font-bold">{formattedPrice} ▼</p>
         </div>
       </motion.div>
@@ -275,22 +211,14 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
 };
 
 const BookedTicketsPage: React.FC = () => {
+  const { t } = useTranslation();
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-
-  // Fetch user profile for userName and userEmail
-  const {
-    data: profileData,
-    isLoading: profileLoading,
-    error: profileError,
-  } = useUserProfile();
-
-  // Fetch booking history
   const { data, isLoading, error } = useBookingHistory({
     pageIndex: 1,
     pageSize: 10,
   });
+  const { data: profileData } = useUserProfile();
 
-  // Map bookings to Ticket interface
   const tickets: Ticket[] =
     data?.bookings
       ?.map((booking) => ({
@@ -327,38 +255,24 @@ const BookedTicketsPage: React.FC = () => {
       ) || [];
 
   return (
-    <main className="container mx-auto p-4 max-w-4xl bg-gray-50 dark:bg-gray-900 min-h-screen">
-      <div className="mb-6">
-        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-          View your movie bookings
-        </p>
-      </div>
+    <main className="container mx-auto p-4 max-w-4xl bg-gray-50">
+      <p className="text-xs text-gray-600">{t("book.viewYourBookings")}</p>
 
-      {isLoading || profileLoading ? (
-        <div className="text-center text-gray-600 dark:text-gray-400 text-sm animate-pulse">
-          Loading your tickets...
-        </div>
-      ) : error || profileError ? (
-        <div className="text-center text-red-600 dark:text-red-400 text-sm bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md">
-          {error?.message ||
-            profileError?.message ||
-            "Failed to load tickets. Please try again."}
-        </div>
+      {isLoading ? (
+        <p className="text-center">{t("book.loading")}</p>
+      ) : error ? (
+        <p className="text-center text-red-600">{t("book.error")}</p>
       ) : tickets.length === 0 ? (
-        <div className="text-center text-gray-600 dark:text-gray-400 text-sm bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md">
-          No booked tickets found. Book your first movie ticket today!
-        </div>
+        <p className="text-center">{t("book.noTickets")}</p>
       ) : (
         <AnimatePresence>
-          <div className="grid gap-3">
-            {tickets.map((ticket) => (
-              <TicketCard
-                key={ticket.id}
-                ticket={ticket}
-                onClick={() => setSelectedTicket(ticket)}
-              />
-            ))}
-          </div>
+          {tickets.map((ticket) => (
+            <TicketCard
+              key={ticket.id}
+              ticket={ticket}
+              onClick={() => setSelectedTicket(ticket)}
+            />
+          ))}
         </AnimatePresence>
       )}
 

@@ -116,6 +116,11 @@ export const PromotionService = {
   deletePromotion: async (id: string): Promise<void> => {
     await apiService.delete(`/promotions/${id}`);
   },
-};
+
+  getPromotionsAvailable: async (userId: string): Promise<PromotionListResponse> => {
+    const response = await apiService.get<PromotionListResponse>(`/promotions/available/${userId}`);
+    return response.data;
+}
+}
 
 export default PromotionService;
