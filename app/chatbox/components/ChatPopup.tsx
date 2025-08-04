@@ -5,7 +5,6 @@ import type React from "react";
 import * as signalR from "@microsoft/signalr";
 import { getUserIdFromToken } from "@/utils/signalr";
 import { Send, X, MessageCircle, User } from "lucide-react";
-import { useUserProfile } from "@/hooks/useUsers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Cookies from "js-cookie";
 interface ChatMessage {
@@ -22,20 +21,18 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
     null
   );
   const [isConnected, setIsConnected] = useState(false);
-  const userId = getUserIdFromToken();
 
-  // Tạo userId nếu chưa có
-  function generateCustomerId() {
-    const saved = localStorage.getItem("chat-user-id");
-    if (saved) return saved;
-    const id = crypto.randomUUID();
-    localStorage.setItem("chat-user-id", id);
-    return id;
-  }
+  // // Tạo userId nếu chưa có
+  // function generateCustomerId() {
+  //   const saved = localStorage.getItem("chat-user-id");
+  //   if (saved) return saved;
+  //   const id = crypto.randomUUID();
+  //   localStorage.setItem("chat-user-id", id);
+  //   return id;
+  // }
 
-  const customerId = userId || generateCustomerId();
+  const customerId = getUserIdFromToken();
 
-  // const customerName = useUserProfile().data?.data?.fullName;
   useEffect(() => {
     console.log(
       "NEXT_PUBLIC_SIGNALR_CHAT:",
