@@ -58,6 +58,7 @@ export default function RoleManagement() {
   const [formData, setFormData] = useState({ name: "", description: "" });
   const { mutate: createRole } = useCreateRole();
 
+  console.log(roles);
   const filteredRoles = roles
     ?.filter((role) => role.status === true)
     .filter((role) =>
@@ -80,7 +81,8 @@ export default function RoleManagement() {
     });
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
+    console.log(id);
     deleteRole(id, {
       onSuccess: () => queryClient.invalidateQueries({ queryKey: ["roles"] }),
     });
@@ -193,7 +195,7 @@ export default function RoleManagement() {
                   </TableRow>
                 ) : (
                   filteredRoles?.map((role) => (
-                    <TableRow key={role.roleId}>
+                    <TableRow key={role.id}>
                       <TableCell>{role.name}</TableCell>
                       <TableCell>{role.description}</TableCell>
                       <TableCell>
@@ -231,7 +233,7 @@ export default function RoleManagement() {
                               </AlertDialogCancel>
                               <Button
                                 variant="destructive"
-                                onClick={() => handleDelete(role.roleId)}
+                                onClick={() => handleDelete(role.id.toString())}
                               >
                                 {t("role.delete")}
                               </Button>

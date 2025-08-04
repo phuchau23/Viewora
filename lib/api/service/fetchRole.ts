@@ -1,7 +1,7 @@
 import apiService from "../core";
 
 export interface Role {
-    roleId: number;
+    id: string;
     name: string;
     status: boolean;
     dateCreate: string ;
@@ -29,7 +29,7 @@ export interface RoleCreateResponse {
 }
 
 export interface RoleCreate {
-    roleId: number;
+    id: string;
     name: string;
     status: boolean;
     dateCreate: string ;
@@ -37,7 +37,7 @@ export interface RoleCreate {
 }
 
 export interface RoleDeleteRequest {
-    roleId: number;
+    id: string;
 }
 export interface RoleDeleteResponse {
     code: number;
@@ -58,8 +58,8 @@ export const RoleService = {
         return response.data;
     },
 
-    deleteRole: async (roleId: number) => {
-        const response = await apiService.delete<RoleDeleteResponse>(`/roles/${roleId}`);
+    deleteRole: async (id: string) => {
+        const response = await apiService.delete<RoleDeleteResponse>(`/roles/${id}`);
         return response.data;
     },
 }
