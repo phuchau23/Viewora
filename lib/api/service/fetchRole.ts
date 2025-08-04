@@ -15,6 +15,7 @@ export interface RoleApiResponse {
     data: Role[];
 }
 
+
 export interface RoleCreateRequest {
     name: string;
     description: string;
