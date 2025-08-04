@@ -1,4 +1,4 @@
-import SnackDetailPage from "./components/page";
+import SnackDetailPage from "./components/SnackDetailPage";
 
 type PageProps = {
   params: {
