@@ -52,7 +52,6 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
           accessTokenFactory: () => {
             return Cookies.get("auth-token") || "";
           },
-          transport: signalR.HttpTransportType.WebSockets,
         }
       )
       .withAutomaticReconnect()
