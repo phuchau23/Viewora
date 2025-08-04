@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es2015",                      // ✅ đổi từ "es5"
     "lib": ["dom", "dom.iterable", "esnext"],
-    "types": ["jest", "node"],         // 👈 Thêm dòng này
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
