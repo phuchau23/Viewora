@@ -3,12 +3,16 @@
 import React from "react";
 import MovieDetailWrapper from "./components/MovieDetailWrapper";
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
-export default function MovieDetailPage({ params }: Props) {
+export default function MovieDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   return <MovieDetailWrapper id={params.id} />;
+}
+
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  return {
+    title: `Movie ${params.id}`,
+  };
 }

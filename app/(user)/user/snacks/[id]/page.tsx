@@ -1,11 +1,10 @@
 import SnackDetailPage from "./components/SnackDetailPage";
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
-export default function Page({ params }: Props) {
+export default function SnackPage({ params }: { params: { id: string } }) {
   return <SnackDetailPage params={params} />;
+}
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  return {
+    title: `Snack ${params.id}`,
+  };
 }
