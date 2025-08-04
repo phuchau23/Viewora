@@ -17,6 +17,9 @@ import { Branch } from "@/lib/api/service/fetchBranch";
 import { useRoomByBranchId } from "@/hooks/useRoom";
 import RoomSeatingChart from "@/app/movies/[id]/components/seatChart";
 import { useTranslation } from "react-i18next";
+import SeatSelector from "@/app/movies/[id]/components/SeatSelector";
+import { Seat, seatType } from "@/lib/api/service/fetchSeat";
+import { useSeatOfRoomByRoomId } from "@/hooks/useSeat";
 
 function App() {
   const { t } = useTranslation();
@@ -26,6 +29,8 @@ function App() {
   const [hasImageError, setHasImageError] = useState(false);
   const [openRoomModal, setOpenRoomModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
+  const { data: roomSeats = [], isLoading: isLoadingSeats } =
+    useSeatOfRoomByRoomId(selectedRoom?.id);
 
   const { rooms, isLoading: loadingRooms } = useRoomByBranchId(
     selectedBranch?.id || ""
@@ -236,16 +241,69 @@ function App() {
               </button>
             </div>
             {selectedRoom && selectedBranch && (
-              <RoomSeatingChart
-                movie={{
-                  name: selectedRoom.roomType?.name || t("room.unknown"),
-                }}
-                showtime={selectedRoom.roomNumber.toString()}
-                roomNumber={selectedRoom.roomNumber}
-                branchName={selectedBranch.name}
-                roomId={selectedRoom.id}
-                showtimeId={selectedRoom.showtimeId}
-              />
+              <>
+                {isLoadingSeats ? (
+                  <div className="text-center py-10">
+                    {t("Đang tải ghế...")}
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex flex-col gap-4 items-center">
+                      {Object.entries(
+                        roomSeats.reduce(
+                          (acc: Record<string, Seat[]>, seat) => {
+                            acc[seat.row] = acc[seat.row] || [];
+                            acc[seat.row].push(seat);
+                            return acc;
+                          },
+                          {}
+                        )
+                      )
+                        .sort((a, b) => a[0].localeCompare(b[0]))
+                        .map(([row, rowSeats]) => (
+                          <div key={row} className="flex items-center gap-4">
+                            <span className="w-8 font-bold text-lg text-gray-700 dark:text-gray-300">
+                              {row}
+                            </span>
+                            <div className="flex gap-2 flex-wrap">
+                              {rowSeats
+                                .sort((a, b) => a.number - b.number)
+                                .map((seat) => {
+                                  const type = seat.seatType?.name;
+                                  const isCouple = type === seatType.couple;
+                                  const color =
+                                    type === seatType.vip
+                                      ? "bg-red-400"
+                                      : type === seatType.couple
+                                      ? "bg-pink-300"
+                                      : "bg-blue-400";
+
+                                  return (
+                                    <div
+                                      key={seat.id}
+                                      title={type}
+                                      className={`rounded-md border border-white font-semibold
+                            ${color} ${
+                                        isCouple ? "w-20" : "w-10"
+                                      } h-10 flex items-center justify-center text-sm`}
+                                    >
+                                      {isCouple ? "❤️" : seat.row + seat.number}
+                                    </div>
+                                  );
+                                })}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-6 flex justify-center gap-4 text-sm flex-wrap">
+                      <Legend color="bg-blue-400" label={t("Ghế Thường")} />
+                      <Legend color="bg-red-400" label={t("Ghế Vip")} />
+                      <Legend color="bg-pink-300" label={t("Ghế Đôi")} />
+                    </div>
+                  </>
+                )}
+              </>
             )}
           </Dialog.Panel>
         </div>
@@ -277,5 +335,12 @@ function StatCard({
     </div>
   );
 }
+
+const Legend = ({ color, label }: { color: string; label: string }) => (
+  <div className="flex items-center gap-1">
+    <div className={`w-4 h-4 rounded ${color}`} />
+    {label}
+  </div>
+);
 
 export default App;

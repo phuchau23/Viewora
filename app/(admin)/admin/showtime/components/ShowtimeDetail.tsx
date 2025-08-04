@@ -180,7 +180,7 @@ export const ShowtimeDetailModal: React.FC<ShowtimeDetailModalProps> = ({
                       {showtime.room.branch.address}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <span className="text-gray-600 ml-6">{t("room")}:</span>
                     <span className="font-medium">
                       {t("roomLabel", {
@@ -188,7 +188,7 @@ export const ShowtimeDetailModal: React.FC<ShowtimeDetailModalProps> = ({
                         type: showtime.room.roomType.name,
                       })}
                     </span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center gap-2">
                     <Users size={16} className="text-gray-500" />
                     <span className="text-gray-600">{t("capacity")}:</span>
@@ -218,13 +218,6 @@ export const ShowtimeDetailModal: React.FC<ShowtimeDetailModalProps> = ({
                       {formatTime(showtime.endTime)}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <DollarSign size={16} className="text-gray-500" />
-                    <span className="text-gray-600">{t("basePrice")}:</span>
-                    <span className="font-medium text-green-600">
-                      ${showtime.basePrice}
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -237,17 +230,6 @@ export const ShowtimeDetailModal: React.FC<ShowtimeDetailModalProps> = ({
               className="px-4 py-2 text-foreground hover:text-gray-800 transition-colors"
             >
               {t("close")}
-            </button>
-            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium flex items-center gap-2 transition-colors">
-              <Edit size={16} />
-              {t("editShowtime")}
-            </button>
-            <button
-              onClick={handleDeleteShowtime}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium flex items-center gap-2 transition-colors"
-            >
-              <Trash2 size={16} />
-              {t("delete")}
             </button>
           </div>
         </div>
