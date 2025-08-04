@@ -1,11 +1,11 @@
 import SnackDetailPage from "./components/SnackDetailPage";
 
-type PageProps = {
+type Props = {
   params: {
     id: string;
   };
 };
 
-export default function Page({ params }: PageProps) {
+export default function Page({ params }: Props) {
   return <SnackDetailPage params={params} />;
 }

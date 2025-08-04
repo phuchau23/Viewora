@@ -1,16 +1,18 @@
 // app/(user)/user/promotions/[id]/page.tsx
 
-type PageProps = {
+import PromotionDetailPage from "./components/PromotionDetailPage";
+
+type Props = {
   params: {
     id: string;
   };
 };
 
-export default function Page({ params }: PageProps) {
-  return <div>Promotion ID: {params.id}</div>;
+export default function Page({ params }: Props) {
+  return <PromotionDetailPage params={params} />;
 }
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata({ params }: Props) {
   return {
     title: `Promotion ${params.id}`,
   };
