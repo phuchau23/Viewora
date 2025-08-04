@@ -28,7 +28,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <Link
-                href="#"
+                href="https://www.facebook.com/viewora/"
                 className="text-muted-foreground hover:text-primary"
               >
                 <Facebook className="h-5 w-5" />
@@ -65,7 +65,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/user/movies"
+                  href="#"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   {t("quickLinks.movies")}
@@ -73,7 +73,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/user/cinemas"
+                  href="#"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   {t("quickLinks.cinemas")}
@@ -81,7 +81,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/user/promotions"
+                  href="#"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   {t("quickLinks.promotions")}
@@ -89,7 +89,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/user/events"
+                  href="#"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   {t("quickLinks.events")}
@@ -97,7 +97,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/user/membership"
+                  href="#"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   {t("quickLinks.membership")}
@@ -113,7 +113,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/user/faq"
+                  href="#"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   {t("helpSupport.faq")}
@@ -137,7 +137,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/user/refund"
+                  href="#"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   {t("helpSupport.refund")}
@@ -145,7 +145,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/user/contact"
+                  href="#"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
                   {t("helpSupport.contact")}
