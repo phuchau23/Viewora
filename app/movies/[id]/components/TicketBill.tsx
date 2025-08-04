@@ -8,12 +8,15 @@ import { Snack } from "@/lib/api/service/fetchSnack";
 import { Promotion } from "@/lib/api/service/fetchPromotion";
 import { Movies } from "@/lib/api/service/fetchMovies";
 import { useTranslation } from "react-i18next";
-
+import { useDeleteSeatHolding } from "@/hooks/useSeatHolding";
+import { getUserIdFromToken } from "@/utils/signalr";
 interface Props {
+  userId: string;
   movie: Partial<Movies>;
   showtime: string;
   roomNumber: number;
   branchName: string;
+  showtimeId: string;
   selectedSeats: Seat[];
   selectedCombos: Snack[];
   promotionCode: string;
@@ -24,10 +27,12 @@ interface Props {
 }
 
 export default function TicketBill({
+  userId,
   movie,
   showtime,
   roomNumber,
   branchName,
+  showtimeId,
   selectedSeats,
   selectedCombos,
   promotionCode,
@@ -42,7 +47,10 @@ export default function TicketBill({
   );
   const [finalPrice, setFinalPrice] = useState(0);
   const [promotionError, setPromotionError] = useState<React.ReactNode>("");
-  const [countdown, setCountdown] = useState(5 * 60); // 5 phút (tính bằng giây)
+  const [countdown, setCountdown] = useState(1 * 60); // 5 phút (tính bằng giây)
+  const [timerStarted, setTimerStarted] = useState(false);
+  const [graceTimeoutStarted, setGraceTimeoutStarted] = useState(false);
+  const { deleteSeatHolding } = useDeleteSeatHolding();
 
   const originalTotal = useMemo(() => {
     const seatTotal = selectedSeats.reduce(
@@ -94,17 +102,44 @@ export default function TicketBill({
     setFinalPrice(final > 0 ? final : 0);
   };
   useEffect(() => {
-    if (countdown <= 0) {
-      console.log("Hết thời gian thanh toán");
-      return;
+    if (!timerStarted && selectedSeats.length > 0) {
+      setTimerStarted(true);
     }
+  }, [selectedSeats, timerStarted]);
+  useEffect(() => {
+    if (!timerStarted) return;
 
     const interval = setInterval(() => {
-      setCountdown((prev) => prev - 1);
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [countdown]);
+  }, [timerStarted]);
+  useEffect(() => {
+    if (countdown === 0 && !graceTimeoutStarted) {
+      setGraceTimeoutStarted(true);
+      alert("Bạn đã hết thời gian giữ ghế! Đang hủy ghế sau 10 giây...");
+    }
+  }, [countdown, graceTimeoutStarted]);
+  useEffect(() => {
+    if (!graceTimeoutStarted) return;
+
+    const timeout = setTimeout(() => {
+      const userId = getUserIdFromToken();
+      if (userId) {
+        deleteSeatHolding({ showtimeId, userId });
+      }
+      window.location.reload();
+    }, 10 * 1000);
+
+    return () => clearTimeout(timeout);
+  }, [graceTimeoutStarted]);
 
   useEffect(() => {
     applyDiscount();
@@ -206,6 +241,7 @@ export default function TicketBill({
               <PromoCodeSelector
                 selectedCode={promotionCode}
                 totalPrice={originalTotal}
+                userId={userId}
                 onSelect={(promo) => {
                   const isCleared = !promo.code;
                   setPromotionCode(promo.code ?? "");
@@ -275,7 +311,7 @@ export default function TicketBill({
             )}
 
             <div className="flex justify-between items-center pt-2 border-t border-gray-300">
-              <span className="text-lg md:text-xl font-bold text-gray-800">
+              <span className="text-lg md:text-xl font-bold">
                 {t("subtotal")}
               </span>
               <span className="text-xl md:text-2xl font-bold text-orange-600">
@@ -309,12 +345,20 @@ export default function TicketBill({
             </button>
           )}
         </div>
-        <div className="mt-4 text-center text-base font-medium text-gray-600">
-          Còn lại:{" "}
-          <span className="text-lg font-extrabold text-red-600">
-            {Math.floor(countdown / 60)}:
-            {(countdown % 60).toString().padStart(2, "0")}
-          </span>
+        <div className="mt-4 text-center text-base font-medium">
+          {countdown > 0 ? (
+            <>
+              Còn lại:{" "}
+              <span className="text-lg font-extrabold text-red-600">
+                {Math.floor(countdown / 60)}:
+                {(countdown % 60).toString().padStart(2, "0")}
+              </span>
+            </>
+          ) : (
+            <span className="text-red-600 font-bold">
+              Hết thời gian! Đang hủy ghế...
+            </span>
+          )}
         </div>
       </div>
     </div>
