@@ -38,6 +38,12 @@ export default function ProfilePage() {
     }
   };
 
+  const authProvider =
+    typeof window !== "undefined"
+      ? localStorage.getItem("auth-provider")
+      : "local";
+  const isGoogleAccount = authProvider === "google";
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen bg-[#f9fbfc] dark:bg-gray-900">
@@ -56,7 +62,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f9fbfc] dark:bg-gray-900 text-black dark:text-white flex flex-col">
+    <div className="min-h-screen bg-[#f9fbfc] dark:bg-neutral-800 text-black dark:text-white flex flex-col">
       <Header />
       <div className="container mx-auto max-w-6xl flex justify-end pt-4"></div>
       <div className="flex-1">
@@ -111,16 +117,18 @@ export default function ProfilePage() {
                 >
                   {t("tabs.booking")}
                 </button>
-                <button
-                  onClick={() => setActiveTab("changePassword")}
-                  className={`flex items-center gap-2 px-4 py-2 w-full text-sm font-medium rounded ${
-                    activeTab === "changePassword"
-                      ? "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-white"
-                      : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
-                >
-                  {t("tabs.changePassword")}
-                </button>
+                {!isGoogleAccount && (
+                  <button
+                    onClick={() => setActiveTab("changePassword")}
+                    className={`flex items-center gap-2 px-4 py-2 w-full text-sm font-medium rounded ${
+                      activeTab === "changePassword"
+                        ? "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-white"
+                        : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    {t("tabs.changePassword")}
+                  </button>
+                )}
               </nav>
             </aside>
 

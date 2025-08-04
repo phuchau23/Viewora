@@ -48,93 +48,99 @@ export default function SnacksPage() {
         <h1 className="text-3xl font-bold text-orange">{t("snacktitle")}</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-          {snacks.map((snack) => (
-            <Card
-              key={snack.id}
-              className="overflow-hidden group relative cursor-pointer rounded-2xl shadow-lg"
-              style={{
-                aspectRatio: "3/4",
-                minHeight: 0,
-                height: "450px",
-                maxHeight: "540px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-end",
-                transition: "box-shadow 0.2s",
-              }}
-            >
-              <div className="relative w-full h-full">
-                {snack.image ? (
-                  <Image
-                    src={snack.image}
-                    alt={snack.name ?? t("snack")}
-                    fill
-                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                    priority={false}
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    style={{ borderRadius: "16px" }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 rounded-xl">
-                    {t("noImage")}
-                  </div>
-                )}
+          {snacks.length === 0 ? (
+            <div className="flex flex-col items-center justify-center w-full col-span-3 py-24">
+              <p className="text-gray-500 text-lg">{t("noSnacksAvailable")}</p>
+            </div>
+          ) : (
+            snacks.map((snack) => (
+              <Card
+                key={snack.id}
+                className="overflow-hidden group relative cursor-pointer rounded-2xl shadow-lg"
+                style={{
+                  aspectRatio: "3/4",
+                  minHeight: 0,
+                  height: "450px",
+                  maxHeight: "540px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                  transition: "box-shadow 0.2s",
+                }}
+              >
+                <div className="relative w-full h-full">
+                  {snack.image ? (
+                    <Image
+                      src={snack.image}
+                      alt={snack.name ?? t("snack")}
+                      fill
+                      className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                      priority={false}
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      style={{ borderRadius: "16px" }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 rounded-xl">
+                      {t("noImage")}
+                    </div>
+                  )}
 
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 rounded-2xl">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2 text-white">
-                      {snack.name}
-                    </h3>
-                    <p className="text-white mb-2">
-                      {t("price")}: {formatVND(snack.price)}
-                    </p>
-                    <p className="text-white mb-4">
-                      {t("status")}:{" "}
-                      {snack.isAvailable ? t("available") : t("unavailable")}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-white">
-                        {t("clickForDetails")}
-                      </span>
-                      <Button
-                        asChild
-                        size="sm"
-                        className="bg-orange-500 text-white hover:bg-orange-300"
-                      >
-                        <Link href={`/user/snacks/${snack.id}`}>
-                          {t("learnMore")}
-                        </Link>
-                      </Button>
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 rounded-2xl">
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2 text-white">
+                        {snack.name}
+                      </h3>
+                      <p className="text-white mb-2">
+                        {t("price")}: {formatVND(snack.price)}
+                      </p>
+                      <p className="text-white mb-4">
+                        {t("status")}:{" "}
+                        {snack.isAvailable ? t("available") : t("unavailable")}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-white">
+                          {t("clickForDetails")}
+                        </span>
+                        <Button
+                          asChild
+                          size="sm"
+                          className="bg-orange-500 text-white hover:bg-orange-300"
+                        >
+                          <Link href={`/user/snacks/${snack.id}`}>
+                            {t("learnMore")}
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <CardContent className="p-6 block md:hidden">
-                <h3 className="text-xl font-semibold mb-2">{snack.name}</h3>
-                <p className="text-muted-foreground mb-2">
-                  {t("price")}: {formatVND(snack.price)}
-                </p>
-                <p className="text-muted-foreground mb-4">
-                  {t("status")}:{" "}
-                  {snack.isAvailable ? t("available") : t("unavailable")}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    {t("clickForDetails")}
-                  </span>
-                  <Button
-                    asChild
-                    size="sm"
-                    className="bg-orange-500 text-white hover:bg-orange-300"
-                  >
-                    <Link href={`/user/snacks/${snack.id}`}>
-                      {t("learnMore")}
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                <CardContent className="p-6 block md:hidden">
+                  <h3 className="text-xl font-semibold mb-2">{snack.name}</h3>
+                  <p className="text-muted-foreground mb-2">
+                    {t("price")}: {formatVND(snack.price)}
+                  </p>
+                  <p className="text-muted-foreground mb-4">
+                    {t("status")}:{" "}
+                    {snack.isAvailable ? t("available") : t("unavailable")}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      {t("clickForDetails")}
+                    </span>
+                    <Button
+                      asChild
+                      size="sm"
+                      className="bg-orange-500 text-white hover:bg-orange-300"
+                    >
+                      <Link href={`/user/snacks/${snack.id}`}>
+                        {t("learnMore")}
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
       </div>
     </div>

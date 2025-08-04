@@ -18,8 +18,8 @@ import {
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { toast } from "@/hooks/use-toast";
-import { Toast } from "@radix-ui/react-toast";
 import { formatVND } from "@/utils/price/formatPrice";
+import { useTranslation } from "react-i18next";
 
 interface Promotion {
   id: string;
@@ -40,6 +40,7 @@ interface Promotion {
 }
 
 export default function PromotionsSection() {
+  const { t } = useTranslation();
   const { data, isLoading, isError, error } = usePromotions(1, 6);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -77,22 +78,24 @@ export default function PromotionsSection() {
     const endDate = new Date(endTime);
     const diff = endDate.getTime() - now.getTime();
 
-    if (diff <= 0) return "Expired";
+    if (diff <= 0) return t("prohome.expired");
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
-    if (days > 0) return `${days}d ${hours}h left`;
-    return `${hours}h left`;
+    if (days > 0) return t("prohome.timeLeftDays", { days, hours });
+    return t("prohome.timeLeftHours", { hours });
   };
 
   const formatDiscount = (promotion: Promotion) => {
     if (promotion.discountTypeEnum === "PERCENTAGE") {
-      return `${promotion.discountPrice}% OFF`;
+      return t("prohome.percentOff", { value: promotion.discountPrice });
     } else if (promotion.discountTypeEnum === "FIXED_AMOUNT") {
-      return `${formatVND(promotion.discountPrice)} OFF`;
+      return t("prohome.fixedOff", {
+        value: formatVND(promotion.discountPrice),
+      });
     }
-    return `${formatVND(promotion.discountPrice)} OFF`;
+    return t("prohome.fixedOff", { value: formatVND(promotion.discountPrice) });
   };
 
   if (isLoading) {
@@ -126,9 +129,7 @@ export default function PromotionsSection() {
         <div className="max-w-7xl mx-auto">
           <Alert className="max-w-md mx-auto">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              Failed to load promotions. Please try again later.
-            </AlertDescription>
+            <AlertDescription>{t("prohome.error")}</AlertDescription>
           </Alert>
         </div>
       </section>
@@ -141,9 +142,9 @@ export default function PromotionsSection() {
         <div className="max-w-7xl mx-auto text-center">
           <Gift className="h-16 w-16 mx-auto text-gray-400 mb-4" />
           <h2 className="text-2xl font-bold text-gray-600 mb-2">
-            No Promotions Available
+            {t("prohome.noPromotions")}
           </h2>
-          <p className="text-gray-500">Check back soon for exciting offers!</p>
+          <p className="text-gray-500">{t("prohome.checkBack")}</p>
         </div>
       </section>
     );
@@ -166,14 +167,13 @@ export default function PromotionsSection() {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
             <Gift className="h-4 w-4" />
-            Special Offers
+            {t("prohome.specialOffers")}
           </div>
           <h2 className="text-4xl font-bold bg-gradient-to-r from-orange-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-4">
-            Limited Time Promotions
+            {t("prohome.limitedTime")}
           </h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Don&apos;t miss out on these incredible deals! Save big on your
-            favorite items.
+            {t("prohome.dontMiss")}
           </p>
         </div>
 
@@ -244,7 +244,7 @@ export default function PromotionsSection() {
                                 variant="outline"
                                 className="bg-white/90 text-gray-700 font-mono"
                               >
-                                CODE: {promotion.code}
+                                {t("prohome.code")}: {promotion.code}
                               </Badge>
                             </div>
                           </div>
@@ -258,7 +258,7 @@ export default function PromotionsSection() {
                             <div className="space-y-2 mb-4">
                               {promotion.minOrderValue > 0 && (
                                 <p className="text-sm text-gray-600">
-                                  Min. order:{" "}
+                                  {t("prohome.minOrder")}:{" "}
                                   <span className="font-semibold">
                                     {formatVND(promotion.minOrderValue)}
                                   </span>
@@ -267,7 +267,7 @@ export default function PromotionsSection() {
                               {promotion.maxDiscountValue > 0 &&
                                 promotion.discountTypeEnum === "PERCENTAGE" && (
                                   <p className="text-sm text-gray-600">
-                                    Max. discount:{" "}
+                                    {t("prohome.maxDiscount")}:{" "}
                                     <span className="font-semibold">
                                       {formatVND(promotion.maxDiscountValue)}
                                     </span>
@@ -284,8 +284,8 @@ export default function PromotionsSection() {
                             <div className="flex items-center gap-2 mb-4 text-sm text-blue-600">
                               <Gift className="h-4 w-4" />
                               <span>
-                                {promotion.discountUserNum} people used this
-                                offer
+                                {promotion.discountUserNum}{" "}
+                                {t("prohome.usedOffer")}
                               </span>
                             </div>
 
@@ -301,9 +301,8 @@ export default function PromotionsSection() {
                               onClick={() => {
                                 navigator.clipboard.writeText(promotion.code);
                                 toast({
-                                  title: "Đã sao chép",
-                                  description:
-                                    "Mã khuyến mãi đã được sao chép vào clipboard.",
+                                  title: t("prohome.copied"),
+                                  description: t("prohome.copySuccess"),
                                 });
                               }}
                               className="w-2/4 mx-auto bg-gradient-to-r from-orange-600 to-pink-600 hover:from-orange-700 hover:to-pink-700 text-white font-semibold py-2 px-4 rounded-lg transform transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2"
@@ -368,7 +367,7 @@ export default function PromotionsSection() {
             size="lg"
             className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold px-8 py-3 rounded-full transform transition-all duration-200 hover:scale-105 shadow-lg"
           >
-            View All Promotions
+            {t("prohome.viewAll")}
           </Button>
         </div>
       </div>
