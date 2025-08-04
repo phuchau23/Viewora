@@ -10,6 +10,7 @@ import { Movies } from "@/lib/api/service/fetchMovies";
 import { useTranslation } from "react-i18next";
 import { useDeleteSeatHolding } from "@/hooks/useSeatHolding";
 import { getUserIdFromToken } from "@/utils/signalr";
+import { toast } from "@/hooks/use-toast";
 interface Props {
   userId: string;
   movie: Partial<Movies>;
@@ -47,7 +48,7 @@ export default function TicketBill({
   );
   const [finalPrice, setFinalPrice] = useState(0);
   const [promotionError, setPromotionError] = useState<React.ReactNode>("");
-  const [countdown, setCountdown] = useState(1 * 60); // 5 phút (tính bằng giây)
+  const [countdown, setCountdown] = useState<number | undefined>(undefined);
   const [timerStarted, setTimerStarted] = useState(false);
   const [graceTimeoutStarted, setGraceTimeoutStarted] = useState(false);
   const { deleteSeatHolding } = useDeleteSeatHolding();
@@ -101,32 +102,64 @@ export default function TicketBill({
     const final = originalTotal - discountAmount;
     setFinalPrice(final > 0 ? final : 0);
   };
+
   useEffect(() => {
-    if (!timerStarted && selectedSeats.length > 0) {
+    if (selectedSeats.length > 0) {
+      const key = `seatHoldStart-${showtimeId}`;
+      const existing = localStorage.getItem(key);
+      if (!existing) {
+        localStorage.setItem(key, Date.now().toString());
+      }
       setTimerStarted(true);
     }
-  }, [selectedSeats, timerStarted]);
+  }, [selectedSeats, showtimeId]);
+
   useEffect(() => {
     if (!timerStarted) return;
 
+    const key = `seatHoldStart-${showtimeId}`;
+    const start = Number(localStorage.getItem(key));
+    const now = Date.now();
+    const diffInSeconds = Math.floor((now - start) / 1000);
+    const remaining = 5 * 60 - diffInSeconds;
+
+    if (remaining <= 0) {
+      setCountdown(0);
+      return;
+    } else {
+      setCountdown(remaining);
+    }
+
     const interval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
+      const now = Date.now();
+      const diffInSeconds = Math.floor((now - start) / 1000);
+      const remaining = 5 * 60 - diffInSeconds;
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+        setCountdown(0);
+      } else {
+        setCountdown(remaining);
+      }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timerStarted]);
+  }, [timerStarted, showtimeId]);
+
   useEffect(() => {
     if (countdown === 0 && !graceTimeoutStarted) {
       setGraceTimeoutStarted(true);
-      alert("Bạn đã hết thời gian giữ ghế! Đang hủy ghế sau 10 giây...");
+      toast({
+        title: "Hết thời gian giữ ghế",
+        description: "Ghế của bạn đã bị hủy.",
+        variant: "destructive",
+      });
+
+      // Xoá timestamp giữ ghế
+      localStorage.removeItem(`seatHoldStart-${showtimeId}`);
     }
-  }, [countdown, graceTimeoutStarted]);
+  }, [countdown, graceTimeoutStarted, showtimeId]);
+
   useEffect(() => {
     if (!graceTimeoutStarted) return;
 
@@ -135,8 +168,10 @@ export default function TicketBill({
       if (userId) {
         deleteSeatHolding({ showtimeId, userId });
       }
-      window.location.reload();
-    }, 10 * 1000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 3 * 1000); // reload sau 3 giây
+    });
 
     return () => clearTimeout(timeout);
   }, [graceTimeoutStarted]);
@@ -346,19 +381,20 @@ export default function TicketBill({
           )}
         </div>
         <div className="mt-4 text-center text-base font-medium">
-          {countdown > 0 ? (
-            <>
-              Còn lại:{" "}
-              <span className="text-lg font-extrabold text-red-600">
-                {Math.floor(countdown / 60)}:
-                {(countdown % 60).toString().padStart(2, "0")}
+          {countdown !== undefined &&
+            (countdown > 0 ? (
+              <>
+                Còn lại:{" "}
+                <span className="text-lg font-extrabold text-red-600">
+                  {Math.floor(countdown / 60)}:
+                  {(countdown % 60).toString().padStart(2, "0")}
+                </span>
+              </>
+            ) : (
+              <span className="text-red-600 font-bold">
+                Hết thời gian! Đang hủy ghế...
               </span>
-            </>
-          ) : (
-            <span className="text-red-600 font-bold">
-              Hết thời gian! Đang hủy ghế...
-            </span>
-          )}
+            ))}
         </div>
       </div>
     </div>
