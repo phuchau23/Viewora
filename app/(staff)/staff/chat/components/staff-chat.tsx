@@ -73,7 +73,6 @@ export default function StaffChat({ staffId, staffName }: StaffChatProps) {
           accessTokenFactory: () => {
             return Cookies.get("auth-token") || "";
           },
-          transport: signalR.HttpTransportType.WebSockets,
         }
       )
       .withAutomaticReconnect()
