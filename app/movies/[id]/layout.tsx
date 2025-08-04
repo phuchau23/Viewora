@@ -1,8 +1,15 @@
 "use client";
-    export default function MovieLayout({
+
+import { Provider } from "@radix-ui/react-toast";
+
+export default function MovieLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <Provider>{children}</Provider>
+    </>
+  );
 }
