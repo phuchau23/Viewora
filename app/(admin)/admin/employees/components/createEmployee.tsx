@@ -24,6 +24,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useCreateEmployee } from "@/hooks/useEmployees";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { on } from "node:events";
 
 interface CreateEmployeeModalProps {
   isOpen: boolean;
@@ -131,7 +132,11 @@ export function CreateEmployeeModal({
         formDataToSend.append(key, value.toString());
       });
 
-      createEmployee(formDataToSend);
+      createEmployee(formDataToSend, {
+        onSuccess: () => {
+          onClose();
+        },
+      });
     }
   };
 
