@@ -319,16 +319,16 @@
   "dashboardtitle": "Dashboard",
   "dashboardsubtitle": "Real-time analytics and insights for your cinema",
   "metrics": {
-    "revenue": "Revenue (VND)",
+    "revenue": "Revenue",
     "bookings": "Bookings",
     "movies": "Movies",
-    "rating": "Average Rating",
     "nowShowing": "Now Showing"
   },
   "charts": {
-    "revenueTrend": "Revenue",
-    "topMovies": "Movie Showing",
-    "genreDistribution": "Genre Distribution"
+   "yearlyRevenue": "Yearly Revenue",
+    "monthlyRevenue": "Monthly Revenue",
+    "topMovies": "Top 5 Movies",
+    "recentMovies": "Recent Movies"
   },
   "recentActivity": {
     "title": "Recent Activity",
@@ -1041,5 +1041,23 @@
     "copied": "Copied",
     "copySuccess": "Promotion code has been copied to clipboard.",
     "viewAll": "View All Promotions"
-  }
-}
+  },
+  "user":"User",
+  "dash": {
+    "bookingHistoryTitle": "Booking History",
+    "bookingHistoryDesc": "List of recent bookings",
+    "overview": "Overview",
+    "revenue": "Revenue",
+    "bookings": "Bookings",
+    "totalMovies": "Total Movies",
+    "nowShowing": "Now Showing",
+     "yearRevenue": "Yearly Revenue",
+    "monthRevenue": "Monthly Revenue",
+    "topSellingMovies": "Top Selling Movies",
+    "errorDefault": "An error occurred. Please try again later.",
+    "released": "Release Date",
+    "noNowShowing": "No movies currently showing"
+  },
+  "Customers":"Customers"
+}  
+
