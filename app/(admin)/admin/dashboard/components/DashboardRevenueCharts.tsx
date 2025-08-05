@@ -117,6 +117,7 @@ const DashboardRevenueCharts = ({ branchId }: { branchId?: string }) => {
     }));
   }, [dayRevenueData]);
 
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
       {/* Biểu đồ theo tháng (trong năm) */}
@@ -149,9 +150,9 @@ const DashboardRevenueCharts = ({ branchId }: { branchId?: string }) => {
           <BarChart data={formattedMonthRevenueData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="label" stroke="#666" />
-            <YAxis stroke="#666" tick={{ fontSize: 15 }} />
+            <YAxis stroke="#666" tick={{ fontSize: 10 }} />
             <Tooltip />
-            <Bar dataKey="revenue" fill="#10B981" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="revenue" fill="#10B981" radius={[4, 4, 0, 0]}/>
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
@@ -184,7 +185,7 @@ const DashboardRevenueCharts = ({ branchId }: { branchId?: string }) => {
           <LineChart data={formattedDayRevenueData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="label" stroke="#666" />
-            <YAxis stroke="#666" tick={{ fontSize: 15 }} />
+            <YAxis stroke="#666" tick={{ fontSize: 10 }} />
             <Tooltip />
             <Line
               type="monotone"

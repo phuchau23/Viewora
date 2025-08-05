@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -43,6 +43,13 @@ export default function BookingsHistory() {
     setOpenModal(true);
     console.log(bookingId);
   };
+
+  const sortedBookings = useMemo(() => {
+    return [...bookings].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [bookings]);
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -105,7 +112,7 @@ export default function BookingsHistory() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {bookings?.map((booking) => (
+            {sortedBookings?.map((booking) => (
               <TableRow key={booking.id} className="hover:bg-secondary">
                 <TableCell className="font-bold">
                   {booking.user.fullName}
