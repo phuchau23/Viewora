@@ -14,17 +14,22 @@ import { Movies } from "@/lib/api/service/fetchMovies";
 
 interface CinemaCardProps {
   movies: Movies[];
+  uniqueId: string;
 }
-export default function CinemaCard({ movies }: CinemaCardProps) {
+export default function CinemaCard({ movies, uniqueId }: CinemaCardProps) {
   const swiperRef = useRef<SwiperClass>();
 
   return (
     <div className="relative w-[400px] h-[500px] mx-auto mt-8 px-4">
       {/* Navigation buttons (move these inside Swiper) */}
-      <div className="h-10 w-10 mx-auto my-auto swiper-button-prev absolute left-[-40px] top-1/2 -translate-y-1/2 z-10 cursor-pointer text-white text-2xl hover:scale-125 transition rounded-full bg-black/30 dark:bg-white/30 flex items-center justify-center">
+      <div
+        className={`h-10 w-10 mx-auto my-auto swiper-button-prev-${uniqueId} absolute left-[-40px] top-1/2 -translate-y-1/2 z-10 cursor-pointer text-white text-2xl hover:scale-125 transition rounded-full bg-black/30 dark:bg-white/30 flex items-center justify-center`}
+      >
         ‹
       </div>
-      <div className="h-10 w-10 mx-auto my-2 swiper-button-next absolute right-[-40px] top-1/2 -translate-y-1/2 z-10 cursor-pointer text-white text-2xl hover:scale-125 transition rounded-full bg-black/30 dark:bg-white/30 flex items-center justify-center">
+      <div
+        className={`h-10 w-10 mx-auto my-2 swiper-button-next-${uniqueId} absolute right-[-40px] top-1/2 -translate-y-1/2 z-10 cursor-pointer text-white text-2xl hover:scale-125 transition rounded-full bg-black/30 dark:bg-white/30 flex items-center justify-center`}
+      >
         ›
       </div>
 
@@ -33,6 +38,7 @@ export default function CinemaCard({ movies }: CinemaCardProps) {
         grabCursor={true}
         slidesPerView="auto"
         loop={true}
+        initialSlide={Math.floor(movies.length / 2)} // set slide giữa là initial
         centeredSlides={true}
         spaceBetween={20}
         onBeforeInit={(swiper) => {
@@ -51,8 +57,8 @@ export default function CinemaCard({ movies }: CinemaCardProps) {
         }}
         modules={[Navigation, EffectCoverflow, Autoplay]}
         navigation={{
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
+          nextEl: `.swiper-button-next-${uniqueId}`,
+          prevEl: `.swiper-button-prev-${uniqueId}`,
         }}
         className="w-full h-[500px] !overflow-visible"
       >

@@ -27,7 +27,9 @@ export default function HomeClient() {
       <Header />
       <PageIntroReveal />
       <HeroSlider
-        featuredMovies={movies?.filter((movie) => movie.status === "nowShowing")}
+        featuredMovies={movies?.filter(
+          (movie) => movie.status === "nowShowing"
+        )}
       />
       <div className="mt-12" ref={comingRef}>
         <h2 className="text-3xl font-semibold text-black dark:text-white border-l-4 border-orange-500 pl-4 mb-4">
@@ -35,6 +37,7 @@ export default function HomeClient() {
         </h2>
         <CinemaCard
           movies={movies?.filter((movie) => movie.status === "inComing")}
+          uniqueId="comingSoon"
         />
       </div>
       <div className="mt-12" ref={showingRef}>
@@ -43,6 +46,7 @@ export default function HomeClient() {
         </h2>
         <CinemaCard
           movies={movies?.filter((movie) => movie.status === "nowShowing")}
+          uniqueId="nowShowing"
         />
       </div>
       <PromotionsSection />
