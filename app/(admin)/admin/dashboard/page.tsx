@@ -1,6 +1,6 @@
 "use client";
 
-import MovieDashboard from "./components/dashboardChart.tsx/page";
+import MovieDashboard from "./components/page";
 
 export default function Page() {
   return <MovieDashboard />;

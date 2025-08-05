@@ -78,13 +78,15 @@ export default function PromotionsSection() {
     const endDate = new Date(endTime);
     const diff = endDate.getTime() - now.getTime();
 
-    if (diff <= 0) return t("prohome.expired");
+    if (diff <= 0) return "Expired";
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const year = endDate.getFullYear();
+    const month = String(endDate.getMonth() + 1).padStart(2, "0");
+    const day = String(endDate.getDate()).padStart(2, "0");
+    const hours = String(endDate.getHours()).padStart(2, "0");
+    const minutes = String(endDate.getMinutes()).padStart(2, "0");
 
-    if (days > 0) return t("prohome.timeLeftDays", { days, hours });
-    return t("prohome.timeLeftHours", { hours });
+    return `${year}-${month}-${day} ${hours}:${minutes} End`;
   };
 
   const formatDiscount = (promotion: Promotion) => {

@@ -319,16 +319,16 @@
   "dashboardtitle": "Bảng Điều Khiển ",
   "dashboardsubtitle": "Phân tích và thông tin chi tiết theo thời gian thực cho rạp chiếu phim",
   "metrics": {
-    "revenue": "Doanh Thu (VND)",
-    "bookings": "Số Lượng Đặt Vé",
-    "movies": "Số Phim",
-    "rating": "Đánh Giá Trung Bình",
-    "nowShowing": "Phim Đang Chiếu"
+   "revenue": "Doanh thu",
+    "bookings": "Vé đặt",
+    "movies": "Phim",
+    "nowShowing": "Đang chiếu"
   },
   "charts": {
-    "revenueTrend": "Doanh Thu",
-    "topMovies": "Phim Đang Chiếu",
-    "genreDistribution": "Phân Loại Phim"
+   "yearlyRevenue": "Doanh thu năm",
+    "monthlyRevenue": "Doanh thu tháng",
+    "topMovies": "Top 5 phim",
+    "recentMovies": "Phim gần đây"
   },
   "recentActivity": {
     "title": "Hoạt Động Gần Đây",
@@ -1027,8 +1027,8 @@
     "expired": "Đã hết hạn",
     "timeLeftDays": "{days} ngày {hours} giờ còn lại",
     "timeLeftHours": "{hours} giờ còn lại",
-    "percentOff": "{value}% giảm",
-    "fixedOff": "Giảm {value}",
+    "percentOff": "{value}% ",
+    "fixedOff": "Giảm ",
     "error": "Không tải được khuyến mãi. Vui lòng thử lại sau.",
     "noPromotions": "Không có khuyến mãi nào",
     "checkBack": "Hãy quay lại sau để xem ưu đãi hấp dẫn!",
@@ -1042,5 +1042,22 @@
     "copied": "Đã sao chép",
     "copySuccess": "Mã khuyến mãi đã được sao chép vào clipboard.",
     "viewAll": "Xem tất cả khuyến mãi"
-  }
+  },
+  "user":"Người đặt vé",
+  "dash": {
+    "bookingHistoryTitle": "Lịch sử giao dịch",
+    "bookingHistoryDesc": "Danh sách các booking gần đây",
+      "overview": "Tổng Quan",
+      "revenue": "Doanh thu",
+    "bookings": "Đơn đặt vé",
+    "totalMovies": "Tổng phim",
+    "nowShowing": "Phim đang chiếu",
+     "yearRevenue": "Doanh thu năm",
+    "monthRevenue": "Doanh thu tháng",
+    "topSellingMovies": "Top phim bán chạy",
+    "errorDefault": "Có lỗi xảy ra. Vui lòng thử lại sau.",
+    "released": "Ngày phát hành",
+    "noNowShowing": "Không có phim đang chiếu"
+  },
+  "Customers":"Khách hàng"
 }

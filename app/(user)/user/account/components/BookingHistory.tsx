@@ -55,18 +55,18 @@ const TicketCard: React.FC<{ ticket: Ticket; onClick: () => void }> = ({
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <p className="text-xs text-gray-600">{t("book.name")}</p>
-            <p className="text-sm font-medium">{ticket.userName}</p>
-            <p className="text-xs text-gray-600">{t("book.email")}</p>
-            <p className="text-sm font-medium">{ticket.userEmail}</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-600">{t("book.date")}</p>
-            <p className="text-sm font-medium">{formattedDate}</p>
-            <p className="text-xs text-gray-600">{t("book.time")}</p>
-            <p className="text-sm font-medium">{ticket.showTime}</p>
-            <p className="text-xs text-gray-600">{t("book.theater")}</p>
-            <p className="text-sm font-medium">{ticket.theater}</p>
+            <p className="text-xs text-gray-600 break-words whitespace-normal">
+              {t("book.name")}
+            </p>
+            <p className="text-sm font-medium break-words whitespace-normal">
+              {ticket.userName}
+            </p>
+            <p className="text-xs text-gray-600 break-words whitespace-normal">
+              {t("book.email")}
+            </p>
+            <p className="text-sm font-medium break-words whitespace-normal">
+              {ticket.userEmail}
+            </p>
           </div>
           <div className="text-right">
             <p className="text-xs text-gray-600">{t("book.seat")}</p>

@@ -86,7 +86,6 @@ export const ShowTimeService = {
           console.log("API result:", res);
           return res.data; 
         } catch (error) {
-          console.error("Failed to fetch showtime:", error);
           throw error; 
         }
       },
