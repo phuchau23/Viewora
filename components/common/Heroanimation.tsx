@@ -21,6 +21,7 @@ interface Movie {
   director: string;
   age: string;
   releaseDate: string;
+  actor: string;
 }
 
 interface HeroSliderProps {
@@ -125,16 +126,12 @@ export default function HeroSlider({ featuredMovies }: HeroSliderProps) {
                       {/* Movie Stats */}
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-4">
                         <div className="flex items-center gap-3 text-white">
-                          <div className="flex items-center gap-1">
-                            <Star className="h-5 w-5 text-yellow-500 fill-current" />
-                            <Star className="h-5 w-5 text-yellow-500 fill-current" />
-                            <Star className="h-5 w-5 text-yellow-500 fill-current" />
-                            <Star className="h-5 w-5 text-yellow-500 fill-current" />
-                            <Star className="h-5 w-5 text-gray-400" />
+                          <div className="text-gray-300">
+                            <span className="text-sm">Actor</span>
+                            <p className="font-semibold text-white text-sm">
+                              {movie.actor}
+                            </p>
                           </div>
-                          <span className="font-semibold text-lg">
-                            {movie.rate}/5
-                          </span>
                         </div>
                         <div className="flex items-center gap-3 text-gray-300">
                           <Clock className="h-5 w-5 text-blue-400" />

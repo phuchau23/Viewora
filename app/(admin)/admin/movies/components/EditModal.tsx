@@ -78,7 +78,6 @@ export const EditMovieModal = ({
         Director: movie.director,
         Actor: movie.actor,
         Duration: movie.duration,
-        Rate: movie.rate,
         ReleaseDate: movie.releaseDate.split(" ")[0],
         StartShow: movie.startShow.split(" ")[0],
         Age: movie.age,
@@ -130,12 +129,6 @@ export const EditMovieModal = ({
                   label: t("movieedit.duration"),
                   name: "Duration",
                   type: "number",
-                },
-                {
-                  label: t("movieedit.rate"),
-                  name: "Rate",
-                  type: "number",
-                  step: 0.1,
                 },
                 {
                   label: t("movieedit.releaseDate"),

@@ -661,7 +661,7 @@
     "active": "Hoạt động",
     "inactive": "Ngừng hoạt động",
     "deleteTitle": "Xóa vai trò",
-    "deleteDescription": "Bạn có chắc chắn muốn xóa vai trò \"{name}\"? Hành động này không thể hoàn tác.",
+    "deleteDescription": "Bạn có chắc chắn muốn xóa vai trò \"{{name}}\"? Hành động này không thể hoàn tác.",
     "delete": "Xóa",
     "editTitle": "Chỉnh sửa vai trò",
     "editDescription": "Cập nhật thông tin vai trò bên dưới."
@@ -688,7 +688,7 @@
     "noExport": "Không có dữ liệu để xuất",
     "none": "Không có",
     "preview": "Xem trước",
-    "error": "Lỗi: {message}"
+    "error": "Lỗi: {{message}}"
   },
   "proadd": {
     "addPromotion": "Thêm khuyến mãi",
@@ -714,7 +714,7 @@
     "errorRequired": "Vui lòng điền đầy đủ các trường bắt buộc.",
     "errorDate": "Ngày bắt đầu phải trước ngày kết thúc.",
     "errorDiscount": "Giá giảm phải là số dương.",
-    "errorNumber": "{field} phải là số.",
+    "errorNumber": "{{field}} phải là số.",
     "createSuccess": "Tạo khuyến mãi thành công!",
     "createFailed": "Tạo khuyến mãi thất bại!"
   },
@@ -722,7 +722,7 @@
     "dialogTitle": "Chỉnh sửa khuyến mãi",
     "dialogDescription": "Cập nhật chi tiết khuyến mãi.",
     "loading": "Đang tải dữ liệu khuyến mãi...",
-    "errorLoad": "Lỗi: {error}",
+    "errorLoad": "Lỗi: {{error}}",
     "formTitle": "Biểu mẫu khuyến mãi",
     "title": "Tiêu đề",
     "code": "Mã",
@@ -770,14 +770,14 @@
     "exportName": "Tên",
     "exportPrice": "Giá",
     "exportStatus": "Trạng thái",
-    "errorLoad": "Lỗi: {error}",
+    "errorLoad": "Lỗi: {{error}}",
     "previewImage": "Xem trước hình ảnh"
   },
   "snackedit": {
     "title": "Chỉnh sửa Snack",
     "description": "Cập nhật thông tin của snack.",
     "loading": "Đang tải dữ liệu snack...",
-    "error": "Lỗi: {error}",
+    "error": "Lỗi: {{error}}",
     "formTitle": "Biểu mẫu Snack",
     "name": "Tên",
     "price": "Giá",
@@ -877,12 +877,12 @@
   },
   "movietype": {
     "loading": "Đang tải dữ liệu...",
-    "error": "Lỗi khi tải dữ liệu: {error}",
+    "error": "Lỗi khi tải dữ liệu: {{error}}",
     "addPlaceholder": "Thêm loại phim...",
     "addButton": "Thêm",
     "nameColumn": "Tên Loại Phim",
     "deleteTitle": "Xóa Loại Phim",
-    "deleteConfirm": "Bạn có chắc chắn muốn xóa loại phim \"{name}\"? Hành động này không thể hoàn tác.",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa loại phim \"{{name}}\"? Hành động này không thể hoàn tác.",
     "cancel": "Hủy",
     "delete": "Xóa"
   },
@@ -1025,10 +1025,10 @@
   },
   "prohome": {
     "expired": "Đã hết hạn",
-    "timeLeftDays": "{days} ngày {hours} giờ còn lại",
-    "timeLeftHours": "{hours} giờ còn lại",
-    "percentOff": "{value}% ",
-    "fixedOff": "Giảm ",
+    "timeLeftDays": "{{days}} ngày {{hours}} giờ còn lại",
+    "timeLeftHours": "{{hours}} giờ còn lại",
+    "percentOff": "{{value}}% giảm",
+    "fixedOff": "Giảm {{value}}",
     "error": "Không tải được khuyến mãi. Vui lòng thử lại sau.",
     "noPromotions": "Không có khuyến mãi nào",
     "checkBack": "Hãy quay lại sau để xem ưu đãi hấp dẫn!",
