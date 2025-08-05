@@ -28,7 +28,7 @@ export function useSnack(id: string) {
   };
 }
 
-export function useSnacks(pageIndex = 1, pageSize = 10) {
+export function useSnacks(pageIndex = 1, pageSize = 100) {
   const token = getCookie("auth-token");
   const isAuthenticated = !!token;
 

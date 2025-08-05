@@ -38,7 +38,6 @@ import { useTranslation } from "react-i18next";
 const adminNavItems = [
   { titleKey: "dashboard", url: "/admin/dashboard", icon: Home },
   { titleKey: "userManager", url: "/admin/users", icon: Users },
-  { titleKey: "tickets", url: "/admin/tickets", icon: Ticket },
   { titleKey: "employees", url: "/admin/employees", icon: ContactRound },
   { titleKey: "roles", url: "/admin/role", icon: User },
   { titleKey: "promotion", url: "/admin/promotion", icon: TicketPercent },
