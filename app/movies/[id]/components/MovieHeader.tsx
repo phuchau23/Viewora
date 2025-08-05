@@ -31,7 +31,7 @@ export default function MovieHeader({ movie }: MovieHeaderProps) {
         }`}
       >
         {labels[status as keyof typeof labels]}
-              </span>
+      </span>
     );
   };
 
@@ -92,12 +92,12 @@ export default function MovieHeader({ movie }: MovieHeaderProps) {
               </h1>
 
               <div className="flex flex-wrap items-center gap-4 text-base">
-                {movie.rate > 0 && (
-                  <div className="flex items-center gap-2">
-                    <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold">{averageRating?.data.toFixed(1)}/5</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  <span className="font-semibold">
+                    {averageRating?.data.toFixed(1) || 0}/5
+                  </span>
+                </div>
 
                 <div className="flex items-center gap-2">
                   <Clock className="w-5 h-5" />

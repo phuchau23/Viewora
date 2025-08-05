@@ -84,7 +84,6 @@ export const CreateModal = () => {
     formData.append("Director", get("Director"));
     formData.append("Actor", get("Actor"));
     formData.append("Duration", get("Duration"));
-    formData.append("Rate", get("Rate"));
     formData.append("ReleaseDate", get("ReleaseDate"));
     formData.append("StartShow", get("StartShow"));
     formData.append("Trailer", get("Trailer"));
@@ -129,23 +128,19 @@ export const CreateModal = () => {
           </DialogHeader>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {["Name", "Director", "Actor", "Duration", "Rate"].map(
-              (field, i) => (
-                <div key={i} className="space-y-1">
-                  <Label htmlFor={field}>
-                    {t(`movieadd.${field.toLowerCase()}`)}
-                  </Label>
-                  <Input
-                    id={field}
-                    name={field}
-                    type={
-                      ["Duration", "Rate"].includes(field) ? "number" : "text"
-                    }
-                    required
-                  />
-                </div>
-              )
-            )}
+            {["Name", "Director", "Actor", "Duration"].map((field, i) => (
+              <div key={i} className="space-y-1">
+                <Label htmlFor={field}>
+                  {t(`movieadd.${field.toLowerCase()}`)}
+                </Label>
+                <Input
+                  id={field}
+                  name={field}
+                  type={["Duration"].includes(field) ? "number" : "text"}
+                  required
+                />
+              </div>
+            ))}
 
             <div className="space-y-1">
               <Label htmlFor="ReleaseDate">{t("movieadd.releaseDate")}</Label>
