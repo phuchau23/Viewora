@@ -60,12 +60,19 @@ export default function MoviesTables() {
   ]);
 
   const searchedMovies = useMemo(() => {
-    const safeMovies = movies ?? [];
-    if (!searchTerm) return safeMovies;
+    let safeMovies = movies ?? [];
 
-    return safeMovies.filter((movie) =>
-      movie.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Search filter
+    if (searchTerm) {
+      safeMovies = safeMovies.filter((movie) =>
+        movie.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Chỉ hiển thị phim không có sẵn
+    safeMovies = safeMovies.filter((movie) => movie.isAvailable === true);
+
+    return safeMovies;
   }, [movies, searchTerm]);
 
   if (isLoading) {
@@ -154,11 +161,6 @@ export default function MoviesTables() {
                 {sortConfig.key === "duration" &&
                   (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
-              <TableHead onClick={() => handleSort("isAvailable")}>
-                {t("movie.isAvailable")}{" "}
-                {sortConfig.key === "isAvailable" &&
-                  (sortConfig.direction === "ascending" ? "↑" : "↓")}
-              </TableHead>
               <TableHead onClick={() => handleSort("status")}>
                 {t("movie.status")}{" "}
                 {sortConfig.key === "status" &&
@@ -186,11 +188,6 @@ export default function MoviesTables() {
                 <TableCell>{movie.director}</TableCell>
                 <TableCell>
                   {movie.duration} {t("movie.minutes")}
-                </TableCell>
-                <TableCell>
-                  {movie.isAvailable
-                    ? t("movie.available")
-                    : t("movie.unavailable")}
                 </TableCell>
                 <TableCell>{movie.status}</TableCell>
                 <TableCell className="px-0">

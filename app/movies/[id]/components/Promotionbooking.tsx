@@ -49,7 +49,6 @@ export default function PromoCodeSelector({
           {promoData?.promotions?.length ? (
             promoData.promotions.map((promo) => {
               const notEnough = totalPrice < promo.minOrderValue;
-
               return (
                 <div
                   key={promo.id}
