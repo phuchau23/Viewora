@@ -52,7 +52,7 @@ export default function ComboSelector({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => updateComboQuantity(combo, quantity - 1)}
-                  className="w-8 h-8 rounded-full dark:bg-neutral-700 hover:bg-neutral-600 flex items-center justify-center text-lg"
+                  className="w-8 h-8 rounded-full hover:bg-gray-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 flex items-center justify-center text-lg"
                   disabled={quantity <= 0}
                 >
                   -
@@ -60,7 +60,7 @@ export default function ComboSelector({
                 <div className="w-6 text-center">{quantity}</div>
                 <button
                   onClick={() => updateComboQuantity(combo, quantity + 1)}
-                  className="w-8 h-8 rounded-full dark:bg-neutral-700 hover:bg-neutral-600 flex items-center justify-center text-lg"
+                  className="w-8 h-8 rounded-full hover:bg-gray-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 flex items-center justify-center text-lg"
                 >
                   +
                 </button>

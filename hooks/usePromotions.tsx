@@ -108,15 +108,10 @@ export function useGetPromotionsAvailable(userId: string) {
     isLoading,
     error: queryError,
   } = useQuery({
-    queryKey: ["promotions"],
+    queryKey: ["promotions", userId],
     queryFn: () => PromotionService.getPromotionsAvailable(userId),
-    select: (data: PromotionListResponse) => ({
-      promotions: data.data.items,
-      total: data.data.totalItems,
-      currentPage: data.data.currentPage,
-      totalPages: data.data.totalPages,
-      status: data.statusCode,
-      message: data.message,
+    select: (data) => ({
+      promotions: data.data, // data.data là Promotion[]
     }),
   });
 
