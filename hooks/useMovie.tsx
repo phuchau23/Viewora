@@ -19,7 +19,7 @@ export const useMovies = (pageIndex = 1, pageSize = 100) => {
     isError: Boolean(error),
     error,
   };
-}; 
+};
 
 // Hook lấy phim theo ID
 export const useGetMovieById = (id: string) => {

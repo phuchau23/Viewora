@@ -29,7 +29,7 @@ export function usePromotion(id: string) {
   };
 }
 
-export function usePromotions(pageIndex = 1, pageSize = 10) {
+export function usePromotions(pageIndex = 1, pageSize = 100) {
   const token = getCookie("auth-token");
   const isAuthenticated = !!token;
 
