@@ -7,7 +7,7 @@ function Movies() {
   const { movies } = useMovies();
   return (
     <div className="min-h-screen max-w-screen-xl mx-auto px-4">
-      <CinemaBanner movies={movies} />
+      <CinemaBanner movies={movies} uniqueId="banner" />
       <MoviesPage />
     </div>
   );
