@@ -206,40 +206,45 @@ export default function RoleManagement() {
                           {role.status ? t("role.active") : t("role.inactive")}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle className="text-xl font-semibold text-red-600">
-                                {t("role.deleteTitle")}
-                              </AlertDialogTitle>
-                              <AlertDialogDescription className="text-sm text-muted-foreground mt-2">
-                                {t("role.deleteDescription", {
-                                  name: role.name,
-                                })}
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
 
-                            <AlertDialogFooter className="mt-4 flex justify-end gap-2">
-                              <AlertDialogCancel asChild>
-                                <Button variant="outline">
-                                  {t("role.cancel")}
-                                </Button>
-                              </AlertDialogCancel>
-                              <Button
-                                variant="destructive"
-                                onClick={() => handleDelete(role.id.toString())}
-                              >
-                                {t("role.delete")}
+                      <TableCell className="text-right">
+                        {role.name !== "Admin" && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="outline" size="sm">
+                                <Trash2 className="h-4 w-4" />
                               </Button>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle className="text-xl font-semibold text-red-600">
+                                  {t("role.deleteTitle")}
+                                </AlertDialogTitle>
+                                <AlertDialogDescription className="text-sm text-muted-foreground mt-2">
+                                  {t("role.deleteDescription", {
+                                    name: role.name,
+                                  })}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+
+                              <AlertDialogFooter className="mt-4 flex justify-end gap-2">
+                                <AlertDialogCancel asChild>
+                                  <Button variant="outline">
+                                    {t("role.cancel")}
+                                  </Button>
+                                </AlertDialogCancel>
+                                <Button
+                                  variant="destructive"
+                                  onClick={() =>
+                                    handleDelete(role.id.toString())
+                                  }
+                                >
+                                  {t("role.delete")}
+                                </Button>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))
