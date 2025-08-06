@@ -256,22 +256,6 @@ export default function UserManagerPage() {
                         <Mail className="h-3 w-3" />
                         <span>{user.email}</span>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <Phone className="h-3 w-3" />
-                        <span>{user.phoneNumber}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <MapPin className="h-3 w-3" />
-                        <span>{user.address}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="h-3 w-3" />
-                        <span>
-                          {t("joined", {
-                            date: formatDate(user.createdAt?.toString() || ""),
-                          })}
-                        </span>
-                      </div>
                     </div>
                   </div>
                 </div>
