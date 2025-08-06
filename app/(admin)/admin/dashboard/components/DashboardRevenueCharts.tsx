@@ -59,6 +59,35 @@ const DashboardRevenueCharts = ({ branchId }: { branchId?: string }) => {
       : undefined
   );
 
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: {
+    active?: boolean;
+    payload?: any[];
+    label?: string;
+  }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          style={{
+            background: "white",
+            border: "1px solid #ccc",
+            padding: "5px 10px",
+            borderRadius: "4px",
+          }}
+        >
+          <p style={{ margin: 0 }}>{label}</p>
+          <p style={{ margin: 0, fontWeight: "normal", color: "#10B981" }}>
+            {payload[0].value.toLocaleString()} VND
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   // --- Tháng có doanh thu của năm được chọn ---
   const availableMonths = useMemo(() => {
     if (!monthRevenueData?.revenueData) return [];
@@ -149,8 +178,8 @@ const DashboardRevenueCharts = ({ branchId }: { branchId?: string }) => {
           <BarChart data={formattedMonthRevenueData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="label" stroke="#666" />
-            <YAxis stroke="#666" tick={{ fontSize: 15 }} />
-            <Tooltip />
+            <YAxis stroke="#666" tick={{ fontSize: 11 }} />
+            <Tooltip content={<CustomTooltip />} />
             <Bar dataKey="revenue" fill="#10B981" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
@@ -184,8 +213,8 @@ const DashboardRevenueCharts = ({ branchId }: { branchId?: string }) => {
           <LineChart data={formattedDayRevenueData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="label" stroke="#666" />
-            <YAxis stroke="#666" tick={{ fontSize: 15 }} />
-            <Tooltip />
+            <YAxis stroke="#666" tick={{ fontSize: 11 }} />
+            <Tooltip content={<CustomTooltip />} />
             <Line
               type="monotone"
               dataKey="revenue"

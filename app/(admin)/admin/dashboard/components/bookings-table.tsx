@@ -53,7 +53,17 @@ export function BookingsTable({
     );
   }, [data, searchTerm]);
 
-  const sortedBookings = sortedData(searchedBookings);
+  const sortedBookings = useMemo(() => {
+    if (sortConfig.key) {
+      return sortedData(searchedBookings);
+    }
+
+    // Mặc định sort theo createdAt DESC (mới nhất trước)
+    return [...searchedBookings].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [searchedBookings, sortedData, sortConfig]);
 
   if (isLoading) {
     return (
