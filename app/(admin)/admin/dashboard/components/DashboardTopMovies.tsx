@@ -7,18 +7,27 @@ import {
   Cell,
   Tooltip,
   Legend,
+  Sector,
+  PieLabelRenderProps,
+  SectorProps,
 } from "recharts";
 import ChartCard from "./ChartCard";
 import { PieChart as PieChartIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { ActiveShape } from "recharts/types/util/types";
+
+interface TopMovie {
+  movieName: string;
+  totalBookings: number;
+}
 
 const DashboardTopMovies: React.FC<{
-  topMovies: any[];
+  topMovies: TopMovie[];
   isLoading: boolean;
 }> = ({ topMovies, isLoading }) => {
   const { t } = useTranslation();
+  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
 
-  // Chuẩn hóa dữ liệu
   const chartData = useMemo(
     () =>
       topMovies?.map((movie) => ({
@@ -28,8 +37,68 @@ const DashboardTopMovies: React.FC<{
     [topMovies]
   );
 
-  // Màu sắc cho top 5
   const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
+
+  const renderCustomizedLabel = (props: PieLabelRenderProps) => {
+    const RADIAN = Math.PI / 180;
+    const { cx, cy, midAngle = 0, innerRadius, outerRadius, percent } = props;
+    const ir = Number(innerRadius ?? 0);
+    const or = Number(outerRadius ?? 0);
+    const radius = ir + (or - ir) * 0.5;
+    const x = Number(cx ?? 0) + radius * Math.cos(-midAngle * RADIAN);
+    const y = Number(cy ?? 0) + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={12}
+      >
+        {`${((percent ?? 0) * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
+  const renderActiveShape = (props: SectorProps & { midAngle?: number }) => {
+    const { cx = 0, cy = 0, midAngle = 0, outerRadius = 0, ...rest } = props;
+
+    const RADIAN = Math.PI / 180;
+    const offset = 12;
+    const xOffset = Math.cos(-midAngle * RADIAN) * offset;
+    const yOffset = Math.sin(-midAngle * RADIAN) * offset;
+
+    return (
+      <g
+        style={{ transition: "transform 0.2s ease-out" }}
+        transform={`translate(${xOffset}, ${yOffset})`}
+      >
+        <Sector {...rest} cx={cx} cy={cy} outerRadius={outerRadius + 5} />
+      </g>
+    );
+  };
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          style={{
+            background: "#fff",
+            border: "1px solid #ccc",
+            padding: "4px 8px",
+            borderRadius: "4px",
+            fontSize: "13px", // giảm font-size ở đây
+            lineHeight: "1.4",
+          }}
+        >
+          <div style={{ fontWeight: "normal" }}>{payload[0].name}</div>
+          <div>{payload[0].value} vé</div>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <ChartCard
@@ -44,26 +113,13 @@ const DashboardTopMovies: React.FC<{
             dataKey="value"
             nameKey="name"
             outerRadius={90}
-            labelLine
-            label={({ cx, cy, midAngle, outerRadius, name, value, index }) => {
-              const RADIAN = Math.PI / 180;
-              const radius = outerRadius + 25;
-              const x = cx + radius * Math.cos(-midAngle * RADIAN);
-              const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-              return (
-                <text
-                  x={x}
-                  y={y}
-                  fill={COLORS[index % COLORS.length]}
-                  textAnchor={x > cx ? "start" : "end"}
-                  dominantBaseline="central"
-                  fontSize={12}
-                >
-                  {`${name} (${value})`}
-                </text>
-              );
-            }}
+            paddingAngle={2}
+            labelLine={false}
+            label={renderCustomizedLabel}
+            activeIndex={activeIndex ?? undefined}
+            activeShape={renderActiveShape} // <- Không lỗi any nữa
+            onMouseEnter={(_, index) => setActiveIndex(index)}
+            onMouseLeave={() => setActiveIndex(null)}
           >
             {chartData.map((_, index) => (
               <Cell
@@ -73,11 +129,18 @@ const DashboardTopMovies: React.FC<{
             ))}
           </Pie>
 
-          <Tooltip />
+          <Tooltip content={<CustomTooltip />} />
           <Legend
             verticalAlign="bottom"
             align="center"
-            wrapperStyle={{ fontSize: "15px", marginTop: "20px" }}
+            layout="vertical"
+            wrapperStyle={{
+              fontSize: "14px",
+              marginTop: "50px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
           />
         </PieChart>
       </ResponsiveContainer>

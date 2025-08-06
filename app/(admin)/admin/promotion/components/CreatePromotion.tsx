@@ -276,14 +276,18 @@ export function PromotionCreateDialog() {
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="maxDiscountValue">{t("proadd.maxValue")}</Label>
-            <input
-              name="maxDiscountValue"
-              type="number"
-              value={formData.maxDiscountValue}
-              onChange={handleChange}
-              className="p-2 border rounded-md w-full"
-            />
+            {formData.discountTypeEnum === "Percent" && (
+              <div className="space-y-2">
+                <Label htmlFor="maxDiscountValue">{t("proadd.maxValue")}</Label>
+                <input
+                  name="maxDiscountValue"
+                  type="number"
+                  value={formData.maxDiscountValue}
+                  onChange={handleChange}
+                  className="p-2 border rounded-md w-full"
+                />
+              </div>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="minOrderValue">{t("proadd.minOrder")}</Label>

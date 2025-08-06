@@ -22,7 +22,7 @@ const DashboardMetrics: React.FC<{
         value={statistics?.totalRevenue || 0}
         icon={<DollarSign className="h-6 w-6 text-white" />}
         color="bg-green-500"
-        suffix="đ"
+        suffix=" VND"
         isLoading={isLoading}
       />
       <MetricCard
