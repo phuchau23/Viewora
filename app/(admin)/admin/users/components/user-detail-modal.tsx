@@ -32,7 +32,7 @@ interface User {
   avatar: string;
   identityCard: string;
   address: string;
-  gender: number;
+  gender: string;
   createdAt: string | null;
 }
 
@@ -59,11 +59,11 @@ export function UserDetailsModal({
       .join("")
       .toUpperCase();
 
-  const getGender = (gender: number) => {
+  const getGender = (gender: string) => {
     switch (gender) {
-      case 0:
+      case "male":
         return t("gender.male");
-      case 1:
+      case "female":
         return t("gender.female");
       default:
         return t("gender.other");

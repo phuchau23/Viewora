@@ -12,7 +12,7 @@ export interface User {
     avatar: string;
     identityCard: string;
     address: string;
-    gender: String; // Represents Gender enum (e.g., 0 for Male, 1 for Female)
+    gender: string; // Represents Gender enum (e.g., 0 for Male, 1 for Female)
     rewardPoint: number;
     createdAt: string | null;
     updatedAt: string | null;

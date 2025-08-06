@@ -36,7 +36,7 @@ export interface ProfileUpdateDataResponse {
   avatar: string | null;
   address: string | null;
   dateOfBirth: string;
-  gender: number;
+  gender: string;
 }
 interface User extends ProfileUpdateDataResponse {
   id?: string;
