@@ -103,7 +103,7 @@
   "searchSubtitle": "Don't miss the moment – Capture every frame!",
   "comingSoon": "Coming Soon",
   "nowShowing": "Now Showing",
-  "searchPlaceholder": "Search for movies, directors, actors...",
+  "searchPlaceholder": "Search for movies, users",
   "pressEnterHint": "Press Enter to search",
   "filter": "Filter",
   "description": "Your ultimate destination for booking movie tickets online. Experience the best movies in premium theaters near you.",
@@ -325,7 +325,7 @@
     "nowShowing": "Now Showing"
   },
   "charts": {
-   "yearlyRevenue": "Yearly Revenue",
+    "yearlyRevenue": "Yearly Revenue",
     "monthlyRevenue": "Monthly Revenue",
     "topMovies": "Top 5 Movies",
     "recentMovies": "Recent Movies"
@@ -816,7 +816,7 @@
     "confirmDelete": "Are you sure you want to delete this movie?",
     "managementTitle": "Movies Management",
     "managementDesc": "Manage movies for your application",
-    "searchPlaceholder": "Search by name",
+    "searchPlaceholder": "Search by moviename",
     "poster": "Poster",
     "name": "Movie Name",
     "type": "Genre",
@@ -1042,7 +1042,7 @@
     "copySuccess": "Promotion code has been copied to clipboard.",
     "viewAll": "View All Promotions"
   },
-  "user":"User",
+  "user": "User",
   "dash": {
     "bookingHistoryTitle": "Booking History",
     "bookingHistoryDesc": "List of recent bookings",
@@ -1051,13 +1051,18 @@
     "bookings": "Bookings",
     "totalMovies": "Total Movies",
     "nowShowing": "Now Showing",
-     "yearRevenue": "Yearly Revenue",
+    "yearRevenue": "Yearly Revenue",
     "monthRevenue": "Monthly Revenue",
     "topSellingMovies": "Top Selling Movies",
     "errorDefault": "An error occurred. Please try again later.",
     "released": "Release Date",
     "noNowShowing": "No movies currently showing"
   },
-  "Customers":"Customers"
-}  
+  "Customers": "Customers",
 
+  "pagination": {
+    "prev": "Previous Page",
+    "next": "Next Page",
+    "page": "Page"
+  }
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Table,
   TableBody,
@@ -29,21 +27,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useSort } from "@/hooks/useSort";
 import { CreateModal } from "./CreateModal";
 import { EditMovieModal } from "./EditModal";
-import PaginationControls from "@/components/shared/PaginationControl";
 import type { Movies } from "@/lib/api/service/fetchMovies";
 import { useTranslation } from "react-i18next";
 
 export default function MoviesTables() {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
-  const [pageSize, setPageSize] = useState(10);
-  const [pageIndex, setPageIndex] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
-  const { movies, isLoading, isError, error, totalPages } = useMovies(
-    pageIndex,
-    pageSize
-  );
-
+  const { movies, isLoading, isError, error } = useMovies();
   const { deleteMovie } = useDeleteMovie();
   const { playMovie } = usePlayMovie();
   const { stopMovie } = useStopMovie();
@@ -59,40 +52,35 @@ export default function MoviesTables() {
     "isAvailable",
   ]);
 
-  const searchedMovies = useMemo(() => {
+  const filteredMovies = useMemo(() => {
     let safeMovies = movies ?? [];
-
-    // Search filter
     if (searchTerm) {
       safeMovies = safeMovies.filter((movie) =>
         movie.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
-    // Chỉ hiển thị phim không có sẵn
     safeMovies = safeMovies.filter((movie) => movie.isAvailable === true);
-
     return safeMovies;
   }, [movies, searchTerm]);
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-6 space-y-6">
-        <Skeleton className="h-32 mb-4 w-full" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-    );
-  }
+  const sortedMovies = useMemo(() => {
+    if (!sortConfig.key) return filteredMovies;
+    const sorted = [...filteredMovies].sort((a, b) => {
+      const aValue = a[sortConfig.key as keyof Movies];
+      const bValue = b[sortConfig.key as keyof Movies];
+      if (aValue < bValue) return sortConfig.direction === "ascending" ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === "ascending" ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }, [filteredMovies, sortConfig]);
 
-  if (isError) {
-    return (
-      <div className="container mx-auto p-6">
-        <p>
-          {t("movie.error")}: {error?.message || t("movie.errorDefault")}
-        </p>
-      </div>
-    );
-  }
+  const paginatedMovies = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return sortedMovies.slice(start, start + pageSize);
+  }, [sortedMovies, currentPage, pageSize]);
+
+  const totalPages = Math.ceil(filteredMovies.length / pageSize);
 
   const handleDelete = (id: string) => {
     if (confirm(t("movie.confirmDelete"))) {
@@ -116,6 +104,25 @@ export default function MoviesTables() {
       stopMovie(id);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6 space-y-6">
+        <Skeleton className="h-32 mb-4 w-full" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="container mx-auto p-6">
+        <p>
+          {t("movie.error")}: {error?.message || t("movie.errorDefault")}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-2 space-y-6">
@@ -146,31 +153,23 @@ export default function MoviesTables() {
             <TableRow className="text-center">
               <TableHead>{t("movie.poster")}</TableHead>
               <TableHead onClick={() => handleSort("name")}>
-                {t("movie.name")}{" "}
-                {sortConfig.key === "name" &&
-                  (sortConfig.direction === "ascending" ? "↑" : "↓")}
+                {t("movie.name")}
               </TableHead>
               <TableHead>{t("movie.type")}</TableHead>
               <TableHead onClick={() => handleSort("director")}>
-                {t("movie.director")}{" "}
-                {sortConfig.key === "director" &&
-                  (sortConfig.direction === "ascending" ? "↑" : "↓")}
+                {t("movie.director")}
               </TableHead>
               <TableHead onClick={() => handleSort("duration")}>
-                {t("movie.duration")}{" "}
-                {sortConfig.key === "duration" &&
-                  (sortConfig.direction === "ascending" ? "↑" : "↓")}
+                {t("movie.duration")}
               </TableHead>
               <TableHead onClick={() => handleSort("status")}>
-                {t("movie.status")}{" "}
-                {sortConfig.key === "status" &&
-                  (sortConfig.direction === "ascending" ? "↑" : "↓")}
+                {t("movie.status")}
               </TableHead>
               <TableHead>{t("movie.action")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {searchedMovies.map((movie) => (
+            {paginatedMovies.map((movie) => (
               <TableRow key={movie.id} className="hover:bg-secondary">
                 <TableCell>
                   <img
@@ -234,16 +233,29 @@ export default function MoviesTables() {
         </Table>
       </Card>
 
-      <PaginationControls
-        currentPage={pageIndex}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        onPageChange={(page) => setPageIndex(page)}
-        onPageSizeChange={(size) => {
-          setPageSize(size);
-          setPageIndex(1);
-        }}
-      />
+      <div className="flex justify-between items-center mt-4">
+        <div>
+          {t("pagination.page")} {currentPage} / {totalPages}
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+          >
+            {t("pagination.prev")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+          >
+            {t("pagination.next")}
+          </Button>
+        </div>
+      </div>
 
       {selectedMovieId && (
         <EditMovieModal
