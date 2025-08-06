@@ -211,8 +211,6 @@ export function useLogin() {
 
       saveTokenToCookie(token);
       toast({ title: "Thành công", description: "Bạn đã đăng nhập" });
-
-      router.push("/");
       queryClient.invalidateQueries({ queryKey: ["auth-token-2"] });
       setError(null);
     },
