@@ -93,8 +93,8 @@ export default function EmployeesPage() {
       onSuccess: () => {
         setIsDeleteDialogOpen(false);
         toast({
-          title: t("Employeetoast.deletedTitle"),
-          description: t("Employeetoast.deletedDesc", {
+          title: t("Employeestoast.deletedTitle"),
+          description: t("Employeestoast.deletedDesc", {
             name: selectedEmployee.account.fullName,
           }),
           variant: "destructive",
@@ -103,8 +103,8 @@ export default function EmployeesPage() {
       },
       onError: () => {
         toast({
-          title: t("Employeetoast.errorTitle"),
-          description: t("Employeetoast.deleteError"),
+          title: t("Employeestoast.errorTitle"),
+          description: t("Employeestoast.deleteError"),
           variant: "destructive",
         });
       },
