@@ -122,7 +122,7 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
           <h3 className="text-xl font-bold text-orange-500">
             {ticket.movieName}
           </h3>
-          <p className="text-sm text-gray-600">{ticket.theater}</p>
+          <p className="text-sm text-black dark:text-black">{ticket.theater}</p>
         </div>
 
         {booking?.qrCodeUrl && (
@@ -135,7 +135,7 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
           </div>
         )}
 
-        <div className="text-sm mb-4">
+        <div className="text-sm text-black dark:text-black mb-4">
           <p>
             <b>{t("book.seat")}:</b> {ticket.seatNumber}
           </p>
@@ -159,7 +159,9 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
         {/* Snacks section */}
         {ticket.snacks && ticket.snacks.length > 0 && (
           <div className="mb-4 space-y-2">
-            <h4 className="text-sm font-semibold">Snacks:</h4>
+            <h4 className="text-sm font-semibold text-black dark:text-black">
+              Snacks:
+            </h4>
             {ticket.snacks.map((snack, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <img
@@ -167,9 +169,9 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
                   alt={snack.name}
                   className="w-10 h-10 object-cover rounded"
                 />
-                <div className="text-sm">
+                <div className="text-sm text-black dark:text-black">
                   <p className="font-medium">{snack.name}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs">
                     x{snack.quantity} –{" "}
                     {snack.unitPrice.toLocaleString("vi-VN", {
                       style: "currency",
@@ -183,7 +185,7 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
         )}
 
         {ticket.promotion && (
-          <div className="mb-4 text-sm">
+          <div className="mb-4 text-sm text-black dark:text-black">
             <h4 className="font-semibold">{t("book.promotion")}:</h4>
             <p className="text-orange-500">
               {ticket.promotion.title} ({t("book.code")}:{" "}
@@ -199,9 +201,11 @@ const TicketDetail: React.FC<{ ticket: Ticket; onClose: () => void }> = ({
           </div>
         )}
 
-        <p className="text-xs text-gray-500 mb-4">{t("book.confirmation")}</p>
+        <p className="text-xs text-black dark:text-black mb-4">
+          {t("book.confirmation")}
+        </p>
 
-        <div className="text-right">
+        <div className="text-right text-black dark:text-black">
           <p className="text-sm">{t("book.totalAmount")}</p>
           <p className="text-lg font-bold">{formattedPrice} ▼</p>
         </div>
@@ -255,8 +259,10 @@ const BookedTicketsPage: React.FC = () => {
       ) || [];
 
   return (
-    <main className="container mx-auto p-4 max-w-4xl bg-gray-50">
-      <p className="text-xs text-gray-600">{t("book.viewYourBookings")}</p>
+    <main className="container mx-auto p-4 max-w-4xl bg-gray-50 dark:bg-gray-900">
+      <p className="text-xs text-gray-900 dark:text-white">
+        {t("book.viewYourBookings")}
+      </p>
 
       {isLoading ? (
         <p className="text-center">{t("book.loading")}</p>

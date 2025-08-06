@@ -12,7 +12,7 @@ export interface User {
     avatar: string;
     identityCard: string;
     address: string;
-    gender: number; // Represents Gender enum (e.g., 0 for Male, 1 for Female)
+    gender: String; // Represents Gender enum (e.g., 0 for Male, 1 for Female)
     rewardPoint: number;
     createdAt: string | null;
     updatedAt: string | null;
@@ -32,7 +32,7 @@ export interface ProfileDataResponse {
   identityCard: string | null;
   address: string | null;
   dateOfBirth: string;
-  gender: number;
+  gender: string;
   rewardPoint: number;
 }
 export interface ProfileResponse{
@@ -73,7 +73,7 @@ export interface ProfileUpdateDataResponse {
   identityCard: string | null;
   address: string | null;
   dateOfBirth: string;
-  gender: number;
+  gender: string;
   rewardPoint: number;
 }
 
@@ -104,7 +104,7 @@ export interface ProfileUpdateResponse {
     isDescending?: boolean;
     roleId?: number;
     isActive?: boolean;
-    gender?: number;
+    gender?: string;
   }
   
 

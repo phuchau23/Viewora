@@ -44,7 +44,6 @@ export default function LoginPage() {
     e.preventDefault();
     if (!loginData.email || !loginData.password) return;
     await login(loginData);
-    window.location.reload();
   };
 
   const handleGoogleLogin = () => {

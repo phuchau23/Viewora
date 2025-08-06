@@ -82,9 +82,9 @@ export default function PersonalInfo() {
               {t("personalInfo.fields.gender")}
             </p>
             <p className="text-black dark:text-white">
-              {user?.gender === 0
+              {user?.gender === "Male"
                 ? t("personalInfo.fields.male")
-                : user?.gender === 1
+                : user?.gender === "Female"
                 ? t("personalInfo.fields.female")
                 : t("personalInfo.fields.unspecified")}
             </p>

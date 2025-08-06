@@ -92,12 +92,6 @@ export default function EditProfileModal({
     if (!formData.email?.trim()) e.email = t("validation.emailRequired");
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       e.email = t("validation.invalidEmail");
-    if (!formData.phoneNumber?.trim())
-      e.phoneNumber = t("validation.phoneNumberRequired");
-    if (!formData.dateOfBirth)
-      e.dateOfBirth = t("validation.dateOfBirthRequired");
-    if (formData.gender == null) e.gender = t("validation.genderRequired");
-    if (!formData.address?.trim()) e.address = t("validation.addressRequired");
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -126,6 +120,9 @@ export default function EditProfileModal({
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setAvatarFile(file);
+    if (file) {
+      setAvatarPreview(URL.createObjectURL(file));
+    }
   };
 
   // Handle profile submit
@@ -223,6 +220,14 @@ export default function EditProfileModal({
       }
     );
   };
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(
+    user.avatar ?? null
+  );
+  React.useEffect(() => {
+    if (user && !avatarFile) {
+      setAvatarPreview(user.avatar ?? null);
+    }
+  }, [user]);
 
   if (showSuccess)
     return (
@@ -314,6 +319,15 @@ export default function EditProfileModal({
                 accept="image/*"
                 onChange={handleAvatarChange}
               />
+              {avatarPreview && (
+                <div className="mt-2">
+                  <img
+                    src={avatarPreview}
+                    alt="Avatar Preview"
+                    className="w-20 h-20 object-cover rounded-full border"
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -341,8 +355,12 @@ export default function EditProfileModal({
               <div>
                 <Label htmlFor="gender">{t("modal.gender")} *</Label>
                 <Select
-                  value={formData.gender?.toString() || ""}
-                  onValueChange={(v) => handleChange("gender", parseInt(v))}
+                  value={
+                    typeof formData.gender === "number"
+                      ? String(formData.gender)
+                      : ""
+                  }
+                  onValueChange={(v) => handleChange("gender", Number(v))}
                 >
                   <SelectTrigger
                     className={errors.gender ? "border-red-500" : ""}
