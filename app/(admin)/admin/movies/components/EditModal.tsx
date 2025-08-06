@@ -80,6 +80,7 @@ export const EditMovieModal = ({
         Duration: movie.duration,
         ReleaseDate: movie.releaseDate.split(" ")[0],
         StartShow: movie.startShow.split(" ")[0],
+        Rate: movie.rate,
         Age: movie.age,
         Description: movie.description,
         TrailerUrl: movie.trailerUrl,

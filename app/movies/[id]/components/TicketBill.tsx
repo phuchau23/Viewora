@@ -116,7 +116,6 @@ export default function TicketBill({
 
   useEffect(() => {
     if (!timerStarted) return;
-
     const key = `seatHoldStart-${showtimeId}`;
     const start = Number(localStorage.getItem(key));
     const now = Date.now();

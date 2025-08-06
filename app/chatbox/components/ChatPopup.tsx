@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type React from "react";
 
 import * as signalR from "@microsoft/signalr";
@@ -21,6 +21,12 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
     null
   );
   const [isConnected, setIsConnected] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   // // Tạo userId nếu chưa có
   // function generateCustomerId() {
@@ -174,7 +180,7 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
                       />
                     </Avatar>
                   )}
-
+                  <div ref={messagesEndRef} /> {/* <-- Marker cuối */}
                   {/* Message bubble */}
                   <div className="flex flex-col">
                     <div
@@ -216,7 +222,7 @@ export default function ChatPopup({ onClose }: { onClose: () => void }) {
         <div className="flex items-end gap-3">
           <div className="flex-1">
             <textarea
-              className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full bg-white text-black border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Nhập tin nhắn của bạn..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
