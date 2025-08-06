@@ -208,7 +208,7 @@ export function useLogin() {
         });
         return;
       }
-
+      router.push("/");
       saveTokenToCookie(token);
       toast({ title: "Thành công", description: "Bạn đã đăng nhập" });
       queryClient.invalidateQueries({ queryKey: ["auth-token-2"] });

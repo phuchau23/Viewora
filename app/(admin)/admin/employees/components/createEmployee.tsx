@@ -77,31 +77,31 @@ export function CreateEmployeeModal({
     const newErrors: Record<string, string> = {};
 
     if (!formData.Position.trim())
-      newErrors.Position = t("errors.positionRequired");
+      newErrors.Position = t("Addemployee.errors.positionRequired");
     if (!formData.Department.trim())
-      newErrors.Department = t("errors.departmentRequired");
+      newErrors.Department = t("Addemployee.errors.departmentRequired");
     if (!formData.WorkLocation.trim())
-      newErrors.WorkLocation = t("errors.workLocationRequired");
+      newErrors.WorkLocation = t("Addemployee.errors.workLocationRequired");
     if (formData.BaseSalary <= 0)
-      newErrors.BaseSalary = t("errors.baseSalaryPositive");
+      newErrors.BaseSalary = t("Addemployee.errors.baseSalaryPositive");
     if (!formData["Account.Email"].trim())
-      newErrors["Account.Email"] = t("errors.emailRequired");
+      newErrors["Account.Email"] = t("Addemployee.errors.emailRequired");
     if (!formData["Account.FullName"].trim())
-      newErrors["Account.FullName"] = t("errors.fullNameRequired");
+      newErrors["Account.FullName"] = t("Addemployee.errors.fullNameRequired");
     if (!formData["Account.DateOfBirth"])
-      newErrors["Account.DateOfBirth"] = t("errors.dobRequired");
+      newErrors["Account.DateOfBirth"] = t("Addemployee.errors.dobRequired");
     if (!formData["Account.Gender"].trim())
-      newErrors["Account.Gender"] = t("errors.genderRequired");
+      newErrors["Account.Gender"] = t("Addemployee.errors.genderRequired");
     if (!formData["Account.PhoneNumber"].trim())
-      newErrors["Account.PhoneNumber"] = t("errors.phoneRequired");
+      newErrors["Account.PhoneNumber"] = t("Addemployee.errors.phoneRequired");
     if (!formData["Account.Password"].trim())
-      newErrors["Account.Password"] = t("errors.passwordRequired");
+      newErrors["Account.Password"] = t("Addemployee.errors.passwordRequired");
 
     if (
       formData["Account.Email"] &&
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData["Account.Email"])
     ) {
-      newErrors["Account.Email"] = t("errors.emailInvalid");
+      newErrors["Account.Email"] = t("Addemployee.errors.emailInvalid");
     }
 
     const maxLength = 28;

@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useMemo, useState } from "react";
 import {
   Table,
@@ -8,9 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { useBookingHistory } from "@/hooks/useBooking";
-import { Eye } from "lucide-react";
+import { Eye, Search } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -20,36 +20,46 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import PaginationControls from "@/components/shared/PaginationControl";
 import { BookingDetailModal } from "./components/DetailBooking";
+import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
 
 export default function BookingsHistory() {
   const { t } = useTranslation();
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [pageSize, setPageSize] = useState(10);
-  const [pageIndex, setPageIndex] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [bookingId, setBookingId] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [pageIndex, setPageIndex] = useState(1);
+  const pageSize = 10;
 
-  const { bookings, isLoading, isError, error, totalPages } = useBookingHistory(
-    pageIndex,
-    pageSize
-  );
+  const { bookings, isLoading, isError, error } = useBookingHistory();
+
+  const filteredBookings = useMemo(() => {
+    return bookings.filter(
+      (b) =>
+        b.user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        b.showTime.movie.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [bookings, searchTerm]);
+
+  const sortedBookings = useMemo(() => {
+    return [...filteredBookings].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [filteredBookings]);
+
+  const paginatedBookings = useMemo(() => {
+    const start = (pageIndex - 1) * pageSize;
+    return sortedBookings.slice(start, start + pageSize);
+  }, [sortedBookings, pageIndex]);
+
+  const totalPages = Math.ceil(sortedBookings.length / pageSize);
 
   const handleViewBooking = (bookingId: string) => {
     setBookingId(bookingId);
     setOpenModal(true);
-    console.log(bookingId);
   };
-
-  const sortedBookings = useMemo(() => {
-    return [...bookings].sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  }, [bookings]);
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -78,28 +88,24 @@ export default function BookingsHistory() {
 
   return (
     <div className="mx-2 space-y-6">
-      {/* Filter and Create */}
       <Card>
         <CardHeader>
           <CardTitle>{t("adminbooking.title")}</CardTitle>
           <CardDescription>{t("adminbooking.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          {/* <div className="flex justify-between items-center mb-6">
-            <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder={t("searchPlaceholder")}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div> */}
+          <div className="relative w-72">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder={t("searchPlaceholder")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </CardContent>
       </Card>
 
-      {/* Table */}
       <Card>
         <Table>
           <TableHeader>
@@ -112,7 +118,7 @@ export default function BookingsHistory() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedBookings?.map((booking) => (
+            {paginatedBookings.map((booking) => (
               <TableRow key={booking.id} className="hover:bg-secondary">
                 <TableCell className="font-bold">
                   {booking.user.fullName}
@@ -138,19 +144,31 @@ export default function BookingsHistory() {
         </Table>
       </Card>
 
-      {/* Pagination */}
-      <PaginationControls
-        currentPage={pageIndex}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        onPageChange={(page) => setPageIndex(page)}
-        onPageSizeChange={(size) => {
-          setPageSize(size);
-          setPageIndex(1);
-        }}
-      />
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center mt-4">
+        <span>
+          Trang {pageIndex} / {totalPages}
+        </span>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            onClick={() => setPageIndex((prev) => Math.max(prev - 1, 1))}
+            disabled={pageIndex === 1}
+          >
+            {t("pagination.prev")}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() =>
+              setPageIndex((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={pageIndex === totalPages}
+          >
+            {t("pagination.next")}
+          </Button>
+        </div>
+      </div>
 
-      {/* Modal */}
       <BookingDetailModal
         bookingId={bookingId}
         open={openModal}
